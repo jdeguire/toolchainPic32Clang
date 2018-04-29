@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
+OpenIDE-Module: com.github.jdeguire.toolchainPic32Clang
+OpenIDE-Module-Layer: com/github/jdeguire/toolchainPic32Clang/layer.xml
+OpenIDE-Module-Localizing-Bundle: com/github/jdeguire/toolchainPic32Clang/Bundle.properties
+OpenIDE-Module-Specification-Version: 0.10
+

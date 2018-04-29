@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
+<filesystem>
+    <folder name="Embedded">
+        <folder name="LanguageToolchain">
+            <file name="Clang.languageToolchain.xml" url="Clang.languageToolchain.xml">
+                <attr name="position" intvalue="7100"/>
+            </file>
+        </folder>
+    </folder>
+</filesystem>
