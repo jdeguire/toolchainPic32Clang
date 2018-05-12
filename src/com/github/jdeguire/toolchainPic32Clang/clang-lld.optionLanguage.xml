@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-ld" opt:name="MPLAB Linker for 32-bit Devices">
+    <opt:optionCategory opt:id="general" opt:name="General">
+        <opt:stringOption opt:id="heap-size" opt:groupid="post" opt:name="Heap size (bytes)" opt:emissionprefix="--defsym=_min_heap_size="/>
+        <opt:stringOption opt:id="stack-size" opt:groupid="post" opt:name="Minimum stack size (bytes)" opt:emissionprefix="--defsym=_min_stack_size="/>
+        <opt:booleanOption opt:id="enable-check-sections" opt:groupid="post" opt:name="Allow overlapped sections" opt:trueemission="--no-check-sections"/>
+        <opt:booleanOption opt:id="remove-unused-sections" opt:groupid="post" opt:name="Remove unused sections" opt:trueemission="--gc-sections"/>
+        <!-- we do not use the additional-options-use-response-files boolean option to emit anything directly. We check its value in the makefile writer rules and emit what is needed
+        for both the linker and assembler based on it being "true"-->
+        <opt:booleanOption opt:id="additional-options-use-response-files" opt:groupid="ignore-me" opt:name="Use response file to link" opt:default="false" opt:trueemission="true" opt:suppressif="${opt-xc32-linker-response-files.suppress}">
+            <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. XC32 provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
+        </opt:booleanOption>
+        <opt:stringOption opt:id="oXC32ld-extra-opts" opt:groupid="pre" opt:name="Additional driver options" opt:emissionprefix="" opt:textdefault="" opt:textpreferred="">
+            <opt:xhtml>Type here any additional driver options not existing in this GUI otherwise.
+                <br/>The string you introduce here will be emitted as is in the driver invocation command.
+            </opt:xhtml>
+        </opt:stringOption>
+        <opt:booleanOption opt:groupid="post" opt:id="code-dinit" opt:name="Place code in data init template" opt:default="${Imola2.detected}" opt:trueemission="--code-in-dinit"  opt:falseemission="--no-code-in-dinit" opt:suppressif="${pic32C.selected}">
+            <opt:version opt:fromversion="1.41"/>
+            Place code sections into the data-initialization template stored in the .dinit section.
+        </opt:booleanOption>
+        <opt:booleanOption opt:groupid="post" opt:id="allocate-dinit" opt:name="Allocate data-init section to serial memory" opt:default="${Imola2.detected}" opt:trueemission="--dinit-in-serial-mem"  opt:falseemission="--no-dinit-in-serial-mem" opt:suppressif="${pic32C.selected}">
+            <opt:version opt:fromversion="1.41"/>
+            Allocate the .dinit template section to a memory region named "serial_mem" rather than "kseg0_program_mem".
+        </opt:booleanOption>
+    </opt:optionCategory>
+
+    <opt:optionCategory opt:id="libraries" opt:name="Libraries">
+        <opt:enumOption opt:id="optimization-level" opt:groupid="pre" opt:name="Optimization level of Standard Libraries" opt:textdefault="" opt:emissionprefix="">
+            <opt:selection opt:text="" opt:name="None"/>
+            <opt:selection opt:text="-O1" opt:name="1"/>
+            <opt:selection opt:text="-O2" opt:name="2"/>
+            <opt:selection opt:text="-O3" opt:name="3"/>
+            <opt:selection opt:text="-Os" opt:name="s"/>
+        </opt:enumOption>
+        <opt:stringListOption opt:id="input-libraries" opt:groupid="post" opt:name="System Libraries" opt:emissionprefix="-l" opt:emissionseparator=",-l" opt:isfile="true" opt:isbrowsable="true" opt:slashnormalization="unix"/>
+        <opt:stringListOption opt:id="extra-lib-directories" opt:groupid="post" opt:name="Library directories" opt:emissionprefix="-L" opt:emissionseparator=",-L" opt:slashnormalization="unix"  opt:isdirectory="true" opt:isbrowsable="true">
+            <opt:browseinfo>
+                Relative paths are from
+                <br/>MPLAB X project directory.
+            </opt:browseinfo>
+            <opt:xhtml>
+                Relative paths are from MPLAB X project directory.
+            </opt:xhtml>
+        </opt:stringListOption>
+        <opt:booleanOption opt:id="exclude-standard-libraries" opt:groupid="pre" opt:name="Exclude Standard Libraries" opt:trueemission="-nostdlib"/>
+        <opt:booleanOption opt:id="no-startup-files" opt:groupid="pre" opt:name="Do not link crt0 startup code" opt:trueemission="-nostartfiles"/>
+        <opt:booleanOption opt:id="no-device-startup-code" opt:groupid="pre" opt:name="Do not link device startup code" opt:trueemission="-mno-device-startup-code" opt:unsuppressif="${pic32C.selected}">
+            <opt:version opt:fromversion="2.00"/>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Link MIPS16 libraries" opt:trueemission="-mips16" opt:suppressif="${mips16.suppress}"/>
+        <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Link micro MIPS compressed startup code and libraries" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}">
+            <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+    </opt:optionCategory>
+
+    <!-- Do fill option a la picc18 so we gain the GUI -->
+    <opt:optionCategory opt:id="fill-flash-options" opt:name="Fill Flash Memory" opt:hideif="${pic32C.selected}">
+        <opt:complexOption  opt:groupid="ld-extra"  opt:id="fill-options" opt:name="Fill" opt:emissionprefix="--fill=" opt:suppressif="${pic32C.selected}">
+            <opt:enumOption opt:groupid="ld-extra" opt:id="fill-flash-options-what" opt:name="Which area to fill" opt:textdefault="0" opt:neveremits="true" opt:fromversion="1.20">
+                You can fill all unused memory or specify and area
+                <opt:selection opt:name="No Fill" opt:text="0">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-how" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-increment" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-addr" opt:bool="true"/>
+                </opt:selection>
+                <opt:selection opt:name="Fill All Unused" opt:text="1">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-how" opt:bool="false"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-increment" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-addr" opt:bool="true"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-how"/>
+                </opt:selection>
+                <opt:selection opt:name="Provide Range to fill" opt:text="2">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-how" opt:bool="false"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-increment" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-addr" opt:bool="false"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-how"/>
+                </opt:selection>
+            </opt:enumOption>
+            <opt:enumOption opt:groupid="ld-extra" opt:id="fill-flash-options-how" opt:name="How to fill it" opt:textdefault="0" opt:neveremits="true" opt:fromversion="1.20" opt:suppressif="true">
+                You can provide a sequence you type in or a value. If you select a value you can further define if the value should be incremented/decremented on each
+                consecutive address.
+                <opt:selection opt:name="Provide sequence of values" opt:text="0">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-increment" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="false"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-seq"/>
+                </opt:selection>
+                <opt:selection opt:name="Constant or incrementing value" opt:text="1">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-const" opt:bool="false"/>
+                    <opt:optionSuppressor opt:idref="fill-flash-options-increment" opt:bool="false"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-increment"/>
+                    <!--opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="false"/-->
+                    <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="true"/>
+                </opt:selection>
+            </opt:enumOption>
+            <opt:stringOption opt:groupid="ld-extra" opt:id="fill-flash-options-seq" opt:name="Sequence" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.SequenceValidator" opt:fromversion="1.20" opt:suppressif="true">
+                Comma separated values. Each value uses C syntax. Example: 0x10,17,18,0x13
+            </opt:stringOption>
+            <opt:stringOption opt:groupid="ld-extra" opt:id="fill-flash-options-const" opt:name="Constant" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.20" opt:suppressif="true">
+                Specify constant using C syntax (0x for hex 0 for octal). Example: 0x10 is the same as 020 or 16
+            </opt:stringOption>
+            <opt:enumOption opt:groupid="ld-extra" opt:id="fill-flash-options-increment" opt:name="Increment/Decrement" opt:textdefault="" opt:emitswhendefault="false" opt:fromversion="1.20" opt:suppressif="true">
+                You can select to leave the constant alone, or increment/decrement the initial value on each consecutive address.
+                <opt:selection opt:name="No Incrementing" opt:text="">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
+                </opt:selection>
+                <opt:selection opt:name="Incrementing Const" opt:text="+=">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="false"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-inc-const"/>
+                </opt:selection>
+                <opt:selection opt:name="Decrementing Const" opt:text="-=">
+                    <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="false"/>
+                    <opt:optionModifierTrigger opt:idref="fill-flash-options-inc-const"/>
+                </opt:selection>
+            </opt:enumOption>
+            <opt:stringOption opt:groupid="ld-extra" opt:id="fill-flash-options-inc-const" opt:name="Increment/Decrement Constant" opt:textpreferred="1" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.20" opt:suppressif="true">
+                Specify constant using C syntax (0x for hex 0 for octal). Example: 0x10 is the same as 020 or 16
+            </opt:stringOption>
+            <opt:stringOption opt:groupid="ld-extra" opt:id="fill-flash-options-addr" opt:name="Memory Address Range" opt:emissionprefix="@"  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.RangeValidator" opt:fromversion="1.20" opt:suppressif="true">
+                Specify range as Start:End where Start and End use C syntax. Example 0x100:0x1FF is the same as 256:511.
+            </opt:stringOption>
+        </opt:complexOption>
+    </opt:optionCategory>
+
+    <opt:optionCategory opt:id="diagnostics" opt:name="Diagnostics">
+        <opt:stringOption opt:id="map-file" opt:groupid="post" opt:name="Generate map file" opt:emissionprefix="-Map=" opt:isfile="true" opt:isbrowsable="true" opt:slashnormalization="unix" opt:textpreferred="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+        <opt:booleanOption opt:id="report-memory-usage" opt:groupid="post" opt:name="Display memory usage" opt:trueemission="--report-mem" opt:default="true"/>
+        <opt:booleanOption opt:id="generate-cross-reference-file" opt:groupid="post" opt:name="Generate cross-reference file" opt:trueemission="--cref"/>
+        <opt:booleanOption opt:id="warn-section-align" opt:groupid="post" opt:name="Warn on section realignment" opt:trueemission="--warn-section-align"/>
+        <opt:stringListOption opt:id="trace-symbols" opt:groupid="post" opt:name="Trace symbols" opt:emissionprefix="-y " opt:emissionseparator=",-y "/>
+    </opt:optionCategory>
+
+    <opt:optionCategory opt:id="symbols-and-macros" opt:name="Symbols &amp; Macros">
+        <opt:stringListOption opt:id="linker-symbols" opt:groupid="post" opt:name="Linker symbols" opt:emissionprefix="--defsym=" opt:emissionseparator=" --defsym=" opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+        <opt:stringListOption opt:id="preprocessor-macros" opt:groupid="post" opt:name="Preprocessor macro definitions" opt:emissionprefix="-D" opt:emissionseparator=" -D" opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+        <opt:enumOption opt:id="symbol-stripping" opt:groupid="post" opt:name="Symbols" opt:textdefault="" opt:emissionprefix="">
+            <opt:selection opt:text="" opt:name="Keep all"/>
+            <opt:selection opt:text="-S" opt:name="Strip debugging info"/>
+            <opt:selection opt:text="-s" opt:name="Strip all symbol info"/>
+        </opt:enumOption>
+        <opt:stringOption opt:groupid="post" opt:id="ebase-addr" opt:name="Exception Base start address" opt:emissionprefix="-DEBASE_ADDRESS="  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.41" opt:hideif="${Imola2.suppresor}" opt:suppressif="${Imola2.suppresor}">
+            Exception Base start address.
+        </opt:stringOption>
+        <opt:stringOption opt:groupid="post" opt:id="kseg-origin" opt:name="SRAM code-region start address" opt:emissionprefix="-DKSEG0_PROGRAM_MEM_ORIGIN="  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.41" opt:hideif="${Imola2.suppresor}" opt:suppressif="${Imola2.suppresor}">
+            SRAM code-region start address.
+        </opt:stringOption>
+        <opt:stringOption opt:groupid="post" opt:id="kseg-length" opt:name="SRAM code-region length in bytes" opt:emissionprefix="-DKSEG0_PROGRAM_MEM_LENGTH="  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.41" opt:hideif="${Imola2.suppresor}" opt:suppressif="${Imola2.suppresor}">
+            SRAM code-region length in bytes.
+        </opt:stringOption>
+        <opt:stringOption opt:groupid="post" opt:id="serial-origin" opt:name="SPI Flash-region start address" opt:emissionprefix="-DSERIAL_MEM_ORIGIN="  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.41" opt:hideif="${Imola2.suppresor}" opt:suppressif="${Imola2.suppresor}">
+            SPI Flash-region start address.
+        </opt:stringOption>
+        <opt:stringOption opt:groupid="post" opt:id="serial-length" opt:name="SPI Flash-region length in bytes" opt:emissionprefix="-DSERIAL_MEM_LENGTH="  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:fromversion="1.41" opt:hideif="${Imola2.suppresor}" opt:suppressif="${Imola2.suppresor}">
+            SPI Flash-region length in bytes.
+        </opt:stringOption>
+    </opt:optionCategory>
+
+
+    <opt:submatchPattern opt:idref="heap-size" opt:expr="--defsym=_min_heap_size=(.+)" opt:firstexpr="--defsym=_min_heap_size=" opt:secondexpr=".+"/>
+    <opt:submatchPattern opt:idref="stack-size" opt:expr="--defsym=_min_stack_size=(.+)" opt:firstexpr="--defsym=_min_stack_size=" opt:secondexpr=".+"/>
+    <opt:disablePattern opt:idref="enable-check-sections" opt:expr="--no-check-sections"/>
+    <opt:enablePattern opt:idref="code-dinit" opt:expr="--code-in-dinit"/>
+    <opt:disablePattern opt:idref="code-dinit" opt:expr="--no-code-in-dinit"/>
+    <opt:enablePattern opt:idref="allocate-dinit" opt:expr="--dinit-in-serial-mem"/>
+    <opt:disablePattern opt:idref="allocate-dinit" opt:expr="--no-dinit-in-serial-mem"/>
+    <opt:enablePattern opt:idref="ebase-addr" opt:expr="-DEBASE_ADDRESS="/>   
+    <opt:enablePattern opt:idref="kseg-origin" opt:expr="-DKSEG0_PROGRAM_MEM_ORIGIN="/>   
+    <opt:enablePattern opt:idref="kseg-length" opt:expr="-DKSEG0_PROGRAM_MEM_LENGTH="/>   
+    <opt:enablePattern opt:idref="serial-origin" opt:expr="-DSERIAL_MEM_ORIGIN="/>   
+    <opt:enablePattern opt:idref="serial-length" opt:expr="-DSERIAL_MEM_LENGTH="/>   
+    <opt:submatchPattern opt:idref="linker-symbols" opt:expr="--defsym=(.+)" opt:firstexpr="--defsym" opt:secondexpr=".+"/>
+    <opt:submatchPattern opt:idref="preprocessor-macros" opt:expr="-D(.+)"/>
+    <opt:submatchPattern opt:idref="map-file" opt:expr="-Map=(.+)" opt:firstexpr="-Map" opt:secondexpr=".+"/>
+    <opt:enablePattern opt:idref="report-memory-usage" opt:expr="--report-mem"/>
+    <opt:enablePattern opt:idref="generate-cross-reference-file" opt:expr="--cref"/>
+    <opt:enablePattern opt:idref="warn-section-align" opt:expr="--warn-section-align"/>
+    <opt:submatchPattern opt:idref="trace-symbols" opt:firstexpr="-y" opt:secondexpr=".+"/>
+    <opt:enablePattern opt:idref="strip-debug-symbols" opt:expr="-S"/>
+    <opt:enablePattern opt:idref="strip-all-symbols" opt:expr="-s"/>
+    <opt:disablePattern opt:idref="enable-data-init" opt:expr="--no-data-init"/>
+    <opt:disablePattern opt:idref="enable-pack-data" opt:expr="--no-pack-data"/>
+    <opt:disablePattern opt:idref="enable-handles" opt:expr="--no-handles"/>
+    <opt:disablePattern opt:idref="enable-default-isr" opt:expr="--no-isr"/>
+    <opt:submatchPattern opt:idref="output-file" opt:expr="-o(.+)" opt:firstexpr="-o" opt:secondexpr=".+"/>
+    <!-- Avoid matching -legacy-libc which is not a library option.  ?! is the non-capturing, 
+    negative lookahead that will not match the expression if it is matched. The ^ at the
+    start is there so that it will not match -libc when the expression is evaluated after
+    the negative lookahead. -->
+    <opt:submatchPattern opt:idref="input-libraries" opt:expr="^-l(?!egacy-libc)(.+)"/>
+    <opt:submatchPattern opt:idref="extra-lib-directories" opt:expr="-L(.+)"/>
+    <opt:submatchPattern opt:idref="optimization-level" opt:expr="(-O[123s])"/>
+    <opt:enablePattern opt:idref="exclude-standard-libraries" opt:expr="-nostdlib"/>
+    <opt:enablePattern opt:idref="generate-16-bit-code" opt:expr="-mips16"/>
+    <opt:enablePattern opt:idref="generate-micro-compressed-code" opt:expr="-mmicromips"/>
+    <opt:enablePattern opt:idref="exclude-floating-point-library" opt:expr="-mno-float"/>
+    <opt:submatchPattern opt:idref="ld-extra" opt:expr="--fill=(.+)">
+        <opt:submatchPattern opt:idref="fill-flash-const" opt:expr="(.+[0-9].+).*"/>
+        <opt:submatchPattern opt:idref="fill-flash-increment" opt:expr="-="/>
+        <opt:submatchPattern opt:idref="fill-flash-increment" opt:expr="\+="/>
+        <opt:submatchPattern opt:idref="fill-flash-inc-const" opt:expr="\+=(.+[0-9]).*"/>
+        <opt:submatchPattern opt:idref="fill-flash-inc-const" opt:expr="-=(.+[0-9]).*"/>
+        <opt:submatchPattern opt:idref="fill-flash-addr" opt:expr="@(.*)"/>
+    </opt:submatchPattern>
+
+
+</opt:optionLanguage>

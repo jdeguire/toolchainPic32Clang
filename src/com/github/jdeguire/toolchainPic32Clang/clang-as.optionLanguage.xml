@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-as" opt:name="MPLAB Assembler for 32-bit Devices">
+    <opt:optionCategory opt:id="general" opt:name="General">
+        <opt:booleanOption opt:id="enable-symbols" opt:groupid="symbols-on-release" opt:name="Have symbols in production build." opt:trueemission="--gdwarf-2" opt:falseemission="" opt:booldefault="true"/>
+        <opt:booleanOption opt:id="keep-locals" opt:groupid="post" opt:name="Keep local symbols" opt:trueemission="--keep-locals"/>
+        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Generate MIPS16 16-bit code" opt:trueemission="-mips16" opt:default="false" opt:suppressif="${mips16.suppress}"/>
+        <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Generate microMIPS compressed code" opt:default="false" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}"/>
+        <opt:stringListOption opt:id="preprocessor-macros" opt:groupid="pre" opt:name="Preprocessor macro definitions" opt:emissionprefix="-D" opt:emissionseparator=" -D" opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+        <opt:stringListOption opt:id="assembler-symbols" opt:groupid="post" opt:name="Assembler symbols" opt:emissionprefix="--defsym=" opt:emissionseparator=",--defsym=" opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+        <opt:stringListOption opt:id="extra-include-directories-for-preprocessor" opt:groupid="pre" opt:name="Preprocessor Include directories" opt:emissionprefix="-I" opt:emissionseparator=" -I" opt:slashnormalization="unix" opt:isdirectory="true" opt:isbrowsable="true">
+            <opt:browseinfo>
+            Relative paths are from
+                <br/>MPLAB X project directory.
+            </opt:browseinfo>
+            <opt:xhtml>
+            Relative paths are from MPLAB X project directory.
+            </opt:xhtml>
+        </opt:stringListOption>
+        <opt:stringListOption opt:id="extra-include-directories-for-assembler" opt:groupid="post" opt:name="Assembler Include directories" opt:emissionprefix="-I" opt:emissionseparator=" -I" opt:slashnormalization="unix" opt:isdirectory="true" opt:isbrowsable="true">
+            <opt:browseinfo>
+            Relative paths are from
+                <br/>MPLAB X project directory.
+            </opt:browseinfo>
+            <opt:xhtml>
+                <br/>Relative paths are from MPLAB X project directory.
+                <br/>If you want a single place to have include paths for compilers and assembler, use the include paths in the global options node.
+            </opt:xhtml>
+        </opt:stringListOption>
+    </opt:optionCategory>
+
+    <opt:optionCategory opt:id="other" opt:name="Other Options">
+  
+        <opt:enumOption opt:id="warning-level" opt:groupid="post"  opt:name="Diagnostics level" opt:textdefault="" opt:emissionprefix="">
+            <opt:selection opt:text="" opt:name="Generate warnings"/>
+            <opt:selection opt:text="--no-warn" opt:name="Suppress warnings"/>
+            <opt:selection opt:text="--fatal-warnings" opt:name="Fatal warnings"/>
+        </opt:enumOption>
+
+        <opt:complexOption opt:id="listing-options" opt:groupid="postlist" opt:emissionprefix="-a">
+            <opt:booleanOption opt:id="list-source" opt:name="Include source code" opt:trueemission="h"/>
+            <opt:booleanOption opt:id="expand-macros" opt:name="Expand macros" opt:trueemission="m"/>
+            <opt:booleanOption opt:id="false-conditionals" opt:name="Include false conditionals" opt:trueemission="c"/>
+            <opt:booleanOption opt:id="omit-forms" opt:name="Omit forms processing" opt:trueemission="n"/>
+            <opt:booleanOption opt:id="list-assembly" opt:name="Include assembly" opt:trueemission="l"/>
+            <opt:booleanOption opt:id="list-symbols" opt:name="List symbols" opt:trueemission="s"/>
+            <opt:booleanOption opt:id="omit-debug-dirs" opt:name="Omit debugging directives" opt:trueemission="d"/>
+      <!-- JLD: is not recognized by assembler 
+          <opt:booleanOption opt:id="list-section-info" opt:name="List section information" opt:trueemission="i"/>
+      -->
+            <opt:booleanOption opt:name="List to file"               opt:trueemission="=${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE_MINUS_EXTENSION}.lst" opt:booldefault="false" opt:id="oXC32asm-list-to-file">
+                <opt:xhtml>Use this option if you want the listing for a file. The list file will have the same name as the asm file plus .lst</opt:xhtml>
+            </opt:booleanOption>
+        </opt:complexOption>
+    </opt:optionCategory>
+
+    <opt:enablePattern opt:idref="enable-symbols" opt:expr="--gdwarf-2"/>
+    <opt:enablePattern opt:idref="keep-locals" opt:expr="--keep-locals"/>
+    <opt:enablePattern opt:idref="exclude-floating-point-library" opt:expr="-mno-float"/>
+    <opt:enablePattern opt:idref="generate-16-bit-code" opt:expr="-mips16"/>
+    <opt:enablePattern opt:idref="generate-micro-compressed-code" opt:expr="-mmicromips"/>
+    <opt:submatchPattern opt:idref="assembler-symbols" opt:expr="--defsym=(.+)" opt:firstexpr="--defsym" opt:secondexpr=".+"/>
+    <opt:submatchPattern opt:idref="preprocessor-macros" opt:expr="-D(.+)"/>
+    <opt:submatchPattern opt:idref="extra-include-directories-for-preprocessor" opt:expr="-I(.+)"/>
+    <!-- TODO Warning: for legacy projects where a pattern is needed, how do we differentiate between -I and ,-I! -->
+    <opt:submatchPattern opt:idref="extra-include-directories-for-assembler" opt:expr="-I(.+)"/>
+    <opt:submatchPattern opt:idref="warning-level" opt:expr="--(no-warn)"/>
+    <opt:submatchPattern opt:idref="warning-level" opt:expr="--(fatal-warnings)"/>
+
+    <opt:submatchPattern opt:idref2="list-file" opt:expr="-a([hmcnlsdi]+)=(.+)">
+        <opt:enablePattern opt:idref="list-source" opt:expr=".*h.*"/>
+        <opt:enablePattern opt:idref="expand-macros" opt:expr=".*m.*"/>
+        <opt:enablePattern opt:idref="false-conditionals" opt:expr=".*c.*"/>
+        <opt:enablePattern opt:idref="omit-forms" opt:expr=".*n.*"/>
+        <opt:enablePattern opt:idref="list-assembly" opt:expr=".*l.*"/>
+        <opt:enablePattern opt:idref="list-symbols" opt:expr=".*s.*"/>
+        <opt:enablePattern opt:idref="omit-debug-dirs" opt:expr=".*d.*"/>
+        <opt:enablePattern opt:idref="list-section-info" opt:expr=".*i.*"/>
+    </opt:submatchPattern>
+
+    <opt:submatchPattern opt:expr="-a([hmcnlsdi]+)">
+        <opt:enablePattern opt:idref="list-source" opt:expr=".*h.*"/>
+        <opt:enablePattern opt:idref="expand-macros" opt:expr=".*m.*"/>
+        <opt:enablePattern opt:idref="false-conditionals" opt:expr=".*m.*"/>
+        <opt:enablePattern opt:idref="omit-forms" opt:expr=".*n.*"/>
+        <opt:enablePattern opt:idref="list-assembly" opt:expr=".*l.*"/>
+        <opt:enablePattern opt:idref="list-symbols" opt:expr=".*s.*"/>
+        <opt:enablePattern opt:idref="omit-debug-dirs" opt:expr=".*d.*"/>
+        <opt:enablePattern opt:idref="list-section-info" opt:expr=".*i.*"/>
+    </opt:submatchPattern>
+
+    <opt:submatchPattern opt:idref="list-file" opt:expr="-a=(.+)"/>
+</opt:optionLanguage>

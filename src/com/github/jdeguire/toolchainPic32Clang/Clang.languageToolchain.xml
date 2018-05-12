@@ -1,0 +1,1548 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<mp:languageToolchain xsi:schemaLocation="http://crownking/mplab mplab/languageToolchain.xsd" mp:id="XC32" mp:name="XC32" mp:hostplatforms="windows,linux,unix,mac,none" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32LanguageToolchain" opt:fromversion="1.00" xmlns:opt="http://crownking/opt" xmlns:mp="http://crownking/mplab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+    <mp:hasCapability mp:id="library" mp:bool="true"/>
+    <mp:dynamicCapabilitiesProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32DynamicCapabilitiesProvider"/>
+    <mp:helpFileProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32HelpFileProvider"/>
+
+    <mp:configurationObject mp:id="C32Global" opt:src="XC32languagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32RuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-AS" opt:src="xc32-as.optionLanguage.xml" mp:idref="xc32-as" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32ASRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32" opt:src="xc32-gcc.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32GCCRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-LD" opt:src="xc32-ld.optionLanguage.xml" mp:idref="xc32-ld" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32RuntimeProperties"/>
+    <mp:configurationObject mp:id="C32CPP" opt:src="xc32-g++.optionLanguage.xml" mp:idref="xc32-g++" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32GPPRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-AR" opt:src="xc32-ar.optionLanguage.xml" mp:idref="xc32-ar" opt:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32RuntimeProperties"/>
+
+    <mp:customizerNode mp:idref="C32Global" mp:name="XC32 (Global Options)" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNode">
+        <mp:customizerNode mp:idref="C32-AS" mp:name="xc32-as" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNodeAS"/>
+        <mp:customizerNode mp:idref="C32" mp:name="xc32-gcc" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNodeGCC"/>
+        <mp:customizerNode mp:idref="C32CPP" mp:name="xc32-g++" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNodeGPP"/>
+        <mp:customizerNode mp:idref="C32-LD" mp:name="xc32-ld" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNode"/>
+        <mp:customizerNode mp:idref="C32-AR" mp:name="xc32-ar" mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CustomizerNodeAR"/>
+    </mp:customizerNode>
+
+    <mp:makefileWriter mp:checkos="true" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.XC32GlobalMakeRuntimeProperties">
+        <mp:inputToOutputExtensionMap mp:src="c" mp:dst="o"/>
+        <mp:inputToOutputExtensionMap mp:src="C" mp:dst="o"/>
+        <mp:inputToOutputExtensionMap mp:src="cpp" mp:dst="o"/>
+        <mp:inputToOutputExtensionMap mp:src="s" mp:dst="o"/>
+        <mp:inputToOutputExtensionMap mp:src="S" mp:dst="o"/>
+        <mp:build mp:buildtype="standalone" mp:debuggableextension="elf">
+            <mp:outputFilenameSuffixProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32OutputFilenameSuffixProvider"/>
+            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="createLTORespFile"/>
+            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doRespFileLTO"/>
+            <mp:buildStep mp:if="!${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doLTO"/>
+            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="assemble"/>
+            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="assembleWithPreprocess"/>
+            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="compile"/>
+            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="compileCPP"/>
+            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="createResponseFiles"/>
+            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="linkWithResponseFile"/>
+            <mp:buildStep mp:ifnot="${USE_RESPONSE_FILES} || ${USE_LTO}" mp:idref="link"/>
+        </mp:build>
+        <mp:build mp:buildtype="archive" mp:outputextension="a">
+            <mp:buildStep mp:idref="assemble"/>
+            <mp:buildStep mp:idref="assembleWithPreprocess"/>
+            <mp:buildStep mp:idref="compile"/>
+            <mp:buildStep mp:idref="compileCPP"/>
+            <mp:buildStep mp:ifnot="${CHOP_AR_LINE}" mp:idref="archive"/>
+            <mp:buildStep mp:if="${CHOP_AR_LINE}" mp:idref="archiveChopped"/>
+        </mp:build>
+        <mp:makeCode mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.ProcessorDependentProperties">
+            <mp:textEmitter mp:text="MP_PROCESSOR_OPTION=${PROCESSOR_NAME}${NEWLINE_NO_TAB}"/>
+            <mp:textEmitter mp:text="MP_LINKER_FILE_OPTION=${OPTION_TO_SPECIFY_GLD}${GLD_NAME}${NEWLINE_NO_TAB}"/>
+        </mp:makeCode>
+
+        <mp:makeRule mp:id="doLTO" mp:prerequisites="${CURRENT_SOURCE_FILES}" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
+            <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
+            <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -flto -fwhole-program -mprocessor=$(MP_PROCESSOR_OPTION) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -MMD "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -o ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" -o ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} "/>
+            <mp:textEmitter mp:text=" ${QUOTED_IF_SPACED_OTHER_OBJECT_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" ${QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" ${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${CURRENT_QUOTED_IF_SPACED_SOURCE_FILES} "/>
+            <mp:textEmitter mp:text=" ${INSTRUMENTED_TRACE_OPTIONS} ${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="linker" mp:separator=" "/>
+            <mp:textEmitter mp:if="${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=" ${DEBUG_MEMORY_RANGES} "/>
+            <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
+            <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=" "/>
+            <mp:textEmitter mp:text=" -Wl,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_POST)"/>
+            <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
+            <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}xc32-bin2hex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FORMAT}"/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+
+        <mp:makeRule mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:id="createLTORespFile" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties">
+            <mp:redirectStart/>
+            <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -flto -fwhole-program -mprocessor=$(MP_PROCESSOR_OPTION) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -MMD "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -o ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" -o ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} "/>
+            <mp:textEmitter mp:text=" ${QUOTED_IF_SPACED_OTHER_OBJECT_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" ${QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" ${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${CURRENT_QUOTED_IF_SPACED_SOURCE_FILES} "/>
+            <mp:textEmitter mp:text=" ${INSTRUMENTED_TRACE_OPTIONS} ${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="linker" mp:separator=" "/>
+            <mp:textEmitter mp:if="${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=" ${DEBUG_MEMORY_RANGES} "/>
+            <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
+            <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text=" -Wl,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_POST)"/>
+            <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
+            <mp:redirectStop/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+
+        <mp:makeRule mp:id="doRespFileLTO" mp:prerequisites="${CURRENT_SOURCE_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
+            <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
+            <mp:textEmitter mp:text=" @nbproject/$(CND_CONF).$(IMAGE_TYPE) ${NEWLINE}"/>
+            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
+            <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}xc32-bin2hex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FORMAT}"/>
+        </mp:makeRule>
+
+        <mp:makeRule mp:id="compileCPP" mp:prerequisites=".*\.cpp$" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.CompilerProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCCompilerMacrosProvider">
+            <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_CC_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -MMD -MF " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; -o " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:textEmitter mp:text=" $(COMPARISON_BUILD) " mp:macroDetectionExclude="true"/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="compile" mp:prerequisites=".*\.[cC]$" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.CompilerProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCompilerMacrosProvider">
+            <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
+            <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" -MMD -MF " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; -o " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} " mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:textEmitter mp:text=" $(COMPARISON_BUILD) " mp:macroDetectionExclude="true"/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="assemble" mp:prerequisites=".*\.s$" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.AssemblerProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG  ${DEBUGGER_NAME_AS_MACRO}"/>
+            <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
+            <mp:textEmitter mp:text=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" -o "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} "/>
+            <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
+            <mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="assembleWithPreprocess" mp:prerequisites=".*\.S$" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.AssemblerProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.ok ${CURRENT_OBJECT_FILE}.err ${NEWLINE}"/>
+           <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.asm.d&quot; -t $(SILENT) -rsi ${MP_CC_DIR}../  -c"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG ${DEBUGGER_NAME_AS_MACRO}"/>
+            <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
+            <mp:textEmitter mp:text=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -MMD -MF "/>
+            <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; "/>
+            <mp:textEmitter mp:text=" -o "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
+            <mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.asm.d&quot;"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="link" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties" mp:prerequisites="${CURRENT_OBJECT_FILES}">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
+            <mp:textEmitter mp:text=" -mprocessor=$(MP_PROCESSOR_OPTION)"/>
+            <mp:textEmitter mp:text=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -o ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" -o ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILES}  " mp:separator=" "/>
+            <mp:textEmitter mp:text="${QUOTED_IF_SPACED_OTHER_OBJECT_FILES}  " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text=" ${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="linker" mp:separator=" "/>
+            <mp:textEmitter mp:text=" $(COMPARISON_BUILD) " mp:macroDetectionExclude="true"/>        
+            <mp:textEmitter mp:if="${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=" ${DEBUG_MEMORY_RANGES} "/>
+            <mp:textEmitter mp:text=" -Wl,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_POST)"/>
+            <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${CHIPKIT_DEBUG_SYMBOL}${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}xc32-bin2hex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FORMAT}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:id="createResponseFiles" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties">
+            <mp:redirectStart/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
+            <mp:textEmitter mp:text=" -mprocessor=$(MP_PROCESSOR_OPTION)"/>
+            <mp:textEmitter mp:text=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=" -o ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text=" -o ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILES_EXPANDED} " mp:separator=" "/>
+            <mp:textEmitter mp:text="${QUOTED_IF_SPACED_OTHER_OBJECT_FILES_UNIX_SLASHES}  " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${QUOTED_IF_SPACED_LIBRARY_FILES_UNIX_SLASHES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES_UNIX_SLASHES} " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text=" ${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="linker" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:if="${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=" ${DEBUG_MEMORY_RANGES} "/>
+            <mp:redirectChange mp:chopseparator=""/>
+            <mp:textEmitter mp:text=" -Wl,--defsym=__MPLAB_BUILD=1"/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_LD_POST)"/>
+            <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
+            <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
+            <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
+            <mp:redirectStop/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="linkWithResponseFile" mp:prerequisites="${CURRENT_OBJECT_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.LinkerProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
+            <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
+            <mp:textEmitter mp:text=" @nbproject/$(CND_CONF).$(IMAGE_TYPE) ${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}xc32-bin2hex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FORMAT}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="archive" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.ArchiverProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="${MP_AR}"/>
+            <mp:textEmitter mp:text=" "/>
+            <mp:textEmitter mp:text="$(MP_EXTRA_AR_PRE) ${MPROCESSOR_CALL}"/>
+            <mp:textEmitter mp:text=" r ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:text="${QUOTED_IF_SPACED_OTHER_OBJECT_FILES}  " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="archiveChopped" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:runtimepropertiesclass="com.microchip.mplab.nbide.toolchainXC32.ArchiverProperties">
+            <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
+            <!-- We'll be using the q option which quick appends. We do not want to append to and old archive. So erase it first -->
+            <mp:textEmitter mp:text="@${RM} ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
+            <mp:redirectStart mp:type="chop" mp:firstprefix="${MP_AR} $(MP_EXTRA_AR_PRE) ${MPROCESSOR_CALL} r ${FINAL_IMAGE_NAME} " mp:restprefix="${MP_AR} q ${FINAL_IMAGE_NAME} "/>
+            <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILES_EXPANDED} " mp:separator=" "/>
+            <mp:textEmitter mp:text="${QUOTED_IF_SPACED_OTHER_OBJECT_FILES_UNIX_SLASHES}  " mp:separator=" "/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${QUOTED_IF_SPACED_LIBRARY_FILES_UNIX_SLASHES} " mp:separator=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES_UNIX_SLASHES} " mp:separator=" "/>
+            <mp:redirectStop/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+    </mp:makefileWriter>
+
+    <mp:logicalFolder mp:id="SourceFiles"/>
+    <mp:logicalFolder mp:id="HeaderFiles"/>
+    <mp:logicalFolder mp:id="LinkerScript"/>
+
+    <mp:defaultLocation mp:hostplatform="linux" mp:dir="/opt/microchip/xc32/v*/bin"/>
+    <mp:defaultLocation mp:hostplatform="mac" mp:dir="/Applications/microchip/xc32/v*/bin"/>
+    <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*xc32*/bin"/>
+    <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*xc32*/v*/bin"/>
+
+    <mp:folderResidenceTester mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32FolderResidenceTester"/>
+
+    <mp:licensingInfoProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32LicensingInfoProvider"/>
+
+    <mp:ccCompiler mp:file="xc32-g++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
+        <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+        <mp:systemIncludeProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32SystemIncludeProvider"/>
+        <mp:systemDefineProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPSystemDefineProvider"/>
+        <mp:userIncludeProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPUserIncludeProvider"/>
+        <mp:userIncludeModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPUserIncludeModifier"/>
+        <mp:userDefineProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPUserDefineProvider"/>
+        <mp:userDefineModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPUserDefineModifier"/>
+        <mp:additionalOptionsProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32CPPAdditionalOptionsModifier"/>
+    </mp:ccCompiler>
+    <mp:cCompiler mp:file="xc32-gcc" mp:name="MPLAB C Compiler for 32-bit Devices">
+        <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+        <mp:systemIncludeProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32SystemIncludeProvider"/>
+        <mp:systemDefineProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32SystemDefineProvider"/>
+        <mp:userIncludeProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32UserIncludeProvider"/>
+        <mp:userIncludeModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32UserIncludeModifier"/>
+        <mp:userDefineProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32UserDefineProvider"/>
+        <mp:userDefineModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32UserDefineModifier"/>
+        <mp:additionalOptionsProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32AdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32AdditionalOptionsModifier"/>
+    </mp:cCompiler>
+    <mp:assembler mp:file="xc32-as" mp:name="MPLAB Assembler for 32-bit Devices">
+        <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+        <mp:systemIncludeProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32SystemIncludeProvider"/>
+        <mp:additionalOptionsProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32ASAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32ASAdditionalOptionsModifier"/>        
+    </mp:assembler>
+    <mp:linker mp:file="xc32-ld" mp:name="MPLAB Linker for 32-bit Devices">
+        <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+        <mp:additionalOptionsProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32LDAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32LDAdditionalOptionsModifier"/>        
+    </mp:linker>
+    <mp:archiver mp:file="xc32-ar" mp:name="MPLAB Archiver for 32-bit Devices">
+        <mp:versionProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32VersionProvider"/>
+        <mp:additionalOptionsProvider mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32ARAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.microchip.mplab.nbide.toolchainXC32.XC32ARAdditionalOptionsModifier"/>        
+    </mp:archiver>
+
+<!--
+  ******************************************************************************
+  ******************* mp:deviceSupport element help ****************************
+  ******************************************************************************
+  The mp:deviceSupport element describes which devices are supported by this
+  tool. There are two ways to describe this tools's support. If the tool is
+  known to Microchip and supported directly by Microchip, the information
+  about device support is found in a different file (mplab.deviceSupport).
+  Otherwise, the information is listed right here in this document.
+
+  if the mp:lookInMplab attribute is true, then the mplab.deviceSupport file
+  is used to find the list of devices and their support status. mplab.deviceSupport
+  is mantained by Microchip. If mp:lookInplab is true, then the mp:deviceSupport
+  element must also have an mp:mplabName attribute which describes the name of
+  the tool as stored in mplab.deviceSupport. For example, if mp:mplabName is
+  "mc", then mplab.deviceSupport must have an attribute with this name
+  to tell us the tool status. Example from mplab.deviceSupport:
+         <mp:device mp:name="PIC18C242">
+          <mp:support mp:masm="yes" mp:mc="yes" mp:pm2="yes" mp:pm3="yes" mp:psp="yes" mp:sim="yes"/>
+         </mp:device>
+
+
+  If mp:lookInMplab was not defined (or false), then the list of supported devices is
+  expected to be here. One element per device. Example:
+  <mp:deviceSupport>
+    <mp:device mp:name="PIC18F4550"/>
+    <mp:device mp:name="PIC18F2550"/>
+             |
+             |
+             |
+  </mp:deviceSupport>
+
+      ******************************************************************************
+      ******************************************************************************
+      ******************************************************************************
+    -->
+    <!--<mp:deviceSupport mp:lookInMplab="true" mp:mplabName="mc"/>-->
+    <mp:deviceSupport>
+<!--    <mp:family mp:family="arm32bit">
+        <mp:device mp:name="PIC32CZ2038CA70144">
+            <opt:version opt:fromversion="1.95"/>
+        </mp:device>
+    </mp:family>-->
+    <mp:family mp:family="32x">
+    <mp:device mp:name="MEC1404">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
+      <opt:version opt:fromversion="1.40"/>
+    </mp:device>
+    <mp:device mp:name="MEC1406">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
+      <opt:version opt:fromversion="1.40"/>
+    </mp:device>
+    <mp:device mp:name="MEC1408">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
+      <opt:version opt:fromversion="1.40"/>
+    </mp:device>
+    <mp:device mp:name="MEC1414">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="MEC1416">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="MEC1418">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
+      <opt:version opt:fromversion="1.40"/>
+    </mp:device>
+    <mp:device mp:name="MEC1424">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="MEC1426">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="MEC1428">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="MGC3140">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="MGC3430">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="MGC3431">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="MGC3450">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="MGC3451">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32M4KCORE">
+      <opt:version opt:toversion="1.30"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512GPD064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512GPD100">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512GPE064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512GPE100">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512MCF064">
+      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
+		<opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK0512MCF100">
+      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
+		<opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024GPD064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024GPD100">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024GPE064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024GPE100">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024MCF064">
+      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
+		<opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MK1024MCF100">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0016GPL020">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0016GPL028">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0016GPL036">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0032GPL020">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0032GPL028">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0032GPL036">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPL020">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPL028">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPL036">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPM028">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPM036">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPM048">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0064GPM064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0128GPM028">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0128GPM036">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0128GPM048">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0128GPM064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0256GPM028">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0256GPM036">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0256GPM048">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MM0256GPM064">
+      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX110F016B"/>
+    <mp:device mp:name="PIC32MX110F016C"/>
+    <mp:device mp:name="PIC32MX110F016D"/>
+    <mp:device mp:name="PIC32MX120F032B"/>
+    <mp:device mp:name="PIC32MX120F032C"/>
+    <mp:device mp:name="PIC32MX120F032D"/>
+    <mp:device mp:name="PIC32MX120F064H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX130F064B"/>
+    <mp:device mp:name="PIC32MX130F064C"/>
+    <mp:device mp:name="PIC32MX130F064D"/>
+    <mp:device mp:name="PIC32MX130F128H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX130F128L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX130F256B">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX130F256D">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX150F128B"/>
+    <mp:device mp:name="PIC32MX150F128C"/>
+    <mp:device mp:name="PIC32MX150F128D"/>
+    <mp:device mp:name="PIC32MX150F256H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX150F256L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX151F128E">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX151F128H">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX154F128B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX154F128D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX155F128B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX155F128D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX170F256B">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+      <opt:version opt:fromversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX170F256C">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX170F256D">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+      <opt:version opt:fromversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX170F512H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX170F512L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX174F256B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX174F256D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX175F256B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX175F256D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX210F016B"/>
+    <mp:device mp:name="PIC32MX210F016C"/>
+    <mp:device mp:name="PIC32MX210F016D"/>
+    <mp:device mp:name="PIC32MX220F032B"/>
+    <mp:device mp:name="PIC32MX220F032C"/>
+    <mp:device mp:name="PIC32MX220F032D"/>
+    <mp:device mp:name="PIC32MX230F064B"/>
+    <mp:device mp:name="PIC32MX230F064C"/>
+    <mp:device mp:name="PIC32MX230F064D"/>
+    <mp:device mp:name="PIC32MX230F128H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX230F128L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX230F256B">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX230F256D">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX250F128B"/>
+    <mp:device mp:name="PIC32MX250F128C"/>
+    <mp:device mp:name="PIC32MX250F128D"/>
+    <mp:device mp:name="PIC32MX250F256H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX250F256L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX251F128E">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX251F128H">
+      <mp:betaVersion opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX254F128B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX254F128D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX255F128B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F256B">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+      <opt:version opt:fromversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F256C">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F256D">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+      <opt:version opt:fromversion="1.32"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F256DB">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F256D_IPTS21">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F512H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX270F512L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX274F256B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX274F256D">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX275F256B">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX275F256D">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX320F032H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX320F064H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX320F128H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX320F128L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX330F064H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+      <opt:version opt:fromversion="1.20"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX330F064L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+      <opt:version opt:fromversion="1.20"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX340F128H"/>
+    <mp:device mp:name="PIC32MX340F128L"/>
+    <mp:device mp:name="PIC32MX340F256H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX340F512H"/>
+    <mp:device mp:name="PIC32MX350F128H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX350F128L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX350F256H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX350F256L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX360F256L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX360F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX370F512H">
+      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+      <opt:version opt:fromversion="1.22"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX370F512L">
+      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+      <opt:version opt:fromversion="1.22"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX420F032H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX430F064H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+      <opt:version opt:fromversion="1.20"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX430F064L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+      <opt:version opt:fromversion="1.20"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX440F128H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX440F128L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX440F256H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX440F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F128H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F128L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F256H">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F256HB">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F256H_IPTS21">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX450F256L">
+      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+      <opt:version opt:fromversion="1.21"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX460F256L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX460F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX470F512H">
+      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+      <opt:version opt:fromversion="1.22"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX470F512L">
+      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+      <opt:version opt:fromversion="1.22"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX470F512LB">
+      <mp:betaVersion opt:fromversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX470F512L_IPTS21">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX530F128H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX530F128L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX534F064H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX534F064L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX550F256H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX550F256L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX564F064H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX564F064L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX564F128H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX564F128L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX570F512H">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX570F512L">
+      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX575F256H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX575F256L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX575F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX575F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX664F064H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX664F064L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX664F128H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX664F128L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX675F256H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX675F256L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX675F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX675F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX695F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX695F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX764F128H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX764F128L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX775F256H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX775F256L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX775F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX775F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX795F512H">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MX795F512L">
+      <opt:version opt:fromversion="1.00"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MXGENERIC">
+      <opt:version opt:toversion="1.30"/>
+      <mp:betaVersion opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFE064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFE100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFE124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFE144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFF064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFF100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFF124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFF144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFK064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFK100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFK124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ0512EFK144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECG064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECG100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECG124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECG144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECH064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECH100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECH124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECH144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECM064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECM100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECM124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024ECM144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFE064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFE100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFE124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFE144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFF064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFF100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFF124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFF144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFG064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFG100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFG124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFG144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFH064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFH100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFH124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFH144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFK064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFK100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFK124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFK144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFM064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFM100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFM124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1024EFM144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAA169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAA176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAA288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAB169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAB176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAB288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAG169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAG176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAH169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1025DAH176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAA169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAA176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAA288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAB169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAB176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAB288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAG169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAG176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAH169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ1064DAH176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAA169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAA176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAA288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAB169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAB176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAB288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAG169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAG176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAH169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2025DAH176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECG064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECG100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECG124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECG144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECH064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECH100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECH124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECH144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECM064">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECM100">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECM124">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048ECM144">
+      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+      <opt:version opt:fromversion="1.34"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFG064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFG100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFG124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFG144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFH064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFH100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFH124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFH144">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFM064">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFM100">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFM124">
+      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2048EFM144">
+      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.41"/>
+      <opt:version opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAA169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAA176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAA288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAB169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAB176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAB288">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAG169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAG176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAH169">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32MZ2064DAH176">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+      <opt:version opt:fromversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32WK2057GPB132">
+      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+    </mp:device>
+    <mp:device mp:name="PIC32WK2057GPD132">
+      <mp:betaVersion opt:fromversion="1.41"/>
+    </mp:device>
+    <mp:device mp:name="USB49XX">
+      <mp:betaVersion opt:fromversion="1.43"/>
+    </mp:device>
+  </mp:family>
+</mp:deviceSupport>
+
+</mp:languageToolchain>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<opt:optionLanguage xmlns:opt="http://crownking/opt"
+                    opt:id="XC32Global"
+                    opt:name="XC32 Language Toolchain"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
+
+    <opt:optionCategory opt:id="general" opt:name="(All Options)">
+        <opt:booleanOption opt:id="legacy-libc" opt:groupid="both" opt:name="Use Legacy libc" opt:booldefault="${legacy-libc.default}" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="save-temps"  opt:groupid="both" opt:name="Don't delete intermediate files" opt:trueemission="-save-temps=obj" opt:booldefault="false">
+            <opt:xhtml>Don't delete intermediate files. Place them in the object directory and name them based on the source file.</opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="wpo-lto" opt:groupid="wpo" opt:name="Use Whole-Program and Link-Time Optimizations" opt:trueemission="">
+            <opt:xhtml>When this feature is enabled, the build will be constrained in the following ways:
+                <br/> - The per-file build settings will be ignored;
+                <br/> - The build will no longer be an incremental one (full build only).
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:stringOption opt:groupid="gp-relative-treshhold" opt:id="gp-relative-option" opt:name="Use GP relative addressing threshold" opt:emissionprefix="-G " opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator" opt:suppressif="${pic32C.selected}">
+            <opt:xhtml>Put definitions of externally-visible data in a small data section if that data is no bigger than num bytes.</opt:xhtml>
+        </opt:stringOption>
+        <opt:booleanOption    opt:name="Relaxed floating-point math"   opt:trueemission="-relaxed-math"  opt:booldefault="false" opt:groupid="both" opt:id="relaxed-math" opt:suppressif="${pic32C.selected}">
+        <opt:version opt:fromversion="1.32"/>
+        </opt:booleanOption>    
+        <opt:stringListOption opt:name="Common include dirs"               opt:emissionprefix="-I"     opt:emissionseparator=" -I"                                                        opt:groupid="common-include-dirs" opt:id="common-include-directories" opt:slashnormalization="unix" opt:isdirectory="true" opt:isbrowsable="true">
+            <opt:browseinfo>
+                Relative paths are from
+                <br/>MPLAB X project directory.
+            </opt:browseinfo>
+            <opt:xhtml>Add 'dir' to the list of shared include directories for compilers and assembler.
+                <br/>
+                <br/>Relative paths are from MPLAB X project directory.
+            </opt:xhtml>
+        </opt:stringListOption>
+        <opt:stringOption opt:groupid="both" opt:id="mdtcm" opt:name="Data TCM size in bytes" opt:emissionprefix="-mdtcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+            <opt:version opt:fromversion="1.95"/>
+            <opt:xhtml>Enable data Tightly Coupled Memory with the specified size.</opt:xhtml>
+        </opt:stringOption>
+        <opt:stringOption opt:groupid="both" opt:id="mitcm" opt:name="Instruction TCM size in bytes" opt:emissionprefix="-mitcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+            <opt:version opt:fromversion="1.95"/>
+            <opt:xhtml>Enable instruction Tightly Coupled Memory with the specified size.</opt:xhtml>
+        </opt:stringOption>
+        <opt:booleanOption    opt:name="Locate Stack in data TCM"   opt:trueemission="-mstack-in-tcm"  opt:booldefault="false" opt:groupid="both" opt:id="mstacktcm" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+            <opt:version opt:fromversion="1.95"/>
+            <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
+        </opt:booleanOption>
+    </opt:optionCategory>
+    
+    <opt:enablePattern opt:idref="legacy-libc" opt:expr="(-legacy-libc)" />
+    <opt:enablePattern opt:idref="save-temps"  opt:expr="-save-temps.*"/>
+    <opt:enablePattern opt:idref="gp-relative-option" opt:expr="-G " />
+    <opt:enablePattern opt:expr="-relaxed-math"   opt:idref="relaxed-math"/>
+    <opt:submatchPattern opt:expr="-I(.+)" opt:firstexpr="-I" opt:secondexpr="(.+)" opt:idref="common-include-directories"/>
+</opt:optionLanguage>
