@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-ld" opt:name="MPLAB Linker for 32-bit Devices">
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-ld" opt:name="MPLAB Linker for 32-bit Devices">
     <opt:optionCategory opt:id="general" opt:name="General">
         <opt:stringOption opt:id="heap-size" opt:groupid="post" opt:name="Heap size (bytes)" opt:emissionprefix="--defsym=_min_heap_size="/>
         <opt:stringOption opt:id="stack-size" opt:groupid="post" opt:name="Minimum stack size (bytes)" opt:emissionprefix="--defsym=_min_stack_size="/>
@@ -7,10 +7,10 @@
         <opt:booleanOption opt:id="remove-unused-sections" opt:groupid="post" opt:name="Remove unused sections" opt:trueemission="--gc-sections"/>
         <!-- we do not use the additional-options-use-response-files boolean option to emit anything directly. We check its value in the makefile writer rules and emit what is needed
         for both the linker and assembler based on it being "true"-->
-        <opt:booleanOption opt:id="additional-options-use-response-files" opt:groupid="ignore-me" opt:name="Use response file to link" opt:default="false" opt:trueemission="true" opt:suppressif="${opt-xc32-linker-response-files.suppress}">
-            <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. XC32 provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
+        <opt:booleanOption opt:id="additional-options-use-response-files" opt:groupid="ignore-me" opt:name="Use response file to link" opt:default="false" opt:trueemission="true" opt:suppressif="${opt-Clang-linker-response-files.suppress}">
+            <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. Clang provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
         </opt:booleanOption>
-        <opt:stringOption opt:id="oXC32ld-extra-opts" opt:groupid="pre" opt:name="Additional driver options" opt:emissionprefix="" opt:textdefault="" opt:textpreferred="">
+        <opt:stringOption opt:id="oClangld-extra-opts" opt:groupid="pre" opt:name="Additional driver options" opt:emissionprefix="" opt:textdefault="" opt:textpreferred="">
             <opt:xhtml>Type here any additional driver options not existing in this GUI otherwise.
                 <br/>The string you introduce here will be emitted as is in the driver invocation command.
             </opt:xhtml>

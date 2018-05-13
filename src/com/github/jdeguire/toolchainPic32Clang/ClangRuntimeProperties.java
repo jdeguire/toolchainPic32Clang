@@ -13,14 +13,14 @@ import org.openide.util.Utilities;
 
 /**
  * <pre>
- * Detects XC32 toolchain license type.
+ * Detects Clang toolchain license type.
  * </pre>
  *
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com>
  */
-public class XC32RuntimeProperties extends XC32AbstractMipsRuntimeProperties {
+public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public XC32RuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
         super(desc, conf);
         supressResponseFileOption();
         setLegacyLibcDefaultState(conf);
@@ -61,7 +61,7 @@ public class XC32RuntimeProperties extends XC32AbstractMipsRuntimeProperties {
         if (Utilities.isWindows()) {
             value = "false";
         }
-        setProperty("opt-xc32-linker-response-files.suppress", value);
+        setProperty("opt-Clang-linker-response-files.suppress", value);
     }
 
 }

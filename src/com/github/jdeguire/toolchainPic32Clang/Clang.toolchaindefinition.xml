@@ -14,7 +14,7 @@ pattern=".*[\\/]pic32[\\/]bin" or_exist_folder="pic32/bin"
 <!-- makefile_writer class="com.microchip.mplab.nbide.toolchains.MPLabMakefileWriter" -->
 
 <toolchaindefinition xmlns="http://www.netbeans.org/ns/cnd-toolchain-definition/1">
-    <toolchain name="XC32" display="PIC32 Compiler Collection" family="PIC32" qmakespec="${os}-g++"/>
+    <toolchain name="Clang" display="PIC32 Compiler Collection" family="PIC32" qmakespec="${os}-g++"/>
     <platforms stringvalue="windows,linux,unix,mac,none"/>
     <default_locations>
         <platform os="linux" directory="/usr/local/pic32/bin" />
@@ -24,13 +24,13 @@ pattern=".*[\\/]pic32[\\/]bin" or_exist_folder="pic32/bin"
     <makefile_writer class="com.microchip.mplab.nbide.toolchains.c32.C32MakefileWriter" />
     <drive_letter_prefix stringvalue="/"/>
     <c>
-        <compiler name="xc32-gcc"/>
+        <compiler name="Clang-gcc"/>
         <system_include_paths parser="GNU"/>
         <system_macros parser="GNU"/>
         <recognizer pattern=".*[\\/]((pic32)|(MPLAB C32))[\\/]bin" />
     </c>
     <assembler>
-        <compiler name="xc32-as"/>
+        <compiler name="Clang-as"/>
         <recognizer pattern=".*[\\/]((pic32)|(MPLAB C32))[\\/]bin" />
     </assembler>
     <linker>

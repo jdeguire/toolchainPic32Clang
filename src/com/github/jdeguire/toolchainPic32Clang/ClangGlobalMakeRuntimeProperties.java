@@ -14,9 +14,9 @@ import org.openide.util.Utilities;
  *
  * @author jose
  */
-public class XC32GlobalMakeRuntimeProperties {
+public class ClangGlobalMakeRuntimeProperties {
 
-    public XC32GlobalMakeRuntimeProperties(MakeConfigurationBook projectDescriptor,
+    public ClangGlobalMakeRuntimeProperties(MakeConfigurationBook projectDescriptor,
             MakeConfiguration conf,
             Properties commandLineProperties) {
         commandLineProperties.put("USE_RESPONSE_FILES", getUseResponseFiles(projectDescriptor, conf));
@@ -59,9 +59,9 @@ public class XC32GlobalMakeRuntimeProperties {
         // Check the option value
         OptionConfiguration confObject = projectDescriptor.getSynthesizedOptionConfiguration(conf.getName(), "C32-LD", null);
         if (confObject != null) {
-            XC32RuntimeProperties rtp = new XC32RuntimeProperties(projectDescriptor, conf);
+            ClangRuntimeProperties rtp = new ClangRuntimeProperties(projectDescriptor, conf);
             if (rtp != null) {
-                XC32RuntimeProperties props = rtp;
+                ClangRuntimeProperties props = rtp;
                 if (props != null) {
                     List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
                     if (emissionPairs != null) {

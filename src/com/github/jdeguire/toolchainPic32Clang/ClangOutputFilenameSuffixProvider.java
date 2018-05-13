@@ -58,7 +58,7 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author drmc
  */
-public class XC32OutputFilenameSuffixProvider implements FilenameSuffixProvider {
+public class ClangOutputFilenameSuffixProvider implements FilenameSuffixProvider {
 
     public String getFilenameSuffix(Project project, ProjectConfiguration projectConf, boolean isDebug) {
         if (!isDebug) {

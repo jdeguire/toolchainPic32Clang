@@ -12,14 +12,14 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.ui.Cust
  *
  * @author Administrator
  */
-public class XC32CustomizerNode extends XC32AbstractCustomizerNode {
+public class ClangCustomizerNode extends ClangAbstractCustomizerNode {
 
-    public XC32CustomizerNode(String id, String name, CustomizerNode[] children, OptionLanguage.Signature sig) {
+    public ClangCustomizerNode(String id, String name, CustomizerNode[] children, OptionLanguage.Signature sig) {
         super(id, name, children, sig, true);
     }
 
     @Override
-    protected XC32AbstractMipsRuntimeProperties getPropertiesFile(final MakeConfigurationBook desc) {
-        return new XC32RuntimeProperties(desc, conf);
+    protected ClangAbstractMipsRuntimeProperties getPropertiesFile(final MakeConfigurationBook desc) {
+        return new ClangRuntimeProperties(desc, conf);
     }
 }

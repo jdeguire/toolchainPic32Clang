@@ -6,12 +6,12 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.UserDef
  *
  * @author drmc
  */
-public class XC32CPPUserDefineProvider extends UserDefineProvider {
+public class ClangCPPUserDefineProvider extends UserDefineProvider {
     
     public static final String OPT_ID = "C32CPP";
     public static final String OPT_PROP = "preprocessor-macros";    
 
-    public XC32CPPUserDefineProvider() {
+    public ClangCPPUserDefineProvider() {
         super("C32CPP", "preprocessor-macros");
     }
 

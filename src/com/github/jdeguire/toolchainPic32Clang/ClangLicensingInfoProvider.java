@@ -11,9 +11,9 @@ import com.microchip.mplab.nbide.toolchainCommon.predicate.IPredicate.ToolchainD
 /**
  * @author Constantin Dumitrascu
  */
-public class XC32LicensingInfoProvider extends LicenseInfoRetriever {
+public class ClangLicensingInfoProvider extends LicenseInfoRetriever {
 
-    public XC32LicensingInfoProvider(String pathToBin, String toolchainID, String version) {
-        super(pathToBin, "xc32", version, new CompilerIsEligibleForRoamingPredicate(new ToolchainData("XC32", pathToBin, "1.10")));
+    public ClangLicensingInfoProvider(String pathToBin, String toolchainID, String version) {
+        super(pathToBin, "Clang", version, new CompilerIsEligibleForRoamingPredicate(new ToolchainData("Clang", pathToBin, "1.10")));
     }
 }

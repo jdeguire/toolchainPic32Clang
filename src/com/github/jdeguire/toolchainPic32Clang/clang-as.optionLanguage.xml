@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-as" opt:name="MPLAB Assembler for 32-bit Devices">
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-as" opt:name="MPLAB Assembler for 32-bit Devices">
     <opt:optionCategory opt:id="general" opt:name="General">
         <opt:booleanOption opt:id="enable-symbols" opt:groupid="symbols-on-release" opt:name="Have symbols in production build." opt:trueemission="--gdwarf-2" opt:falseemission="" opt:booldefault="true"/>
         <opt:booleanOption opt:id="keep-locals" opt:groupid="post" opt:name="Keep local symbols" opt:trueemission="--keep-locals"/>
@@ -48,7 +48,7 @@
       <!-- JLD: is not recognized by assembler 
           <opt:booleanOption opt:id="list-section-info" opt:name="List section information" opt:trueemission="i"/>
       -->
-            <opt:booleanOption opt:name="List to file"               opt:trueemission="=${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE_MINUS_EXTENSION}.lst" opt:booldefault="false" opt:id="oXC32asm-list-to-file">
+            <opt:booleanOption opt:name="List to file"               opt:trueemission="=${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE_MINUS_EXTENSION}.lst" opt:booldefault="false" opt:id="oClangasm-list-to-file">
                 <opt:xhtml>Use this option if you want the listing for a file. The list file will have the same name as the asm file plus .lst</opt:xhtml>
             </opt:booleanOption>
         </opt:complexOption>

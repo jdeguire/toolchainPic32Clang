@@ -7,14 +7,12 @@ package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
+//import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import java.util.Properties;
 
 /**
- * Command line options available during makefile writeer process for archiver
+ * Command line options available during makefile writer process for archiver
  * build sequence.
- *
- * @author Marian Golea <marian.golea@microchip.com>
  */
 public class ArchiverProperties extends CommonProperties {
 
@@ -26,17 +24,19 @@ public class ArchiverProperties extends CommonProperties {
     }
 
     private void setMProcessor(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, Properties commandLineProperties) {
-        String emission = "";
-        //TODO Marian: remove this check once xc32 v2.00 fixes its problem related to expected use of this option.
-        //The option is supposed to also work with non mips devices!
-        if (XC32LanguageToolchain.isPIC32C(getPic())) {
-            //Marian: Normally, PIC32C is only supported starting with 2.00, so next check might seem redundant.
-            //It stays here because in the future this option will also work for mips devices, when 2.00 compiler is fixed.
-            Boolean mprocessorSupported = LTUtils.toolchainVersionGreaterOrEqualTo("2.00", conf);
-            if (mprocessorSupported) {
-                emission = " -mprocessor=$(MP_PROCESSOR_OPTION) ";
-            }
-        }
-        commandLineProperties.put("MPROCESSOR_CALL", emission);
+// TODO: Does llvm-ar need anything like this?  I don't see why it would.
+//
+//        String emission = "";
+//        //TODO Marian: remove this check once xc32 v2.00 fixes its problem related to expected use of this option.
+//        //The option is supposed to also work with non mips devices!
+//        if (XC32LanguageToolchain.isPIC32C(getPic())) {
+//            //Marian: Normally, PIC32C is only supported starting with 2.00, so next check might seem redundant.
+//            //It stays here because in the future this option will also work for mips devices, when 2.00 compiler is fixed.
+//            Boolean mprocessorSupported = LTUtils.toolchainVersionGreaterOrEqualTo("2.00", conf);
+//            if (mprocessorSupported) {
+//                emission = " -mprocessor=$(MP_PROCESSOR_OPTION) ";
+//            }
+//        }
+//        commandLineProperties.put("MPROCESSOR_CALL", emission);
     }
 }

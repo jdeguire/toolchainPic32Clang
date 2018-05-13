@@ -12,9 +12,9 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  * Handles the C++ compiler options.
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class XC32GPPRuntimeProperties extends XC32AbstractMipsRuntimeProperties{
+public class ClangCPPRuntimeProperties extends ClangAbstractMipsRuntimeProperties{
     
-    public XC32GPPRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangCPPRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
         super(desc, conf);
     }
 }

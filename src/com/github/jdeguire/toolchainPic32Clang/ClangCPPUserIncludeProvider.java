@@ -9,13 +9,13 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author drmc
  */
-public class XC32CPPUserIncludeProvider extends UserIncludeProvider {
+public class ClangCPPUserIncludeProvider extends UserIncludeProvider {
 
     public static final String OPT_ID = "C32CPP";
     public static final String OPT_PROP = "extra-include-directories";
     private final UserIncludeProvider uip;
 
-    public XC32CPPUserIncludeProvider() {
+    public ClangCPPUserIncludeProvider() {
         super(OPT_ID, OPT_PROP);
         uip = new UserIncludeProvider("C32Global", "common-include-directories");
     }

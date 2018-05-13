@@ -12,11 +12,11 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author jose
  */
-public class XC32SystemIncludeProvider implements IncludeProvider {
+public class ClangSystemIncludeProvider implements IncludeProvider {
 
     private static final Logger logger = MPLABLogger.mplog;
 
-    public XC32SystemIncludeProvider() {
+    public ClangSystemIncludeProvider() {
     }
 
     @Override
@@ -29,28 +29,28 @@ public class XC32SystemIncludeProvider implements IncludeProvider {
 //        MakeConfiguration makeConf = (MakeConfiguration) conf;
 //        LanguageToolchain cs = makeConf.getLanguageToolchain().findToolchain();
 //        if (cs == null) {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not get language tool chain");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool chain");
 //            return res;
 //        }
 //        LanguageTool t = cs.getTool(LanguageTool.CCompiler);
 //        if (t == null) {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not get language");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language");
 //            return res;
 //        }
 //        String exe = t.getPath();
 //        if (exe == null) {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not get path to executable");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get path to executable");
 //            return res;
 //        }
 //        String path = getDirName(exe);
 //        if (path == null) {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not path");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not path");
 //            return res;
 //        }
 //
 //        LanguageTool lt = cs.getTool(LanguageTool.CCompiler);
 //        if (lt == null) {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not get language tool");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool");
 //            return res;
 //        }
 //        // Was String version = lt.getVersion(); which calls the compiler
@@ -69,7 +69,7 @@ public class XC32SystemIncludeProvider implements IncludeProvider {
 //            }
 //            res.add(path + "/../pic32mx/include");
 //        } else {
-//            logger.log(Level.SEVERE, "XC32SystemIncludeProvider::getIncludes, Could not get language tool version");
+//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool version");
 //            return res;
 //        }
         return res;

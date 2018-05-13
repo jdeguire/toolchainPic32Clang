@@ -17,14 +17,14 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public abstract class XC32AbstractMipsRuntimeProperties extends LanguageToolRuntimePropertiesAccessor {
+public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRuntimePropertiesAccessor {
     public static final String PIC32C_SELECTED_PROPERTY = "pic32C.selected";
     final Boolean pic32CSelected;
     
-    protected XC32AbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
         super(desc, conf);
 
-        pic32CSelected = XC32LanguageToolchain.isPIC32C(getPic());
+        pic32CSelected = ClangLanguageToolchain.isPIC32C(getPic());
         setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
         setMipsBehavior();
     }

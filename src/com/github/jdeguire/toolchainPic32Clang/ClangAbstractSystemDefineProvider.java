@@ -16,13 +16,13 @@ import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectConfiguration;
 
 /**
- * Abstract system defines provider for xc32 plugin.
+ * Abstract system defines provider for Clang plugin.
  *
  * Marian: added getDefinesHook.
  * @author jose
  * @author Marian Golea <marian.golea@microchip.com>
  */
-abstract class XC32AbstractSystemDefineProvider extends CCISystemDefineProvider{
+abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider{
     
     public String getDeviceNameMacro(String device) {
         String res = "";

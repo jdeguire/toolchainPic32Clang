@@ -55,12 +55,12 @@ import com.microchip.mplab.nbide.embedded.spi.HelpFileProvider;
  *
  * @author venkat
  */
-public class XC32HelpFileProvider implements HelpFileProvider
+public class ClangHelpFileProvider implements HelpFileProvider
 {
 
     @Override
     public String getHelpFile() {
-        return "../docs/XC32MasterIndex.htm";
+        return "../docs/ClangMasterIndex.htm";
     }
 
 }

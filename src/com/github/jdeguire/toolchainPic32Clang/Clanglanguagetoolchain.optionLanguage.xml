@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <opt:optionLanguage xmlns:opt="http://crownking/opt"
-                    opt:id="XC32Global"
-                    opt:name="XC32 Language Toolchain"
+                    opt:id="ClangGlobal"
+                    opt:name="Clang Language Toolchain"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
 

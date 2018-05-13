@@ -15,28 +15,28 @@ import org.w3c.dom.Node;
 
 /**
  * <pre>
- * For toolchains versions greater than 1.00 verify all executables for existence, otherwise, xc32-g++.exe is optional.
+ * For toolchains versions greater than 1.00 verify all executables for existence, otherwise, Clang-g++.exe is optional.
  * </pre>
  *
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com>
  */
-public class XC32FolderResidenceTester extends FolderResidenceTester.Default {
+public class ClangFolderResidenceTester extends FolderResidenceTester.Default {
 
     private LanguageToolchainMeta toolchainMeta;
 
-    public XC32FolderResidenceTester() {
+    public ClangFolderResidenceTester() {
         toolchainMeta = LanguageToolchainMetaManager.getToolchain(
-                "XC32"); // NOI18N
+                "Clang"); // NOI18N
     }
 
     @Override
     public boolean isMyFolder(String dir) {
         boolean hasAllButCPP =
-                hasAllExecutableFiles(toolchainMeta, dir, Collections.singleton("xc32-g++"));
+                hasAllExecutableFiles(toolchainMeta, dir, Collections.singleton("Clang-g++"));
         if (!hasAllButCPP) {
             return false;
         }
-        final boolean requiregcc = XC32LanguageToolchain.xcHasCPPSupport(dir);
+        final boolean requiregcc = ClangLanguageToolchain.xcHasCPPSupport(dir);
         if (requiregcc) {
             return hasAllExecutableFiles(toolchainMeta, dir);
         } else {

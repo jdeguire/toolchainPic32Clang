@@ -12,9 +12,9 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class XC32ASRuntimeProperties extends XC32AbstractMipsRuntimeProperties {
+public class ClangASRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public XC32ASRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangASRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
         super(desc, conf);
     }
 }

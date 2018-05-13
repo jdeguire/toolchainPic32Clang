@@ -16,7 +16,7 @@ import java.util.logging.Level;
  *
  * @author jose
  */
-public class XC32LanguageToolchain {
+public class ClangLanguageToolchain {
 
     // For optimization, since it takes running the compiler to get its version
     // type, keep a map of version strings indexed by installation directory
@@ -37,11 +37,11 @@ public class XC32LanguageToolchain {
             // There is one place where this method is called. And at that point, we
             // do not have the MakeConfiguration. So we have no choice. We must run
             // the compiler to get the version. 
-            version = new XC32VersionProvider().getVersion(baseDir);
+            version = new ClangVersionProvider().getVersion(baseDir);
             mapOfInstallationDirToVersion.put(baseDir, version);
         }
         if (null == version || version.isEmpty()) {
-            MPLABLogger.mplog.log(Level.SEVERE, "[XC32]XC32LanguageToolchain::xcHasCPPSupport, can't determine the toolchain version.");
+            MPLABLogger.mplog.log(Level.SEVERE, "[Clang]ClangLanguageToolchain::xcHasCPPSupport, can't determine the toolchain version.");
             return true;
         }
         return version.compareTo("1.00") > 0;
@@ -56,7 +56,7 @@ public class XC32LanguageToolchain {
     public static boolean xcHasCPPSupport(MakeConfiguration conf, String baseDir) {
         String version = LTUtils.getVersion(conf);
         if (null == version || version.isEmpty()) {
-            MPLABLogger.mplog.log(Level.SEVERE, "[XC32]XC32LanguageToolchain::xcHasCPPSupport with conf, can't determine the toolchain version.");
+            MPLABLogger.mplog.log(Level.SEVERE, "[Clang]ClangLanguageToolchain::xcHasCPPSupport with conf, can't determine the toolchain version.");
             return true;
         }
         return version.compareTo("1.00") > 0;

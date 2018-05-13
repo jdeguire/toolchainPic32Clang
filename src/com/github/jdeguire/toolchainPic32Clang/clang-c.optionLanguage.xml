@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-gcc" opt:name="MPLAB C Compiler for 32-bit Devices">
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-gcc" opt:name="MPLAB C Compiler for 32-bit Devices">
     <opt:optionCategory opt:id="general" opt:name="General">
         <opt:enumOption opt:id="unaligned-access" opt:name="Enable unaligned access" opt:textdefault="" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
             <opt:version opt:fromversion="1.95"/>

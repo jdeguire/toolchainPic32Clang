@@ -8,10 +8,6 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import java.util.Properties;
 
-/**
- *
- * @author jose
- */
 public class AssemblerProperties extends CommonProperties {
 
     public AssemblerProperties(MakeConfigurationBook projectDescriptor,

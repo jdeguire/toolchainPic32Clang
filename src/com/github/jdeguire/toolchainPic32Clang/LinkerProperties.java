@@ -56,12 +56,12 @@ public class LinkerProperties extends CommonProperties {
     }
 
     private static String getIdeDashboardProperty(MakeConfiguration conf) {
-        boolean applicable = XC32LanguageToolchain.supportsMemorySummary(conf);
+        boolean applicable = ClangLanguageToolchain.supportsMemorySummary(conf);
         return applicable ? ",--memorysummary," + LTUtils.MEMORY_FILE_ADDRESS : "";
     }
 
     private boolean hasMemReservation(final MakeConfigurationBook projectDescriptor, final MakeConfiguration conf) {
-        boolean isPIC32C = XC32LanguageToolchain.isPIC32C(getPic());
+        boolean isPIC32C = ClangLanguageToolchain.isPIC32C(getPic());
         if (isPIC32C){
             return false;
         }
@@ -130,7 +130,7 @@ public class LinkerProperties extends CommonProperties {
         }
         if (debuggerOptionsAsSymbol.length() > 0) {
             commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", ",");
-            boolean isPIC32C = XC32LanguageToolchain.isPIC32C(pic);
+            boolean isPIC32C = ClangLanguageToolchain.isPIC32C(pic);
             String debuggerOptionString = isPIC32C ? "" : "-mdebugger";
             commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", debuggerOptionString);
         } else {
@@ -197,15 +197,15 @@ public class LinkerProperties extends CommonProperties {
             Project project = confBook.getProject();
             AssemblyProvider provider = project.getLookup().lookup(AssemblyProvider.class);
             if (provider == null) {
-                MPLABLogger.mplog.log(Level.SEVERE, "XC32LinkerProperties::getFunctionLevelProfilingOptions, could not get the AssemblyProvider.");
+                MPLABLogger.mplog.log(Level.SEVERE, "ClangLinkerProperties::getFunctionLevelProfilingOptions, could not get the AssemblyProvider.");
             } else {
                 Assembly assembly = provider.getAssembly();
                 if (assembly == null) {
-                    MPLABLogger.mplog.log(Level.SEVERE, "XC32LinkerProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
+                    MPLABLogger.mplog.log(Level.SEVERE, "ClangLinkerProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
                 } else {
                     TraceSetupInformationInterface tsi = assembly.getLookup().lookup(TraceSetupInformationInterface.class);
                     if (tsi == null) {
-                        MPLABLogger.mplog.log(Level.SEVERE, "XC32LinkerProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
+                        MPLABLogger.mplog.log(Level.SEVERE, "ClangLinkerProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
                     } else {
                         // PRJ 2014.11.07 Added check for iFlowtrace resource.
                         if (tsi.isTraceEnabled() && (tsi.getTraceResource() != StreamingDataEnums.eSDResource.SD_RESOURCE_IFLOWTRACE)

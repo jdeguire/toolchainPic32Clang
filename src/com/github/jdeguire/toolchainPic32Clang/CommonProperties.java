@@ -22,7 +22,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
             MakeConfiguration conf,
             Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
-        Boolean pic32CDeviceSelected = XC32LanguageToolchain.isPIC32C(getPic());
+        Boolean pic32CDeviceSelected = ClangLanguageToolchain.isPIC32C(getPic());
         commandLineProperties.put("PIC32C", pic32CDeviceSelected.toString());
         String emission = pic32CDeviceSelected ? "" : getLibcEmission(projectDescriptor, conf);
         commandLineProperties.put("LEGACY_LIBC", emission);

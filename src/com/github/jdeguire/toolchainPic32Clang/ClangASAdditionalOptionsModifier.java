@@ -6,11 +6,11 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.Additio
  *
  * @author c14014
  */
-public class XC32ASAdditionalOptionsModifier extends AdditionalOptionsModifier {
+public class ClangASAdditionalOptionsModifier extends AdditionalOptionsModifier {
     
     public static final String OPT_ID = "C32-AS";
 
-    public XC32ASAdditionalOptionsModifier() {
+    public ClangASAdditionalOptionsModifier() {
         super(OPT_ID);
     }
 

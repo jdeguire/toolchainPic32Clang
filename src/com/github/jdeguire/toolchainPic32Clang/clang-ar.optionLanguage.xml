@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-ar" opt:name="MPLAB Archiver for 32-bit Devices">
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-ar" opt:name="MPLAB Archiver for 32-bit Devices">
     <opt:optionCategory opt:id="general" opt:name="General">
-        <opt:booleanOption opt:id="additional-options-chop-files" opt:groupid="ignore-me" opt:name="Break line into multiple lines" opt:default="false" opt:trueemission="true" opt:suppressif="${opt-xc32-linker-response-files.suppress}">
-            <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When archiving long sets of file into libraries, the link line might go over this limit. XC32 can break up the archive line into smaller lines to avoid this limitation.</opt:xhtml>
+        <opt:booleanOption opt:id="additional-options-chop-files" opt:groupid="ignore-me" opt:name="Break line into multiple lines" opt:default="false" opt:trueemission="true" opt:suppressif="${opt-Clang-linker-response-files.suppress}">
+            <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When archiving long sets of file into libraries, the link line might go over this limit. Clang can break up the archive line into smaller lines to avoid this limitation.</opt:xhtml>
         </opt:booleanOption>
     </opt:optionCategory>
 </opt:optionLanguage>

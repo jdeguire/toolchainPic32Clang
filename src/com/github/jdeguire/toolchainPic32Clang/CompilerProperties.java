@@ -44,9 +44,9 @@ public class CompilerProperties extends CommonProperties{
     public static boolean xcHasCPPSupport(MakeConfiguration conf) {
         try {
             String baseDir = conf.getLanguageToolchain().getDir().getValue();
-            return XC32LanguageToolchain.xcHasCPPSupport(conf,baseDir);
+            return ClangLanguageToolchain.xcHasCPPSupport(conf,baseDir);
         } catch (NullPointerException npe) {
-            MPLABLogger.mplog.log(Level.SEVERE, "[XC32]CompilerProperties::xcHasCPPSupport.", npe);
+            MPLABLogger.mplog.log(Level.SEVERE, "[Clang]CompilerProperties::xcHasCPPSupport.", npe);
             return true;
         }
     }
@@ -61,13 +61,13 @@ public class CompilerProperties extends CommonProperties{
      */
     public static boolean projectIsCPP(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {
         if (null == projectDescriptor || null == conf) {
-            MPLABLogger.mplog.log(Level.SEVERE, "[XC32]CompilerProperties::projectIsCPP, unexpected null args.");
+            MPLABLogger.mplog.log(Level.SEVERE, "[Clang]CompilerProperties::projectIsCPP, unexpected null args.");
             return false;
         }
         if (conf.isCompileConfiguration()) {
             final Item[] items = projectDescriptor.getProjectItems();
             if (null == items) {
-                MPLABLogger.mplog.log(Level.SEVERE, "[XC32]CompilerProperties::projectIsCPP, cannot reach the project items.");
+                MPLABLogger.mplog.log(Level.SEVERE, "[Clang]CompilerProperties::projectIsCPP, cannot reach the project items.");
                 return false;
             }
             for (int x = 0; x < items.length; x++) {
@@ -180,21 +180,21 @@ public class CompilerProperties extends CommonProperties{
        AssemblyProvider provider = project.getLookup().lookup(AssemblyProvider.class);
        if (provider == null)
         {
-         MPLABLogger.mplog.log(Level.SEVERE, "XC32SelectedProperties::getFunctionLevelProfilingOptions, could not get the AssemblyProvider.");
+         MPLABLogger.mplog.log(Level.SEVERE, "ClangSelectedProperties::getFunctionLevelProfilingOptions, could not get the AssemblyProvider.");
         }
        else
         {
          Assembly assembly = provider.getAssembly();
          if (assembly == null)
           {
-           MPLABLogger.mplog.log(Level.SEVERE, "XC32SelectedProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
+           MPLABLogger.mplog.log(Level.SEVERE, "ClangSelectedProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
           }
          else
           {
            TraceSetupInformationInterface tsi = assembly.getLookup().lookup(TraceSetupInformationInterface.class);
            if (tsi == null)
             {
-             MPLABLogger.mplog.log(Level.SEVERE, "XC32SelectedProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
+             MPLABLogger.mplog.log(Level.SEVERE, "ClangSelectedProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
             }
            else
             {

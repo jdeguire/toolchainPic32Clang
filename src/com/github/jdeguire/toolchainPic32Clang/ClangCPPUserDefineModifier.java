@@ -10,9 +10,9 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.UserDef
  *
  * @author Venkat
  */
-public class XC32CPPUserDefineModifier extends UserDefineModifier {
+public class ClangCPPUserDefineModifier extends UserDefineModifier {
 
-    public XC32CPPUserDefineModifier() {
-        super(XC32CPPUserDefineProvider.OPT_ID, XC32CPPUserDefineProvider.OPT_PROP);
+    public ClangCPPUserDefineModifier() {
+        super(ClangCPPUserDefineProvider.OPT_ID, ClangCPPUserDefineProvider.OPT_PROP);
     }
 }

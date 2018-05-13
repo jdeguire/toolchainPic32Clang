@@ -24,7 +24,7 @@ public class ProcessorDependentProperties {
         String gldName = LinkerProperties.getLinkerGldFileName(projectDescriptor, conf);
         if (gldName != null && gldName.length() > 0) {
             commandLineOption = ",--script=";
-            if (XC32GlobalMakeRuntimeProperties.getUseResponseFiles(projectDescriptor, conf)) {
+            if (ClangGlobalMakeRuntimeProperties.getUseResponseFiles(projectDescriptor, conf)) {
                 // For cases where we use a response file, we cannot pass "..\t.ld", we need to pass ../t.ld.
                 // In other words, the linker likes the name of the scripts to be escaped using the
                 // char '\' and not by quoting the whole thing.

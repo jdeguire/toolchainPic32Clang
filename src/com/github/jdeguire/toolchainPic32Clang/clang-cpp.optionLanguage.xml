@@ -3,7 +3,7 @@
     xmlns:opt="http://crownking/opt"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
-    opt:id="xc32-g++"
+    opt:id="Clang-g++"
     opt:name="MPLAB C++ Compiler for 32-bit Devices">
 
     <opt:optionCategory opt:id="cpp" opt:name="C++ specific">
