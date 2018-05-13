@@ -49,6 +49,8 @@
             <mp:buildStep mp:if="${CHOP_AR_LINE}" mp:idref="archiveChopped"/>
         </mp:build>
         <mp:makeCode mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ProcessorDependentProperties">
+            <!-- TODO:  Replace -mprocessor option here with Clang's -target <blah>, -mcpu=<blah>, -mfpu=<blah>, and -mfloat-abi=<blah> options. -->
+            <!-- TODO:  Make processor name into a macro instead.  This will maintain compatibility with XC32's macros (eg. __32MX795F512L__). -->
             <mp:textEmitter mp:text="MP_PROCESSOR_OPTION=${PROCESSOR_NAME}${NEWLINE_NO_TAB}"/>
             <mp:textEmitter mp:text="MP_LINKER_FILE_OPTION=${OPTION_TO_SPECIFY_GLD}${GLD_NAME}${NEWLINE_NO_TAB}"/>
         </mp:makeCode>
@@ -425,13 +427,13 @@
     <mp:cCompiler mp:file="Clang-gcc" mp:name="MPLAB C Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
-        <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemDefineProvider"/>
-        <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangUserIncludeProvider"/>
-        <mp:userIncludeModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangUserIncludeModifier"/>
-        <mp:userDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangUserDefineProvider"/>
-        <mp:userDefineModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangUserDefineModifier"/>
-        <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangAdditionalOptionsProvider"/>
-        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangAdditionalOptionsModifier"/>
+        <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCSystemDefineProvider"/>
+        <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeProvider"/>
+        <mp:userIncludeModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeModifier"/>
+        <mp:userDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserDefineProvider"/>
+        <mp:userDefineModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserDefineModifier"/>
+        <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsModifier"/>
     </mp:cCompiler>
     <mp:assembler mp:file="Clang-as" mp:name="MPLAB Assembler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>

@@ -35,6 +35,9 @@ public class CompilerProperties extends CommonProperties{
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions(projectDescriptor, conf));
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions(projectDescriptor)); // waiting on compiler 2013.06.04
         commandLineProperties.put("project_cpp", CompilerProperties.buildWithGPP(projectDescriptor, conf));
+        
+        /* TODO:  Add properties to emulate XC32 using command-line macros (-D option).
+        */
     }
 
     public static boolean buildWithGPP(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {

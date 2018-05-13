@@ -12,10 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-/**
- *
- * @author jose
- */
+
 public class ClangLanguageToolchain {
 
     // For optimization, since it takes running the compiler to get its version

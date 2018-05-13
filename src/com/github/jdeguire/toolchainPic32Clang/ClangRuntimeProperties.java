@@ -32,6 +32,10 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         setProperty("legacy-libc.default", legacyLibcEnabled.toString());
     }
 
+    /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
+     *        These do not have built-in flash, but load from an on-package serial PROM.
+     *        We should probably replace this with another name (if we can even support it).
+     */
     private void setImola2Properties(final MakeConfigurationBook projectDescriptor) {
         //default settings, in case projectDescriptor is corrupted.
         setProperty("Imola2.suppresor", Boolean.TRUE.toString());

@@ -13,12 +13,12 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com>
  */
-public class ClangUserIncludeModifier extends UserIncludeModifier {
+public class ClangCUserIncludeModifier extends UserIncludeModifier {
 
     private final UserIncludeModifier uip;
 
-    public ClangUserIncludeModifier() {
-        super(ClangUserIncludeProvider.OPT_ID, ClangUserIncludeProvider.OPT_PROP);
+    public ClangCUserIncludeModifier() {
+        super(ClangCUserIncludeProvider.OPT_ID, ClangCUserIncludeProvider.OPT_PROP);
         uip = new UserIncludeModifier("C32Global", "common-include-directories");
     }
 

@@ -8,7 +8,7 @@ import org.netbeans.api.project.Project;
  * System define provider for C files.
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class ClangSystemDefineProvider extends ClangAbstractSystemDefineProvider {
+public class ClangCSystemDefineProvider extends ClangAbstractSystemDefineProvider {
 
     @Override
     void getDefinesHook(MakeConfiguration makeConf, Project project, List<String> res) {

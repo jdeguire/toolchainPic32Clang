@@ -10,12 +10,9 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.XMLBaseMakefileWriter;
 import java.util.Properties;
 
-/**
- *
- * @author jose
- */
+
 public class ProcessorDependentProperties {
- public ProcessorDependentProperties(MakeConfigurationBook projectDescriptor,
+    public ProcessorDependentProperties(MakeConfigurationBook projectDescriptor,
             MakeConfiguration conf,
             Properties commandLineProperties) {
 
