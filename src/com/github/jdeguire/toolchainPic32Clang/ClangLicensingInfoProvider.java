@@ -8,9 +8,8 @@ import com.microchip.mplab.nbide.toolchainCommon.icon.license.LicenseInfoRetriev
 import com.microchip.mplab.nbide.toolchainCommon.predicate.CompilerIsEligibleForRoamingPredicate;
 import com.microchip.mplab.nbide.toolchainCommon.predicate.IPredicate.ToolchainData;
 
-/**
- * @author Constantin Dumitrascu
- */
+
+// TOOD:  Can we just remove this?
 public class ClangLicensingInfoProvider extends LicenseInfoRetriever {
 
     public ClangLicensingInfoProvider(String pathToBin, String toolchainID, String version) {

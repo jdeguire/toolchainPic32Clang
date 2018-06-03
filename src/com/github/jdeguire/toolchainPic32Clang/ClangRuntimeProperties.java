@@ -11,6 +11,12 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import org.openide.util.Utilities;
 
+// TODO:  LTUtils has static methods for accessing options:
+// String readOptionValue(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, String configurationFileID, String optionID)
+// String readOptionEmittedValue(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, String configurationFileID, String optionGroupID, String optionID)
+//
+// Can we make use of these to grab option values for checking architecture?
+
 /**
  * <pre>
  * Detects Clang toolchain license type.
@@ -68,4 +74,8 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         setProperty("opt-Clang-linker-response-files.suppress", value);
     }
 
+    /* TODO:  We will probably need to handle multilib stuff ourselves using getProperty() and 
+     *        whatever linker options are set.  The base class seems to know that we have
+     *        a PIC32C, so that should help.
+     */
 }

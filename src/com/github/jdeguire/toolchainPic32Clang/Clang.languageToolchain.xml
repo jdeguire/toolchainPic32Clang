@@ -8,9 +8,9 @@
 
     <mp:configurationObject mp:id="C32Global" opt:src="Clanglanguagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AS" opt:src="Clang-as.optionLanguage.xml" mp:idref="xc32-as" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangASRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32" opt:src="Clang-gcc.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangGCCRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32" opt:src="Clang-gcc.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-LD" opt:src="Clang-ld.optionLanguage.xml" mp:idref="xc32-ld" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32CPP" opt:src="Clang-g++.optionLanguage.xml" mp:idref="xc32-g++" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangGPPRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32CPP" opt:src="Clang-g++.optionLanguage.xml" mp:idref="xc32-g++" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCPPRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AR" opt:src="Clang-ar.optionLanguage.xml" mp:idref="xc32-ar" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
 
     <mp:customizerNode mp:idref="C32Global" mp:name="Clang (Global Options)" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode">
@@ -49,8 +49,10 @@
             <mp:buildStep mp:if="${CHOP_AR_LINE}" mp:idref="archiveChopped"/>
         </mp:build>
         <mp:makeCode mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ProcessorDependentProperties">
+            <!-- Use /lib/Driver/ToolChains/Arch/Mips.cpp for reference, maybe? -->
             <!-- TODO:  Replace -mprocessor option here with Clang's -target <blah>, -mcpu=<blah>, -mfpu=<blah>, and -mfloat-abi=<blah> options. -->
             <!-- TODO:  Make processor name into a macro instead.  This will maintain compatibility with XC32's macros (eg. __32MX795F512L__). -->
+            <!-- TODO:  Add macros for XC32-specific stuff like __XC32__ and __XC32 (see ClangAbstractSystemDefineProvider). -->
             <mp:textEmitter mp:text="MP_PROCESSOR_OPTION=${PROCESSOR_NAME}${NEWLINE_NO_TAB}"/>
             <mp:textEmitter mp:text="MP_LINKER_FILE_OPTION=${OPTION_TO_SPECIFY_GLD}${GLD_NAME}${NEWLINE_NO_TAB}"/>
         </mp:makeCode>
@@ -114,7 +116,7 @@
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
 
-        <mp:makeRule mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:id="createLTORespFile" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="createLTORespFile" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO} "/>
@@ -332,9 +334,10 @@
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
+            <!-- TODO:  Need to see if Clang or LLVM has something like objcopy. -->
             <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}xc32-bin2hex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FORMAT}"/>
         </mp:makeRule>
-        <mp:makeRule mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:id="createResponseFiles" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="createResponseFiles" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
@@ -404,6 +407,7 @@
     <mp:logicalFolder mp:id="HeaderFiles"/>
     <mp:logicalFolder mp:id="LinkerScript"/>
 
+    <!-- TODO: Make up some nonsense directories or something. -->
     <mp:defaultLocation mp:hostplatform="linux" mp:dir="/opt/microchip/Clang/v*/bin"/>
     <mp:defaultLocation mp:hostplatform="mac" mp:dir="/Applications/microchip/Clang/v*/bin"/>
     <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*Clang*/bin"/>
@@ -411,9 +415,11 @@
 
     <mp:folderResidenceTester mp:class="com.github.jdeguire.toolchainPic32Clang.ClangFolderResidenceTester"/>
 
+    <!-- Can we just remove this licensing thing? -->
     <mp:licensingInfoProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLicensingInfoProvider"/>
 
-    <mp:ccCompiler mp:file="xc32-g++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
+    <!-- Change these file names. -->
+    <mp:ccCompiler mp:file="Clang-g++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPSystemDefineProvider"/>
@@ -488,6 +494,7 @@
       ******************************************************************************
       ******************************************************************************
     -->
+    <!-- TODO: Can we just enable this line to look in MPLAB? -->
     <!--<mp:deviceSupport mp:lookInMplab="true" mp:mplabName="mc"/>-->
     <mp:deviceSupport>
 <!--    <mp:family mp:family="arm32bit">

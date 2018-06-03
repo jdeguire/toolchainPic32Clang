@@ -5,7 +5,7 @@
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
 
-    <opt:optionCategory opt:id="general" opt:name="(All Options)">
+    <opt:optionCategory opt:id="general" opt:name="General">
         <opt:booleanOption opt:id="legacy-libc" opt:groupid="both" opt:name="Use Legacy libc" opt:booldefault="${legacy-libc.default}" opt:suppressif="${pic32C.selected}"/>
         <opt:booleanOption opt:id="save-temps"  opt:groupid="both" opt:name="Don't delete intermediate files" opt:trueemission="-save-temps=obj" opt:booldefault="false">
             <opt:xhtml>Don't delete intermediate files. Place them in the object directory and name them based on the source file.</opt:xhtml>
@@ -44,6 +44,84 @@
             <opt:version opt:fromversion="1.95"/>
             <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
         </opt:booleanOption>
+    </opt:optionCategory>
+    <opt:optionCategory opt:id="target-options" opt:name="Target Specific">
+        <opt:booleanOption  opt:id="target-auto-detect" opt:name="Auto-detect target options" opt:booldefault="true">
+            <opt:trueModifiers>
+            </opt:trueModifiers>
+            <opt:falseModifiers>
+            </opt:falseModifiers>
+        </opt:booleanOption>
+        <opt:enumOption opt:id="target.arch" opt:groupid="both" opt:name="Target Architecture" opt:textdefault="${target.arch.defualt}" opt:emissionprefix="-target " opt:emitswhendefault="true">
+            <opt:selection opt:text="${target.arch.default}" opt:name="Auto-detect">
+                <opt:enumOptionAssigner opt:idref="target.mips32.cpu" opt:text="${target.mips32.cpu.default}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="${target.arch.isARM}"/>
+                <opt:enumOptionAssigner opt:idref="target.mips32.fpu" opt:text="${target.mips32.fpu.default}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="${target.arch.isARM}"/>
+                <opt:enumOptionAssigner opt:idref="target.mips32.dsp" opt:text="${target.mips32.dsp.default}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="${target.arch.isARM}"/>
+                <opt:enumOptionAssigner opt:idref="target.arm.cpu" opt:text="${target.arm.cpu.default}"/>
+                <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="${target.arch.isMIPS32}"/>
+                <opt:enumOptionAssigner opt:idref="target.arm.fpu" opt:text="${target.arm.fpu.default}"/>
+                <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="${target.arch.isMIPS32}"/>
+            </opt:selection>
+            <opt:selection opt:text="mipsel-unknown-elf" opt:name="MIPS32 (mipsel-unknown-elf)">
+                <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="true"/>
+            </opt:selection>
+            <opt:selection opt:text="arm-none-eabi" opt:name="ARM (arm-none-eabi)">
+                <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="false"/>
+            </opt:selection>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.mips32.cpu" opt:groupid="both" opt:name="MIPS CPU Type" opt:textdefault="${target.mips32.cpu.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+            <opt:selection opt:text="${target.mips32.cpu.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="-mips32r2" opt:name="MIPS32r2"/>
+            <opt:selection opt:text="-mips32r5" opt:name="MIPS32r5"/>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.mips32.fpu" opt:groupid="both" opt:name="MIPS Floating-point" opt:textdefault="${target.mips32.fpu.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+            <!-- TODO:  Do I need to specify both of these floating-point options for MIPS? -->
+            <opt:selection opt:text="${target.mips32.fpu.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
+            <opt:selection opt:text="-mhard-float -mfloat-abi=hard" opt:name="Hardware"/>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.mips32.dsp" opt:groupid="both" opt:name="MIPS DSP ASE" opt:textdefault="${target.mips32.dsp.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+            <opt:selection opt:text="${target.mips32.dsp.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="" opt:name="Unsupported"/>
+            <opt:selection opt:text="-mdspr2" opt:name="Supported"/>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.arm.cpu" opt:groupid="both" opt:name="ARM CPU Type" opt:textdefault="${target.arm.cpu.default}" opt:emissionprefix="-mcpu=" opt:emitswhendefault="true">
+            <opt:selection opt:text="${target.arm.cpu.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="cortex-m3" opt:name="Cortex M3"/>
+            <opt:selection opt:text="cortex-m4" opt:name="Cortex M4"/>
+            <opt:selection opt:text="cortex-m7" opt:name="Cortex M7"/>
+            <opt:selection opt:text="cortex-a5" opt:name="Cortex A5"/>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.arm.fpu" opt:groupid="both" opt:name="ARM Floating-point" opt:textdefault="${target.arm.fpu.default}" opt:emissionprefix="-mfpu=" opt:emitswhendefault="true">
+            <opt:selection opt:text="${target.arm.fpu.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
+            <opt:selection opt:text="-mfpu=vfp4-sp-d16 -mfloat-abi=hard" opt:name="VFPv4 (Single-precision only)"/>
+            <opt:selection opt:text="-mfpu=vfp5-sp-d16 -mfloat-abi=hard" opt:name="VFPv5 (Single-precision only)"/>
+            <opt:selection opt:text="-mfpu=vfp5-dp-d16 -mfloat-abi=hard" opt:name="VFPv5"/>
+            <opt:selection opt:text="-mfpu=neon-vfpv4 -mfloat-abi=hard" opt:name="NEON"/>
+        </opt:enumOption>
+
+        <!-- TODO:  The following properties need to be added to ClangRuntimeProperties.java :
+            target.arch.defualt
+            target.mips32.cpu.default
+            target.mips32.fpu.default
+            target.mips32.dsp.default
+            target.arm.cpu.default
+            target.arm.fpu.default
+            target.arch.isARM
+            target.arch.isMIPS32
+        -->
     </opt:optionCategory>
     
     <opt:enablePattern opt:idref="legacy-libc" opt:expr="(-legacy-libc)" />
