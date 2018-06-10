@@ -98,7 +98,7 @@
         </opt:enumOption>
         <opt:enumOption opt:id="target.arm.cpu" opt:groupid="both" opt:name="ARM CPU Type" opt:textdefault="${target.arm.cpu.default}" opt:emissionprefix="-mcpu=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arm.cpu.default}" opt:name="Auto-detect"/>
-            <opt:selection opt:text="cortex-m3" opt:name="Cortex M3"/>
+            <opt:selection opt:text="cortex-m0" opt:name="Cortex M0"/>
             <opt:selection opt:text="cortex-m4" opt:name="Cortex M4"/>
             <opt:selection opt:text="cortex-m7" opt:name="Cortex M7"/>
             <opt:selection opt:text="cortex-a5" opt:name="Cortex A5"/>
@@ -107,7 +107,7 @@
             <opt:selection opt:text="${target.arm.fpu.default}" opt:name="Auto-detect"/>
             <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
             <opt:selection opt:text="-mfpu=vfp4-sp-d16 -mfloat-abi=hard" opt:name="VFPv4 (Single-precision only)"/>
-            <opt:selection opt:text="-mfpu=vfp5-sp-d16 -mfloat-abi=hard" opt:name="VFPv5 (Single-precision only)"/>
+            <opt:selection opt:text="-mfpu=vfp4-dp-d16 -mfloat-abi=hard" opt:name="VFPv4"/>
             <opt:selection opt:text="-mfpu=vfp5-dp-d16 -mfloat-abi=hard" opt:name="VFPv5"/>
             <opt:selection opt:text="-mfpu=neon-vfpv4 -mfloat-abi=hard" opt:name="NEON"/>
         </opt:enumOption>

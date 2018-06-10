@@ -10,13 +10,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.Languag
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 
-/**
- * Handle the common behavior related to mips16 and micromips instruction
- * sets.</br>
- * This functionality is applicable to both GCC and GPP compilers.
- *
- * @author Marian Golea <marian.golea@microchip.com>
- */
+
 public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRuntimePropertiesAccessor {
     public static final String PIC32C_SELECTED_PROPERTY = "pic32C.selected";
     final Boolean pic32CSelected;
