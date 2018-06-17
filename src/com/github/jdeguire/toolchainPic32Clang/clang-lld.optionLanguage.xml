@@ -15,11 +15,11 @@
                 <br/>The string you introduce here will be emitted as is in the driver invocation command.
             </opt:xhtml>
         </opt:stringOption>
-        <opt:booleanOption opt:groupid="post" opt:id="code-dinit" opt:name="Place code in data init template" opt:default="${Imola2.detected}" opt:trueemission="--code-in-dinit"  opt:falseemission="--no-code-in-dinit" opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption opt:groupid="post" opt:id="code-dinit" opt:name="Place code in data init template" opt:default="${Imola2.detected}" opt:trueemission="--code-in-dinit"  opt:falseemission="--no-code-in-dinit" opt:suppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.41"/>
             Place code sections into the data-initialization template stored in the .dinit section.
         </opt:booleanOption>
-        <opt:booleanOption opt:groupid="post" opt:id="allocate-dinit" opt:name="Allocate data-init section to serial memory" opt:default="${Imola2.detected}" opt:trueemission="--dinit-in-serial-mem"  opt:falseemission="--no-dinit-in-serial-mem" opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption opt:groupid="post" opt:id="allocate-dinit" opt:name="Allocate data-init section to serial memory" opt:default="${Imola2.detected}" opt:trueemission="--dinit-in-serial-mem"  opt:falseemission="--no-dinit-in-serial-mem" opt:suppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.41"/>
             Allocate the .dinit template section to a memory region named "serial_mem" rather than "kseg0_program_mem".
         </opt:booleanOption>
@@ -45,19 +45,19 @@
         </opt:stringListOption>
         <opt:booleanOption opt:id="exclude-standard-libraries" opt:groupid="pre" opt:name="Exclude Standard Libraries" opt:trueemission="-nostdlib"/>
         <opt:booleanOption opt:id="no-startup-files" opt:groupid="pre" opt:name="Do not link crt0 startup code" opt:trueemission="-nostartfiles"/>
-        <opt:booleanOption opt:id="no-device-startup-code" opt:groupid="pre" opt:name="Do not link device startup code" opt:trueemission="-mno-device-startup-code" opt:unsuppressif="${pic32C.selected}">
+        <opt:booleanOption opt:id="no-device-startup-code" opt:groupid="pre" opt:name="Do not link device startup code" opt:trueemission="-mno-device-startup-code" opt:unsuppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="2.00"/>
         </opt:booleanOption>
         <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Link MIPS16 libraries" opt:trueemission="-mips16" opt:suppressif="${mips16.suppress}"/>
         <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Link micro MIPS compressed startup code and libraries" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}">
             <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
         </opt:booleanOption>
-        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
     </opt:optionCategory>
 
     <!-- Do fill option a la picc18 so we gain the GUI -->
-    <opt:optionCategory opt:id="fill-flash-options" opt:name="Fill Flash Memory" opt:hideif="${pic32C.selected}">
-        <opt:complexOption  opt:groupid="ld-extra"  opt:id="fill-options" opt:name="Fill" opt:emissionprefix="--fill=" opt:suppressif="${pic32C.selected}">
+    <opt:optionCategory opt:id="fill-flash-options" opt:name="Fill Flash Memory" opt:hideif="${target.arch.isARM}">
+        <opt:complexOption  opt:groupid="ld-extra"  opt:id="fill-options" opt:name="Fill" opt:emissionprefix="--fill=" opt:suppressif="${target.arch.isARM}">
             <opt:enumOption opt:groupid="ld-extra" opt:id="fill-flash-options-what" opt:name="Which area to fill" opt:textdefault="0" opt:neveremits="true" opt:fromversion="1.20">
                 You can fill all unused memory or specify and area
                 <opt:selection opt:name="No Fill" opt:text="0">

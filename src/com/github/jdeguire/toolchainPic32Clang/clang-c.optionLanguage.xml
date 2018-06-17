@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-gcc" opt:name="MPLAB C Compiler for 32-bit Devices">
     <opt:optionCategory opt:id="general" opt:name="General">
-        <opt:enumOption opt:id="unaligned-access" opt:name="Enable unaligned access" opt:textdefault="" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+        <opt:enumOption opt:id="unaligned-access" opt:name="Enable unaligned access" opt:textdefault="" opt:unsuppressif="${target.arch.isARM}" opt:showif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.95"/>
             <opt:selection opt:text="" opt:name="Compiler Default"/>
             <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
@@ -20,9 +20,10 @@
             <opt:selection opt:text="-ftoplevel-reorder" opt:name="Enable"/>
         </opt:enumOption>
         <opt:booleanOption opt:id="use-indirect-calls" opt:name="Use indirect calls" opt:trueemission="-mlong-calls"/>
+        <!-- TODO:  Add option for -minterlink-compressed -->
         <opt:booleanOption opt:id="generate-16-bit-code" opt:name="Generate MIPS16 16-bit code" opt:trueemission="-mips16" opt:default="false" opt:suppressif="${mips16.suppress}"/>
         <opt:booleanOption opt:id="generate-micro-compressed-code" opt:name="Generate microMIPS compressed code" opt:default="false" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}"/>
-        <opt:booleanOption opt:id="exclude-floating-point" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="exclude-floating-point" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
     </opt:optionCategory>
 
 
@@ -73,10 +74,10 @@
         </opt:booleanOption>
         <opt:booleanOption opt:id="support-ansi" opt:name="" opt:trueemission="-ansi"/>
         <opt:booleanOption opt:id="strict-ansi" opt:name="" opt:trueemission="-pedantic"/>
-        <opt:booleanOption opt:id="use-cci" opt:name="Use CCI syntax" opt:trueemission="-mcci" opt:booldefault="false" opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption opt:id="use-cci" opt:name="Use CCI syntax" opt:trueemission="-mcci" opt:booldefault="false" opt:suppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.10"/>
         </opt:booleanOption>
-        <opt:booleanOption    opt:id="use-iar" opt:name="Use IAR syntax" opt:trueemission="-mext=IAR" opt:booldefault="false" opt:boolpreferred="false" opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption    opt:id="use-iar" opt:name="Use IAR syntax" opt:trueemission="-mext=IAR" opt:booldefault="false" opt:boolpreferred="false" opt:suppressif="${target.arch.isARM}">
             <opt:xhtml>This option should be set if this project is an original IAR project imported into MPLAB-X</opt:xhtml>
         </opt:booleanOption>
     </opt:optionCategory>

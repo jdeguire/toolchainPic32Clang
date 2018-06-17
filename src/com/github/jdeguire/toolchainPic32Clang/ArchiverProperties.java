@@ -13,6 +13,9 @@ import java.util.Properties;
 /**
  * Command line options available during makefile writer process for archiver
  * build sequence.
+ * 
+ * @author Marian Golea <marian.golea@microchip.com> 
+ * Modified by jdeguire for toolchainPic32Clang.
  */
 public class ArchiverProperties extends CommonProperties {
 

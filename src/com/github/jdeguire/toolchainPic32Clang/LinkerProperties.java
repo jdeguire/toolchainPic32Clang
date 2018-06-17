@@ -48,6 +48,8 @@ public class LinkerProperties extends CommonProperties {
         String memRanges = hasMemReservation ? getDebugMemRanges(cfg) : "";
         commandLineProperties.put("DEBUG_MEMORY_RANGES", memRanges);
         commandLineProperties.put("CHIPKIT_DEBUG_SYMBOL", getChipKITDebugSymbol(cfg));
+
+        commandLineProperties.put("XC32_COMPAT_MACROS", CompilerProperties.getXC32CompatibilityMacros(projectDescriptor, conf));
     }
 
     private static String getChipKITDebugSymbol(final LTUtilsConfiguration cfg) {

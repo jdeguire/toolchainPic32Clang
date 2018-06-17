@@ -8,6 +8,10 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import java.util.Properties;
 
+/**
+ *
+ * @author jose
+ */
 public class AssemblerProperties extends CommonProperties {
 
     public AssemblerProperties(MakeConfigurationBook projectDescriptor,
@@ -18,5 +22,6 @@ public class AssemblerProperties extends CommonProperties {
         commandLineProperties.put("PROCESSOR_NAME_FOR_ASSEMBLER", CompilerProperties.getProcessorNameForCompiler(conf.getDevice().getValue()));
         LinkerProperties.addDebuggerNameOptions(conf.getPlatformTool().getValue(), getPic(), commandLineProperties);
         commandLineProperties.put("project_cpp", CompilerProperties.buildWithGPP(projectDescriptor, conf));
+        commandLineProperties.put("XC32_COMPAT_MACROS", CompilerProperties.getXC32CompatibilityMacros(projectDescriptor, conf));
     }
 }

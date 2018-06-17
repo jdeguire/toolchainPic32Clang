@@ -3,7 +3,7 @@
     <opt:optionCategory opt:id="general" opt:name="General">
         <opt:booleanOption opt:id="enable-symbols" opt:groupid="symbols-on-release" opt:name="Have symbols in production build." opt:trueemission="--gdwarf-2" opt:falseemission="" opt:booldefault="true"/>
         <opt:booleanOption opt:id="keep-locals" opt:groupid="post" opt:name="Keep local symbols" opt:trueemission="--keep-locals"/>
-        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
         <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Generate MIPS16 16-bit code" opt:trueemission="-mips16" opt:default="false" opt:suppressif="${mips16.suppress}"/>
         <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Generate microMIPS compressed code" opt:default="false" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}"/>
         <opt:stringListOption opt:id="preprocessor-macros" opt:groupid="pre" opt:name="Preprocessor macro definitions" opt:emissionprefix="-D" opt:emissionseparator=" -D" opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>

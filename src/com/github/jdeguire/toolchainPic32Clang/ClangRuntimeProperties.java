@@ -11,15 +11,19 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import org.openide.util.Utilities;
 
-// TODO:  LTUtils has static methods for accessing options:
-// String readOptionValue(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, String configurationFileID, String optionID)
-// String readOptionEmittedValue(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, String configurationFileID, String optionGroupID, String optionID)
-//
-// Can we make use of these to grab option values for checking architecture?
-
-
+/** 
+ * <pre>
+ * Detects Clang toolchain license type. 
+ * </pre> 
+ * 
+ * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com> 
+ * Modified by jdeguire for toolchainPic32Clang.
+ */
 public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
+    /* TODO:  Do I want to move this target-detection stuff to the ClangAbstractMipsRuntimeProperties base class?
+     *        That would make all of this accessible by all of the options, but I don't know if that actually helps.
+     */
     private enum TargetFamily {
       PIC32MX,          // MIPS32r2, no FPU/DSP, MIPS16e
       PIC32MZ,          // MIPS32r2, DSP, microMIPS, no FPU
@@ -49,6 +53,47 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
       MEC17,            // Cortex-M4F, FPv4 D16 single-precision FPU
     };
     
+    public ClangRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+        super(desc, conf);
+        supressResponseFileOption();
+        setLegacyLibcDefaultState(conf);
+        setImola2Properties(desc);
+        setTargetDefaultProperties(conf);
+    }
+
+    private void setLegacyLibcDefaultState(MakeConfiguration conf) {
+        Boolean legacyLibcEnabled = !pic32CSelected && LTUtils.toolchainVersionGreaterOrEqualTo("1.41", conf);
+        setProperty("legacy-libc.default", legacyLibcEnabled.toString());
+    }
+
+    /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
+     *        These do not have built-in flash, but load from an on-package serial PROM.
+     *        We should probably replace this with another name (if we can even support it).
+     */
+    private void setImola2Properties(final MakeConfigurationBook projectDescriptor) {
+        //default settings, in case projectDescriptor is corrupted.
+        setProperty("Imola2.suppresor", Boolean.TRUE.toString());
+        setProperty("Imola2.detected", Boolean.FALSE.toString());
+
+        if (projectDescriptor == null) {
+            //corrupted.
+            return;
+        }
+        xPIC pic = getPic();
+        if (pic == null) {
+            //corrupted.
+            return;
+        }
+
+        FamilyDefinitions.SubFamily subFamily = pic.getSubFamily();
+
+        //avoid calling setProperty twice in case isImola is false.
+        if (FamilyDefinitions.SubFamily.PIC32WK == subFamily) {
+            setProperty("Imola2.suppresor", Boolean.FALSE.toString());
+            setProperty("Imola2.detected", Boolean.TRUE.toString());
+        }
+    }
+
     private TargetFamily getTargetFamily(String targetName) {
         TargetFamily family = TargetFamily.PIC32MX;
         
@@ -126,47 +171,6 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         return family;
     }
     
-    public ClangRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
-        super(desc, conf);
-        supressResponseFileOption();
-        setLegacyLibcDefaultState(conf);
-        setImola2Properties(desc);
-        setTargetDefaultProperties(conf);
-    }
-
-    private void setLegacyLibcDefaultState(MakeConfiguration conf) {
-        Boolean legacyLibcEnabled = !pic32CSelected && LTUtils.toolchainVersionGreaterOrEqualTo("1.41", conf);
-        setProperty("legacy-libc.default", legacyLibcEnabled.toString());
-    }
-
-    /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
-     *        These do not have built-in flash, but load from an on-package serial PROM.
-     *        We should probably replace this with another name (if we can even support it).
-     */
-    private void setImola2Properties(final MakeConfigurationBook projectDescriptor) {
-        //default settings, in case projectDescriptor is corrupted.
-        setProperty("Imola2.suppresor", Boolean.TRUE.toString());
-        setProperty("Imola2.detected", Boolean.FALSE.toString());
-
-        if (projectDescriptor == null) {
-            //corrupted.
-            return;
-        }
-        xPIC pic = getPic();
-        if (pic == null) {
-            //corrupted.
-            return;
-        }
-
-        FamilyDefinitions.SubFamily subFamily = pic.getSubFamily();
-
-        //avoid calling setProperty twice in case isImola is false.
-        if (FamilyDefinitions.SubFamily.PIC32WK == subFamily) {
-            setProperty("Imola2.suppresor", Boolean.FALSE.toString());
-            setProperty("Imola2.detected", Boolean.TRUE.toString());
-        }
-    }
-
     private void supressResponseFileOption() {
         String value = "true";
         if (Utilities.isWindows()) {
@@ -180,7 +184,7 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         TargetFamily family = getTargetFamily(targetName);
 
         String defaultArch = "mipsel-unknown-elf";
-        String mipsDefaultCpu = "-mips32r2";
+        String mipsDefaultCpu = "mips32r2";
         String mipsDefaultFpu = "-msoft-float -mfloat-abi=soft";
         String mipsDefaultDsp = "";
         String armDefaultCpu = "cortex-m0";
@@ -202,7 +206,7 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
             case PIC32MZEF:
             case PIC32MK:
             case PIC32WK:
-                mipsDefaultCpu = "-mips32r5";
+                mipsDefaultCpu = "mips32r5";
                 mipsDefaultFpu = "-mhard-float -mfloat-abi=hard";
                 mipsDefaultDsp = "-mdspr2";
                 break;
@@ -281,16 +285,6 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
                 break;
         }
 
-        /*
-            target.arch.defualt
-            target.mips32.cpu.default
-            target.mips32.fpu.default
-            target.mips32.dsp.default
-            target.arm.cpu.default
-            target.arm.fpu.default
-            target.arch.isARM
-            target.arch.isMIPS32
-        */
         setProperty("target.arch.default", defaultArch);
         setProperty("target.mips32.cpu.default", mipsDefaultCpu);
         setProperty("target.mips32.fpu.default", mipsDefaultFpu);
@@ -301,8 +295,18 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         setProperty("target.arch.isMIPS32", isMIPS32);
     }
 
-    /* TODO:  We will probably need to handle multilib stuff ourselves using getProperty() and 
-     *        whatever linker options are set.  The base class seems to know that we have
-     *        a PIC32C, so that should help.
+    /* TODO:  We will probably need to handle multilib stuff ourselves using LTUtils and 
+     *        whatever linker options are set.
+     *
+     *   - Optimization level (0, 1, 2, 3, fast, s, z)
+     *   - Arch (mips32r2, mips32r5, cortex m0/m4/m7/a5)
+     *   - FPU (soft, mips, vfp4-sp-d16, vfp4-dp-d16, vfp5-dp-d16, neon-vfpv4)
+     *   - fast-math enabled
+     *   - mips32/mips16e/micromips
+     *   - mips DSP
+     *
+     * We can use the EmbeddedProjectSupport.getSynthesizedOption(Project project, ProjectConfiguration projectConf, String optionBookID, String optionID, String itemPath)
+     * method to get option values.  See ClangGlobalMakeRuntimeProperties.java.  This can be used to
+     * determine multilibs and support for MIPS16e/microMIPS.
      */
 }

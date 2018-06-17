@@ -14,7 +14,7 @@
     </opt:optionCategory>
 
     <opt:optionCategory opt:id="general" opt:name="General">
-        <opt:enumOption opt:id="unaligned-access" opt:name="Enable unaligned access" opt:textdefault="" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+        <opt:enumOption opt:id="unaligned-access" opt:name="Enable unaligned access" opt:textdefault="" opt:unsuppressif="${target.arch.isARM}" opt:showif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.95"/>
             <opt:selection opt:text="" opt:name="Compiler Default"/>
             <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
@@ -23,7 +23,7 @@
                 If unaligned access is not enabled then words in packed data structures are accessed a byte at a time.</opt:xhtml>
         </opt:enumOption>
         <opt:booleanOption opt:id="enable-symbols" opt:groupid="symbols-on-release" opt:name="Have symbols in production build" opt:trueemission="-g" opt:falseemission="" opt:booldefault="true"/>
-        <opt:booleanOption opt:id="enable-app-io" opt:name="Enable App IO" opt:trueemission="-mappio-debug" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="enable-app-io" opt:name="Enable App IO" opt:trueemission="-mappio-debug" opt:suppressif="${target.arch.isARM}"/>
         <opt:booleanOption opt:id="isolate-each-function" opt:name="Isolate each function in a section" opt:trueemission="-ffunction-sections"/>
         <opt:booleanOption opt:id="place-data-into-section" opt:name="Place data into its own section" opt:trueemission="-fdata-sections"/>
         <opt:enumOption opt:id="toplevel-reordering" opt:name="Enable toplevel reordering" opt:emitswhendefault="false">
@@ -35,7 +35,7 @@
         <opt:booleanOption opt:id="use-indirect-calls" opt:name="Use indirect calls" opt:trueemission="-mlong-calls"/>
         <opt:booleanOption opt:id="generate-16-bit-code" opt:name="Generate MIPS16 16-bit code" opt:trueemission="-mips16" opt:default="false" opt:suppressif="${mips16.suppress}"/>
         <opt:booleanOption opt:id="generate-micro-compressed-code" opt:name="Generate microMIPS compressed code" opt:default="false" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}"/>
-        <opt:booleanOption opt:id="exclude-floating-point" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${pic32C.selected}"/>
+        <opt:booleanOption opt:id="exclude-floating-point" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
     </opt:optionCategory>
 
 
@@ -79,16 +79,17 @@
                 <br/>If you want a single place to have include paths for compilers and assembler, use the include paths in the global options node.
             </opt:xhtml>
         </opt:stringListOption>
+        <!-- TODO:  Add option here to use C includes to get around annoyances with the MPLAB Harmony Configurator. -->
         <opt:booleanOption opt:id="make-warnings-into-errors" opt:name="Make warnings into errors" opt:trueemission="-Werror"/>
         <opt:booleanOption opt:id="additional-warnings" opt:name="Additional warnings" opt:trueemission="-Wall"/>
         <opt:booleanOption opt:id="addresss-attribute-use" opt:name="Enable address-attribute warning" opt:trueemission="-Waddress-attribute-use" opt:fromversion="1.41">
             <opt:xhtml>Emit a warning for all uses of the address() attribute. This option is for engineering-support use only.</opt:xhtml>
         </opt:booleanOption>
         <opt:booleanOption opt:id="strict-ansi" opt:name="" opt:trueemission="-pedantic"/>
-        <opt:booleanOption opt:id="use-cci" opt:name="Use CCI syntax" opt:trueemission="-mcci" opt:booldefault="false" opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption opt:id="use-cci" opt:name="Use CCI syntax" opt:trueemission="-mcci" opt:booldefault="false" opt:suppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.10"/>
         </opt:booleanOption>
-        <opt:booleanOption    opt:id="use-iar" opt:name="Use IAR syntax" opt:trueemission="-mext=IAR" opt:booldefault="false" opt:boolpreferred="false"  opt:suppressif="${pic32C.selected}">
+        <opt:booleanOption    opt:id="use-iar" opt:name="Use IAR syntax" opt:trueemission="-mext=IAR" opt:booldefault="false" opt:boolpreferred="false"  opt:suppressif="${target.arch.isARM}">
             <opt:xhtml>This option should be set if this project is an original IAR project imported into MPLAB-X</opt:xhtml>
         </opt:booleanOption>
     </opt:optionCategory>

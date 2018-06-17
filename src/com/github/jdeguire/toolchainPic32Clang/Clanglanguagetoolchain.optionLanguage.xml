@@ -1,28 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!-- NOTE:  We'll keep orginal opt:id name here for compatibility with Microchip tools.  -->
 <opt:optionLanguage xmlns:opt="http://crownking/opt"
-                    opt:id="ClangGlobal"
+                    opt:id="C32Global"
                     opt:name="Clang Language Toolchain"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
 
     <opt:optionCategory opt:id="general" opt:name="General">
-        <opt:booleanOption opt:id="legacy-libc" opt:groupid="both" opt:name="Use Legacy libc" opt:booldefault="${legacy-libc.default}" opt:suppressif="${pic32C.selected}"/>
-        <opt:booleanOption opt:id="save-temps"  opt:groupid="both" opt:name="Don't delete intermediate files" opt:trueemission="-save-temps=obj" opt:booldefault="false">
+        <opt:booleanOption opt:id="save-temps" opt:groupid="both" opt:name="Don't delete intermediate files" opt:trueemission="-save-temps=obj" opt:booldefault="false">
             <opt:xhtml>Don't delete intermediate files. Place them in the object directory and name them based on the source file.</opt:xhtml>
         </opt:booleanOption>
+        <opt:booleanOption opt:id="fake-xc32" opt:groupid="xc32-compat" opt:name="Add XC32 compatibility macros" opt:trueemission="" opt:booldefault="true">
+            <opt:xhtml>
+                If True, define the __XC, __XC32, and __XC32_VERSION__ macros for compatibility with code that expects those.  
+                Clang-specific macros, like __clang__, are still defined.
+            </opt:xhtml>
+            <opt:falseModifiers>
+                <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="true"/>
+            </opt:falseModifiers>
+            <opt:trueModifiers>
+                <opt:optionGrayer opt:idref="fake-xc2-version" opt:bool="false"/>
+            </opt:trueModifiers>
+        </opt:booleanOption>
+        <opt:stringOption opt:id="fake-xc32-version" opt:groupid="xc32-compat" opt:name="XC32 version macro value" opt:textdefault="2100" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
+            <opt:xhtml>Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times 1000 (eg. 2100 for XC32 v2.10).</opt:xhtml>
+        </opt:stringOption>
+        <!-- TODO: Add support for ThinLTO; see https://clang.llvm.org/docs/ThinLTO.html
+                    Move LTO stuff to its own category?
+          -->
         <opt:booleanOption opt:id="wpo-lto" opt:groupid="wpo" opt:name="Use Whole-Program and Link-Time Optimizations" opt:trueemission="">
             <opt:xhtml>When this feature is enabled, the build will be constrained in the following ways:
                 <br/> - The per-file build settings will be ignored;
                 <br/> - The build will no longer be an incremental one (full build only).
             </opt:xhtml>
         </opt:booleanOption>
-        <opt:stringOption opt:groupid="gp-relative-treshhold" opt:id="gp-relative-option" opt:name="Use GP relative addressing threshold" opt:emissionprefix="-G " opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator" opt:suppressif="${pic32C.selected}">
-            <opt:xhtml>Put definitions of externally-visible data in a small data section if that data is no bigger than num bytes.</opt:xhtml>
+        <opt:stringOption opt:groupid="gp-relative-treshhold" opt:id="gp-relative-option" opt:name="Use GP relative addressing threshold" opt:emissionprefix="-G " opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator" opt:suppressif="${target.arch.isARM}">
+            <opt:xhtml>Put definitions of externally-visible data in a small data section for fast access if that data is no bigger than num bytes.</opt:xhtml>
         </opt:stringOption>
-        <opt:booleanOption    opt:name="Relaxed floating-point math"   opt:trueemission="-relaxed-math"  opt:booldefault="false" opt:groupid="both" opt:id="relaxed-math" opt:suppressif="${pic32C.selected}">
-        <opt:version opt:fromversion="1.32"/>
-        </opt:booleanOption>    
-        <opt:stringListOption opt:name="Common include dirs"               opt:emissionprefix="-I"     opt:emissionseparator=" -I"                                                        opt:groupid="common-include-dirs" opt:id="common-include-directories" opt:slashnormalization="unix" opt:isdirectory="true" opt:isbrowsable="true">
+        <opt:booleanOption opt:id="extended-got" opt:groupid="both" opt:name="Allow extended global offset table" opt:trueemission="-mxgot" opt:booldefault="false" opt:suppressif="${target.arch.isARM}">
+            <opt:xhtml>Allow a global offset table larger than 64kB at the expense of slower access (3 instructions instead of 1).</opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="relaxed-math" opt:groupid="both" opt:name="Relaxed floating-point math" opt:trueemission="-ffast-math" opt:booldefault="false">
+            <opt:xhtml>Allow the compiler to more aggresively optimize floating-poing math by making certain assumptions about floating-point math that may result in some loss of precision, including (but not limited to):
+                <br/> - floating-point math follows regular algebraic rules such as the associative and distributive properties,
+                <br/> - operands to floating-point operations are not NaN or Inf,
+                <br/> - and that +0 and -0 are interchangeable.
+                <br/>Enabling this option defines the __FAST_MATH__ preprocessor macro.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:stringListOption opt:name="Common include directories" opt:emissionprefix="-I" opt:emissionseparator=" -I"  opt:groupid="common-include-dirs" opt:id="common-include-directories" opt:slashnormalization="unix" opt:isdirectory="true" opt:isbrowsable="true">
             <opt:browseinfo>
                 Relative paths are from
                 <br/>MPLAB X project directory.
@@ -32,27 +58,22 @@
                 <br/>Relative paths are from MPLAB X project directory.
             </opt:xhtml>
         </opt:stringListOption>
-        <opt:stringOption opt:groupid="both" opt:id="mdtcm" opt:name="Data TCM size in bytes" opt:emissionprefix="-mdtcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+        <opt:stringOption opt:groupid="both" opt:id="mdtcm" opt:name="Data TCM size in bytes" opt:emissionprefix="-mdtcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${target.arch.isARM}" opt:showif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.95"/>
             <opt:xhtml>Enable data Tightly Coupled Memory with the specified size.</opt:xhtml>
         </opt:stringOption>
-        <opt:stringOption opt:groupid="both" opt:id="mitcm" opt:name="Instruction TCM size in bytes" opt:emissionprefix="-mitcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+        <opt:stringOption opt:groupid="both" opt:id="mitcm" opt:name="Instruction TCM size in bytes" opt:emissionprefix="-mitcm=" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator" opt:unsuppressif="${target.arch.isARM}" opt:showif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.95"/>
             <opt:xhtml>Enable instruction Tightly Coupled Memory with the specified size.</opt:xhtml>
         </opt:stringOption>
-        <opt:booleanOption    opt:name="Locate Stack in data TCM"   opt:trueemission="-mstack-in-tcm"  opt:booldefault="false" opt:groupid="both" opt:id="mstacktcm" opt:unsuppressif="${pic32C.selected}" opt:showif="${pic32C.selected}">
+        <opt:booleanOption    opt:name="Locate Stack in data TCM"   opt:trueemission="-mstack-in-tcm"  opt:booldefault="false" opt:groupid="both" opt:id="mstacktcm" opt:unsuppressif="${target.arch.isARM}" opt:showif="${target.arch.isARM}">
             <opt:version opt:fromversion="1.95"/>
             <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
         </opt:booleanOption>
     </opt:optionCategory>
+
     <opt:optionCategory opt:id="target-options" opt:name="Target Specific">
-        <opt:booleanOption  opt:id="target-auto-detect" opt:name="Auto-detect target options" opt:booldefault="true">
-            <opt:trueModifiers>
-            </opt:trueModifiers>
-            <opt:falseModifiers>
-            </opt:falseModifiers>
-        </opt:booleanOption>
-        <opt:enumOption opt:id="target.arch" opt:groupid="both" opt:name="Target Architecture" opt:textdefault="${target.arch.defualt}" opt:emissionprefix="-target " opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.arch" opt:groupid="target" opt:name="Target Architecture" opt:textdefault="${target.arch.defualt}" opt:emissionprefix="-target " opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arch.default}" opt:name="Auto-detect">
                 <opt:enumOptionAssigner opt:idref="target.mips32.cpu" opt:text="${target.mips32.cpu.default}"/>
                 <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="${target.arch.isARM}"/>
@@ -80,30 +101,30 @@
                 <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="false"/>
             </opt:selection>
         </opt:enumOption>
-        <opt:enumOption opt:id="target.mips32.cpu" opt:groupid="both" opt:name="MIPS CPU Type" opt:textdefault="${target.mips32.cpu.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.mips32.cpu" opt:groupid="target" opt:name="MIPS CPU Type" opt:textdefault="${target.mips32.cpu.default}" opt:emissionprefix="-march=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.mips32.cpu.default}" opt:name="Auto-detect"/>
-            <opt:selection opt:text="-mips32r2" opt:name="MIPS32r2"/>
-            <opt:selection opt:text="-mips32r5" opt:name="MIPS32r5"/>
+            <opt:selection opt:text="mips32r2" opt:name="MIPS32r2"/>
+            <opt:selection opt:text="mips32r5" opt:name="MIPS32r5"/>
         </opt:enumOption>
-        <opt:enumOption opt:id="target.mips32.fpu" opt:groupid="both" opt:name="MIPS Floating-point" opt:textdefault="${target.mips32.fpu.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.mips32.fpu" opt:groupid="target" opt:name="MIPS Floating-point" opt:textdefault="${target.mips32.fpu.default}" opt:emissionprefix="" opt:emitswhendefault="true">
             <!-- TODO:  Do I need to specify both of these floating-point options for MIPS? -->
             <opt:selection opt:text="${target.mips32.fpu.default}" opt:name="Auto-detect"/>
             <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
             <opt:selection opt:text="-mhard-float -mfloat-abi=hard" opt:name="Hardware"/>
         </opt:enumOption>
-        <opt:enumOption opt:id="target.mips32.dsp" opt:groupid="both" opt:name="MIPS DSP ASE" opt:textdefault="${target.mips32.dsp.default}" opt:emissionprefix="" opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.mips32.dsp" opt:groupid="target" opt:name="MIPS DSP ASE" opt:textdefault="${target.mips32.dsp.default}" opt:emissionprefix="" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.mips32.dsp.default}" opt:name="Auto-detect"/>
             <opt:selection opt:text="" opt:name="Unsupported"/>
             <opt:selection opt:text="-mdspr2" opt:name="Supported"/>
         </opt:enumOption>
-        <opt:enumOption opt:id="target.arm.cpu" opt:groupid="both" opt:name="ARM CPU Type" opt:textdefault="${target.arm.cpu.default}" opt:emissionprefix="-mcpu=" opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.arm.cpu" opt:groupid="target" opt:name="ARM CPU Type" opt:textdefault="${target.arm.cpu.default}" opt:emissionprefix="-mcpu=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arm.cpu.default}" opt:name="Auto-detect"/>
             <opt:selection opt:text="cortex-m0" opt:name="Cortex M0"/>
             <opt:selection opt:text="cortex-m4" opt:name="Cortex M4"/>
             <opt:selection opt:text="cortex-m7" opt:name="Cortex M7"/>
             <opt:selection opt:text="cortex-a5" opt:name="Cortex A5"/>
         </opt:enumOption>
-        <opt:enumOption opt:id="target.arm.fpu" opt:groupid="both" opt:name="ARM Floating-point" opt:textdefault="${target.arm.fpu.default}" opt:emissionprefix="-mfpu=" opt:emitswhendefault="true">
+        <opt:enumOption opt:id="target.arm.fpu" opt:groupid="target" opt:name="ARM Floating-point" opt:textdefault="${target.arm.fpu.default}" opt:emissionprefix="-mfpu=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arm.fpu.default}" opt:name="Auto-detect"/>
             <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
             <opt:selection opt:text="-mfpu=vfp4-sp-d16 -mfloat-abi=hard" opt:name="VFPv4 (Single-precision only)"/>
@@ -111,22 +132,11 @@
             <opt:selection opt:text="-mfpu=vfp5-dp-d16 -mfloat-abi=hard" opt:name="VFPv5"/>
             <opt:selection opt:text="-mfpu=neon-vfpv4 -mfloat-abi=hard" opt:name="NEON"/>
         </opt:enumOption>
-
-        <!-- TODO:  The following properties need to be added to ClangRuntimeProperties.java :
-            target.arch.defualt
-            target.mips32.cpu.default
-            target.mips32.fpu.default
-            target.mips32.dsp.default
-            target.arm.cpu.default
-            target.arm.fpu.default
-            target.arch.isARM
-            target.arch.isMIPS32
-        -->
     </opt:optionCategory>
-    
-    <opt:enablePattern opt:idref="legacy-libc" opt:expr="(-legacy-libc)" />
+
     <opt:enablePattern opt:idref="save-temps"  opt:expr="-save-temps.*"/>
-    <opt:enablePattern opt:idref="gp-relative-option" opt:expr="-G " />
-    <opt:enablePattern opt:expr="-relaxed-math"   opt:idref="relaxed-math"/>
-    <opt:submatchPattern opt:expr="-I(.+)" opt:firstexpr="-I" opt:secondexpr="(.+)" opt:idref="common-include-directories"/>
+    <opt:enablePattern opt:idref="gp-relative-option" opt:expr="-G "/>
+    <opt:enablePattern opt:idref="relaxed-math" opt:expr="-ffast-math"/>
+    <opt:enablePattern opt:idref="extended-got" opt:expr="-mxgot"/>
+    <opt:submatchPattern opt:idref="common-include-directories" opt:expr="-I(.+)" opt:firstexpr="-I" opt:secondexpr="(.+)"/>
 </opt:optionLanguage>

@@ -12,7 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-
+/**
+ * 
+ * @author jose 
+ * Modified by jdeguire for toolchainPic32Clang.
+ */ 
 public class ClangLanguageToolchain {
 
     // For optimization, since it takes running the compiler to get its version
