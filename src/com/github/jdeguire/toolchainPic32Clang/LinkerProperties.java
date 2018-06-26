@@ -28,6 +28,7 @@ import org.netbeans.api.project.Project;
 /**
  *
  * @author jose
+ * Modified by jdeguire for toolchainPic32Clang.
  */
 public class LinkerProperties extends CommonProperties {
 

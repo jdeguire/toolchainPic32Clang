@@ -48,8 +48,8 @@
         <opt:booleanOption opt:id="no-device-startup-code" opt:groupid="pre" opt:name="Do not link device startup code" opt:trueemission="-mno-device-startup-code" opt:unsuppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="2.00"/>
         </opt:booleanOption>
-        <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Link MIPS16 libraries" opt:trueemission="-mips16" opt:suppressif="${mips16.suppress}"/>
-        <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Link micro MIPS compressed startup code and libraries" opt:trueemission="-mmicromips" opt:suppressif="${micromips.suppress}">
+        <opt:booleanOption opt:id="generate-16-bit-code" opt:groupid="pre" opt:name="Link MIPS16 libraries" opt:trueemission="" opt:grayif="${mips16.gray}" opt:suppressif="${target.arch.isARM}"/>
+        <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Link micro MIPS compressed startup code and libraries" opt:trueemission="" opt:grayif="${micromips.gray}" opt:suppressif="${target.arch.isARM}">
             <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
         </opt:booleanOption>
         <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>

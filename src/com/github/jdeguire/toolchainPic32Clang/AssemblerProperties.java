@@ -11,6 +11,7 @@ import java.util.Properties;
 /**
  *
  * @author jose
+ * Modified by jdeguire for toolchainPic32Clang.
  */
 public class AssemblerProperties extends CommonProperties {
 

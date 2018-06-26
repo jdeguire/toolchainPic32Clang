@@ -11,9 +11,9 @@ import org.netbeans.api.project.Project;
 import org.openide.util.Utilities;
 
 /**
- *
  * @author jose
- */
+ * Modified by jdeguire for toolchainPic32Clang.
+*/
 public class ClangGlobalMakeRuntimeProperties {
 
     public ClangGlobalMakeRuntimeProperties(MakeConfigurationBook projectDescriptor,
@@ -46,6 +46,18 @@ public class ClangGlobalMakeRuntimeProperties {
             ret = EmbeddedProjectSupport.getSynthesizedOption(project, projectConf, "C32Global", "wpo-lto", null); // NOI18N
             if (ret == null) {
                 ret = "false";
+            }
+            else if(ret.equalsIgnoreCase("true")) {
+                String doThinLto = EmbeddedProjectSupport.getSynthesizedOption(project, 
+                                                                               projectConf,
+                                                                               "C32Global", 
+                                                                               "thin-lto.enable",
+                                                                               null); // NOI18N
+
+                if(doThinLto != null  &&  doThinLto.equalsIgnoreCase("true")) {
+                    // ThinLTO is handled like a normal build, so we want this to be false.
+                    ret = "false";
+                }
             }
         }
         return ret;

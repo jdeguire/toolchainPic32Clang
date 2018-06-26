@@ -25,15 +25,6 @@
         <opt:stringOption opt:id="fake-xc32-version" opt:groupid="xc32-compat" opt:name="XC32 version macro value" opt:textdefault="2100" opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
             <opt:xhtml>Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times 1000 (eg. 2100 for XC32 v2.10).</opt:xhtml>
         </opt:stringOption>
-        <!-- TODO: Add support for ThinLTO; see https://clang.llvm.org/docs/ThinLTO.html
-                    Move LTO stuff to its own category?
-          -->
-        <opt:booleanOption opt:id="wpo-lto" opt:groupid="wpo" opt:name="Use Whole-Program and Link-Time Optimizations" opt:trueemission="">
-            <opt:xhtml>When this feature is enabled, the build will be constrained in the following ways:
-                <br/> - The per-file build settings will be ignored;
-                <br/> - The build will no longer be an incremental one (full build only).
-            </opt:xhtml>
-        </opt:booleanOption>
         <opt:stringOption opt:groupid="gp-relative-treshhold" opt:id="gp-relative-option" opt:name="Use GP relative addressing threshold" opt:emissionprefix="-G " opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator" opt:suppressif="${target.arch.isARM}">
             <opt:xhtml>Put definitions of externally-visible data in a small data section for fast access if that data is no bigger than num bytes.</opt:xhtml>
         </opt:stringOption>
@@ -72,21 +63,75 @@
         </opt:booleanOption>
     </opt:optionCategory>
 
+    <opt:optionCategory opt:id="lto-options" opt:name="Link-Time Optimization">
+        <opt:booleanOption opt:id="wpo-lto" opt:groupid="wpo" opt:name="Enable Link-Time Optimizations" opt:trueemission="">
+            <opt:xhtml>When this feature is enabled, the build will be constrained in the following ways if ThinLTO is NOT used:
+                <br/> - The per-file build settings will be ignored;
+                <br/> - The build will no longer be an incremental one (full build only).
+            </opt:xhtml>
+            <opt:falseModifiers>
+                <opt:optionSuppressor opt:idref="thin-lto.enable" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.enable-vtable-opts" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.threads" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachesize" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachedir" opt:bool="true"/>
+            </opt:falseModifiers>
+            <opt:trueModifiers>
+                <opt:optionSuppressor opt:idref="thin-lto.enable" opt:bool="false"/>
+                <opt:optionModifierTrigger opt:idref="thin-lto.enable"/>
+            </opt:trueModifiers>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="thin-lto.enable" opt:groupid="thin-lto" opt:name="Use ThinLTO" opt:trueemission="-flto=thin" opt:booldefault="true">
+            <opt:xhtml>Use Clang's ThinLTO mode, which uses a cache to enable incremental builds and build times similar to non-LTO builds.
+                The cache is stored in "build/{config_name}/ltocache".  
+                <br/>See https://clang.llvm.org/docs/ThinLTO.html for more info.
+            </opt:xhtml>
+            <opt:falseModifiers>
+                <opt:optionSuppressor opt:idref="thin-lto.enable-vtable-opts" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.threads" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachesize" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachedir" opt:bool="true"/>
+            </opt:falseModifiers>
+            <opt:trueModifiers>
+                <opt:optionSuppressor opt:idref="thin-lto.enable-vtable-opts" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.threads" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachesize" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="thin-lto.link.cachedir" opt:bool="false"/>
+            </opt:trueModifiers>
+        </opt:booleanOption>
+        <opt:booleanOption opt:id="thin-lto.enable-vtable-opts" opt:groupid="thin-lto" opt:name="Enable Whole-program vtable optimizations" opt:trueemission="-fwhole-program-vtables">
+        </opt:booleanOption>    
+        <opt:rangeOption opt:id="thin-lto.link.threads" opt:groupid="thin-lto.link" opt:name="Threads for ThinLTO link" opt:fromvalue="1" opt:tovalue="${thin-lto.link.threads.maxval}" opt:defaultvalue="${thin-lto.link.threads.default}" opt:emissionprefix="--thinlto-jobs=">
+            <opt:xhtml>Set the number of threads to use during a ThinLTO link.  This will default to half of the available threads on the current machine.
+            </opt:xhtml>
+        </opt:rangeOption>
+        <opt:stringOption opt:id="thin-lto.link.cachesize" opt:groupid="thin-lto.link" opt:name="Max size of ThinLTO cache" opt:textdefault="1024m" opt:emissionprefix="--thinlto-cache-policy,cache_size_bytes=">
+            <opt:xhtml>Set max size of the ThinLTO cache before it is pruned.  Use a suffix of "k" for kilobytes, "m" for megabytes or "g" for gigatbytes.  For example, using "1024m" will set the max size of 1024MiB.  Use 0 for no pruning.</opt:xhtml>
+        </opt:stringOption>
+        <opt:stringOption opt:id="thin-lto.link.cachedir" opt:groupid="thin-lto.link" opt:name="ThinLTO cache directory" opt:textdefault="${OBJECTDIR}/ltocache" opt:emissionprefix="--thinlto-cache-dir=" opt:hideif="true">
+            <opt:xhtml>Set the location of the ThinLTO cache directory.  This option is not meant to be visible and is here to make adding the directory to the output easier.
+            </opt:xhtml>
+        </opt:stringOption>
+    </opt:optionCategory>
+
     <opt:optionCategory opt:id="target-options" opt:name="Target Specific">
         <opt:enumOption opt:id="target.arch" opt:groupid="target" opt:name="Target Architecture" opt:textdefault="${target.arch.defualt}" opt:emissionprefix="-target " opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arch.default}" opt:name="Auto-detect">
+                <opt:enumOptionAssigner opt:idref="target.mips32.isa" opt:text="${target.mips32.isa.default}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="${target.arch.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.mips32.cpu" opt:text="${target.mips32.cpu.default}"/>
-                <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="${target.arch.isARM}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="${target.arch.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.mips32.fpu" opt:text="${target.mips32.fpu.default}"/>
-                <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="${target.arch.isARM}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="${target.arch.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.mips32.dsp" opt:text="${target.mips32.dsp.default}"/>
-                <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="${target.arch.isARM}"/>
+                <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="${target.arch.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.arm.cpu" opt:text="${target.arm.cpu.default}"/>
-                <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="${target.arch.isMIPS32}"/>
+                <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="${target.arch.isMIPS32.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.arm.fpu" opt:text="${target.arm.fpu.default}"/>
-                <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="${target.arch.isMIPS32}"/>
+                <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="${target.arch.isMIPS32.default}"/>
             </opt:selection>
             <opt:selection opt:text="mipsel-unknown-elf" opt:name="MIPS32 (mipsel-unknown-elf)">
+                <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="false"/>
@@ -94,12 +139,19 @@
                 <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="true"/>
             </opt:selection>
             <opt:selection opt:text="arm-none-eabi" opt:name="ARM (arm-none-eabi)">
+                <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="false"/>
             </opt:selection>
+        </opt:enumOption>
+        <opt:enumOption opt:id="target.mips32.isa" opt:groupid="target" opt:name="MIPS Instruction Set" opt:textdefault="${target.mips32.isa.default}" opt:neveremits="true">
+            <opt:selection opt:text="${target.mips32.isa.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="mips32+mips16e" opt:name="MIPS32 and MIPS16e"/>
+            <opt:selection opt:text="mips32+micromips" opt:name="MIPS32 and microMIPS"/>
+            <opt:selection opt:text="micromips" opt:name="microMIPS only"/>
         </opt:enumOption>
         <opt:enumOption opt:id="target.mips32.cpu" opt:groupid="target" opt:name="MIPS CPU Type" opt:textdefault="${target.mips32.cpu.default}" opt:emissionprefix="-march=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.mips32.cpu.default}" opt:name="Auto-detect"/>

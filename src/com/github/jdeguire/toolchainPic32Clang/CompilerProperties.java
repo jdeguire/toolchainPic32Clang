@@ -23,6 +23,7 @@ import org.netbeans.api.project.Project;
 /**
  *
  * @author jose Modified: 2011.03.29 PRJ Add instrumented trace support.
+ * Modified by jdeguire for toolchainPic32Clang.
  */
 public class CompilerProperties extends CommonProperties{
 
@@ -179,7 +180,7 @@ public class CompilerProperties extends CommonProperties{
                                                                           "fake-xc32",
                                                                           null); // NOI18N
 
-            if(doCompat.equalsIgnoreCase("true")) {
+            if(doCompat != null  &&  doCompat.equalsIgnoreCase("true")) {
                 String compatVersion = EmbeddedProjectSupport.getSynthesizedOption(project, 
                                                                                    conf, 
                                                                                    "C32Global", 
