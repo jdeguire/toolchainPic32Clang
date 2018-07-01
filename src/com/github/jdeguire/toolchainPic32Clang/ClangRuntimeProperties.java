@@ -8,7 +8,6 @@ import com.microchip.crownking.mplabinfo.FamilyDefinitions;
 import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import org.openide.util.Utilities;
 
 /** 
@@ -74,22 +73,8 @@ public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
         if(defaultthreads <= 0)
             defaultthreads = 1;
         
-        setProperty("thin-lto.link.threads.maxval", Integer.toString(maxthreads));
-        setProperty("thin-lto.link.threads.default", Integer.toString(defaultthreads));
+        setProperty("lto.link.threads.maxval", Integer.toString(maxthreads));
+        setProperty("lto.link.threads.default", Integer.toString(defaultthreads));
     }
 
-    /* TODO:  We will probably need to handle multilib stuff ourselves using LTUtils and 
-     *        whatever linker options are set.
-     *
-     *   - Optimization level (0, 1, 2, 3, fast, s, z)
-     *   - Arch (mips32r2, mips32r5, cortex m0/m4/m7/a5)
-     *   - FPU (soft, mips, vfp4-sp-d16, vfp4-dp-d16, vfp5-dp-d16, neon-vfpv4)
-     *   - fast-math enabled
-     *   - mips32/mips16e/micromips
-     *   - mips DSP
-     *
-     * We can use the EmbeddedProjectSupport.getSynthesizedOption(Project project, ProjectConfiguration projectConf, String optionBookID, String optionID, String itemPath)
-     * method to get option values.  See ClangGlobalMakeRuntimeProperties.java.  This can be used to
-     * determine multilibs and support for MIPS16e/microMIPS.
-     */
 }

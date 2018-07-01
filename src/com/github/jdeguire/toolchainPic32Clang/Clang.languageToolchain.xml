@@ -6,7 +6,7 @@
     <mp:dynamicCapabilitiesProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangDynamicCapabilitiesProvider"/>
     <mp:helpFileProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangHelpFileProvider"/>
 
-    <mp:configurationObject mp:id="C32Global" opt:src="clanglanguagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32Global" opt:src="Clanglanguagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AS" opt:src="clang-as.optionLanguage.xml" mp:idref="xc32-as" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangASRuntimeProperties"/>
     <mp:configurationObject mp:id="C32" opt:src="clang-c.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-LD" opt:src="clang-lld.optionLanguage.xml" mp:idref="xc32-ld" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
@@ -192,7 +192,7 @@
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_CC_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
@@ -224,7 +224,7 @@
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
@@ -255,7 +255,7 @@
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG  ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
@@ -287,7 +287,7 @@
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
@@ -320,7 +320,7 @@
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
@@ -346,7 +346,7 @@
             <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${CHIPKIT_DEBUG_SYMBOL}${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto.link" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto.link" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
@@ -358,7 +358,7 @@
             <mp:redirectStart/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="target" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
@@ -384,7 +384,7 @@
             <mp:textEmitter mp:text="$(MP_LINKER_FILE_OPTION)"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="thin-lto.link" mp:separator="," mp:prefix=","/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto.link" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>

@@ -10,8 +10,6 @@ import com.microchip.mplab.mdbcore.assemblies.AssemblyProvider;
 import com.microchip.mplab.mdbcore.common.streamingdata.StreamingDataEnums;
 import com.microchip.mplab.mdbcore.common.streamingdata.interfaces.TraceSetupInformationInterface;
 import com.microchip.mplab.mdbcore.streamingdataprocessing.TraceOptionsConstants;
-import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
-import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.ConfigurationBookProvider;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.Item;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.ItemConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
@@ -37,7 +35,7 @@ public class CompilerProperties extends CommonProperties{
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions(projectDescriptor, conf));
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions(projectDescriptor)); // waiting on compiler 2013.06.04
         commandLineProperties.put("project_cpp", CompilerProperties.buildWithGPP(projectDescriptor, conf));
-        commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros(projectDescriptor, conf));
+
     }
 
     public static boolean buildWithGPP(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {
@@ -168,33 +166,7 @@ public class CompilerProperties extends CommonProperties{
 
         return "";
     }
-    
-    public static String getXC32CompatibilityMacros(MakeConfigurationBook confBook, MakeConfiguration conf) {
-        String ret = "";
-        final Project project = confBook.getProject();
 
-        if (null != project) {
-            String doCompat = EmbeddedProjectSupport.getSynthesizedOption(project, 
-                                                                          conf,
-                                                                          "C32Global", 
-                                                                          "fake-xc32",
-                                                                          null); // NOI18N
-
-            if(doCompat != null  &&  doCompat.equalsIgnoreCase("true")) {
-                String compatVersion = EmbeddedProjectSupport.getSynthesizedOption(project, 
-                                                                                   conf, 
-                                                                                   "C32Global", 
-                                                                                   "fake-xc32-version",
-                                                                                   null); // NOI18N
-
-                if(null != compatVersion) {
-                    ret = "-D__XC -D__XC32 -D__XC32_VERSION__=" + compatVersion;
-                }
-            }
-        }
-        return ret;
-    }
-    
     //=======================================================================
 
     private String getFunctionLevelProfilingOptions(MakeConfigurationBook confBook)

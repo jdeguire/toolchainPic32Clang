@@ -50,7 +50,7 @@ public class LinkerProperties extends CommonProperties {
         commandLineProperties.put("DEBUG_MEMORY_RANGES", memRanges);
         commandLineProperties.put("CHIPKIT_DEBUG_SYMBOL", getChipKITDebugSymbol(cfg));
 
-        commandLineProperties.put("XC32_COMPAT_MACROS", CompilerProperties.getXC32CompatibilityMacros(projectDescriptor, conf));
+        commandLineProperties.put("MULTILIB_DIR", getMultilibDirectoryOpt(projectDescriptor, conf));
     }
 
     private static String getChipKITDebugSymbol(final LTUtilsConfiguration cfg) {
@@ -230,4 +230,123 @@ public class LinkerProperties extends CommonProperties {
         return "-lcppcfl ".substring(0);
 //   return "-lcdpf ".substring(0);
     } // getFunctionLevelProfilingOptions
+
+    /* Return the "-L<dir>" option string that will point to the particular multilib variant that we 
+     * need given our options and architecture.
+     *
+     * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'isa' and
+     * and 'dsp' apply only to MIPS devices.
+     */
+    private static String getMultilibDirectoryOpt(MakeConfigurationBook confBook, MakeConfiguration conf) {
+        String arch = getProjectOption(confBook, conf, "C32Global", "target.arch", "");
+
+        if(arch.equals("mipsel-unknown-elf"))
+            return "-L" + getMips32Multilib(confBook, conf) + getCommonMultilibs(confBook, conf);
+        else if(arch.equals("arm-none-eabi"))
+            return "-L" + getArmMultilib(confBook, conf) + getCommonMultilibs(confBook, conf);
+        else
+            return "";
+    }
+
+    /* 
+     */
+    private static String getMips32Multilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+        String libdir = "";
+        String opt;
+
+        /* Get CPU type.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.cpu", "mips32r2");
+        libdir += opt;
+
+        /* Get ISA.
+         */
+        opt = getProjectOption(confBook, conf, "C32-LD", "generate-16-bit-code", "false");
+
+        if(opt.equalsIgnoreCase("true")) {
+            libdir += "/mips16e";
+        }
+        else {
+            opt = getProjectOption(confBook, conf, "C32-LD", "generate-micro-compressed-code", "false");
+
+            if(opt.equalsIgnoreCase("true")) {
+                libdir += "/micromips";
+            }
+        }
+
+        /* Get DSP.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.dsp", "");
+
+        if(opt.equals("-mdspr2")) {
+            libdir += "/dspr2";
+        }
+
+        /* Get FPU.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.fpu", "");
+
+        if(opt.contains("hard")) {
+            libdir += "/fpu64";
+        }
+
+
+        return libdir;
+    }
+
+    private static String getArmMultilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+        String libdir = "";
+        String opt;
+
+        /* Get CPU type.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.cpu", "cortex-m0");
+        libdir += opt.replace('-', '_');
+
+        /* Get FPU.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.fpu", "");
+
+        if(opt.contains("vfp4-sp-d16")) {
+            libdir += "/vfp4_sp_d16";
+        }
+        else if(opt.contains("vfp4-dp-d16")) {
+            libdir += "/vfp4_dp_d16";
+        }
+        else if(opt.contains("vfp5-dp-d16")) {
+            libdir += "/vfp5_dp_d16";
+        }
+        else if(opt.contains("neon-vfpv4")) {
+            libdir += "/neon_vfpv4";
+        }
+
+        
+        return libdir;        
+    }
+
+    /* Output the multilib dirctories for options common to all architectures we support.
+     */
+    private static String getCommonMultilibs(MakeConfigurationBook confBook, MakeConfiguration conf) {
+        String libdir = "";
+        String opt;
+
+        /* Get fast math.
+         */
+        opt = getProjectOption(confBook, conf, "C32Global", "relaxed-math", "false");
+
+        if(opt.equalsIgnoreCase("true")) {
+            libdir += "/fastmath";
+        }        
+
+        /* Get optimization level.
+         */
+        opt = getProjectOption(confBook, conf, "C32-LD", "optimization-level", "");
+
+        if(!opt.isEmpty()) {
+            libdir += "/" + (opt.substring(1));
+        }
+
+
+        return libdir;
+    }    
 }

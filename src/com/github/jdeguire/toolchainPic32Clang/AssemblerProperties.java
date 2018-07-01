@@ -23,6 +23,5 @@ public class AssemblerProperties extends CommonProperties {
         commandLineProperties.put("PROCESSOR_NAME_FOR_ASSEMBLER", CompilerProperties.getProcessorNameForCompiler(conf.getDevice().getValue()));
         LinkerProperties.addDebuggerNameOptions(conf.getPlatformTool().getValue(), getPic(), commandLineProperties);
         commandLineProperties.put("project_cpp", CompilerProperties.buildWithGPP(projectDescriptor, conf));
-        commandLineProperties.put("XC32_COMPAT_MACROS", CompilerProperties.getXC32CompatibilityMacros(projectDescriptor, conf));
     }
 }

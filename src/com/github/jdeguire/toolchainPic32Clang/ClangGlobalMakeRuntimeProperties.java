@@ -25,41 +25,29 @@ public class ClangGlobalMakeRuntimeProperties {
     }
 
     public final String getChoppedArchiverLine(MakeConfigurationBook projectDescriptor, MakeConfiguration projectConf) {
-        String ret = "false";
         if (!Utilities.isWindows()) {
-            return ret;
+            return "false";
         }
-        final Project project = projectDescriptor.getProject();
-        if (null != project) {
-            ret = EmbeddedProjectSupport.getSynthesizedOption(project, projectConf, "C32-AR", "additional-options-chop-files", null); // NOI18N
-            if (ret == null) {
-                ret = "false";
-            }
-        }
-        return ret;
+
+        return CommonProperties.getProjectOption(projectDescriptor, projectConf, "C32-AR", 
+                                                 "additional-options-chop-files", "false");
     }
     
     public final String getUseLTO(MakeConfigurationBook projectDescriptor, MakeConfiguration projectConf) {
-        String ret = "false";
-        final Project project = projectDescriptor.getProject();
-        if (null != project) {
-            ret = EmbeddedProjectSupport.getSynthesizedOption(project, projectConf, "C32Global", "wpo-lto", null); // NOI18N
-            if (ret == null) {
-                ret = "false";
-            }
-            else if(ret.equalsIgnoreCase("true")) {
-                String doThinLto = EmbeddedProjectSupport.getSynthesizedOption(project, 
-                                                                               projectConf,
-                                                                               "C32Global", 
-                                                                               "thin-lto.enable",
-                                                                               null); // NOI18N
+        String ret = CommonProperties.getProjectOption(projectDescriptor, projectConf, "C32Global", 
+                                                       "wpo-lto", "false");
 
-                if(doThinLto != null  &&  doThinLto.equalsIgnoreCase("true")) {
+        if(ret.equalsIgnoreCase("true")) {
+                String doThinLto = CommonProperties.getProjectOption(projectDescriptor, projectConf,
+                                                                     "C32Global", "lto.enable-thin",
+                                                                     "false");
+
+                if(doThinLto.equalsIgnoreCase("true")) {
                     // ThinLTO is handled like a normal build, so we want this to be false.
                     ret = "false";
                 }
-            }
         }
+
         return ret;
     }
 

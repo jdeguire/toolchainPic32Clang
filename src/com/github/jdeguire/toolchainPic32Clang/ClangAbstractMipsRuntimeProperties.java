@@ -67,6 +67,18 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
         setArchSpecificBehavior(desc, conf);
     }
 
+    /* Get the current value of the given option using the MakeConfiguration supplied to this class.
+     * The optionBookId is the name given to the mp:configurationObject in the Clang.languageToolchain.xml
+     * file, such as "C32Global", "C32", "C32CPP", etc.  The optionId is the name of the option itself.
+     * This will return the given default value if the option could not be read for some reason.
+     *
+     * This just calls the implementation in CommonProperties.java and is here for convenience.
+     */
+    public static String getProjectOption(MakeConfigurationBook confBook, MakeConfiguration conf, 
+                                             String optionBookId, String optionId, String defaultVal) {
+        return CommonProperties.getProjectOption(confBook, conf, optionBookId, optionId, defaultVal);
+    }
+    
     /* Get the device family based on the device's name.
      */
     private TargetFamily getTargetFamily(String targetName) {
@@ -285,77 +297,70 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
         boolean valueMips16 = false;
         boolean valueMicromips = false;
         
-        Project project = desc.getProject();
-        if(null != project)
-        {
-            String arch = EmbeddedProjectSupport.getSynthesizedOption(project, conf, "C32Global", 
-                                                                        "target.arch", null); // NOI18N
+        String arch = getProjectOption(desc, conf, "C32Global", "target.arch", "");
 
-            if(null != arch) {
-                if(arch.equals("mipsel-unknown-elf")) {
-                    isMips32 = true;
-                    isArm = false;
+        if(!arch.isEmpty()) {
+            if(arch.equals("mipsel-unknown-elf")) {
+                isMips32 = true;
+                isArm = false;
 
-                    String mipsIsa = EmbeddedProjectSupport.getSynthesizedOption(project, conf,
-                                                                                 "C32Global", 
-                                                                                 "target.mips32.isa",
-                                                                                 null); // NOI18N
+                String mipsIsa = getProjectOption(desc, conf, "C32Global", "target.mips32.isa",
+                                                  "mips32+mips16e");
 
-                    if(null != mipsIsa) {
-                        if(mipsIsa.equals("mips32+mips16e")) {
-                            grayMicromips = true;
-                            setMicromips = true;
-                            valueMicromips = false;
-                        }
-                        else if(mipsIsa.equals("mips32+micromips")) {
-                            grayMips16 = true;
-                            setMips16 = true;
-                            valueMips16 = false;
-                        }
-                        else if(mipsIsa.equals("micromips")) {
-                            // Here microMIPS must be forced on because only it is supported.
-                            grayMips16 = true;
-                            grayMicromips = true;
-                            setMips16 = true;
-                            setMicromips = true;
-                            valueMips16 = false;
-                            valueMicromips = true;
-                        }
-                    }
+                if(mipsIsa.equals("mips32+mips16e")) {
+                    grayMicromips = true;
+                    setMicromips = true;
+                    valueMicromips = false;
                 }
-                else {
-                    isMips32 = false;
-                    isArm = true;
-                    // No need to gray options because they'll be suppressed by ${target.arch.isARM}.
+                else if(mipsIsa.equals("mips32+micromips")) {
+                    grayMips16 = true;
+                    setMips16 = true;
+                    valueMips16 = false;
+                }
+                else if(mipsIsa.equals("micromips")) {
+                    // Here microMIPS must be forced on because only it is supported.
+                    grayMips16 = true;
+                    grayMicromips = true;
+                    setMips16 = true;
+                    setMicromips = true;
+                    valueMips16 = false;
+                    valueMicromips = true;
                 }
             }
+            else {
+                isMips32 = false;
+                isArm = true;
+                // No need to gray options because they'll be suppressed by ${target.arch.isARM}.
+            }
+        }
 
-            // Notice that these are not the default arch settings like in setTargetDefaultProperties().
-            setProperty("target.arch.isARM", Boolean.toString(isArm));
-            setProperty("target.arch.isMIPS32", Boolean.toString(isMips32));
+        // Notice that these are not the default arch settings like in setTargetDefaultProperties().
+        setProperty("target.arch.isARM", Boolean.toString(isArm));
+        setProperty("target.arch.isMIPS32", Boolean.toString(isMips32));
 
-            setProperty("mips16.gray", Boolean.toString(grayMips16));
-            setProperty("micromips.gray", Boolean.toString(grayMicromips));
+        setProperty("mips16.gray", Boolean.toString(grayMips16));
+        setProperty("micromips.gray", Boolean.toString(grayMicromips));
+
+        try {
+            Project project = desc.getProject();
             
-            try {
-                if(setMips16) {
-                    conf.setGenericOption(project, "C32-AS", "generate-16-bit-code", Boolean.toString(valueMips16));
-                    conf.setGenericOption(project, "C32", "generate-16-bit-code", Boolean.toString(valueMips16));
-                    conf.setGenericOption(project, "C32CPP", "generate-16-bit-code", Boolean.toString(valueMips16));
-                    conf.setGenericOption(project, "C32-LD", "generate-16-bit-code", Boolean.toString(valueMips16));
-                }
+            if(setMips16) {
+                conf.setGenericOption(project, "C32-AS", "generate-16-bit-code", Boolean.toString(valueMips16));
+                conf.setGenericOption(project, "C32", "generate-16-bit-code", Boolean.toString(valueMips16));
+                conf.setGenericOption(project, "C32CPP", "generate-16-bit-code", Boolean.toString(valueMips16));
+                conf.setGenericOption(project, "C32-LD", "generate-16-bit-code", Boolean.toString(valueMips16));
+            }
 
-                if(setMicromips) {
-                    conf.setGenericOption(project, "C32-AS", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                    conf.setGenericOption(project, "C32", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                    conf.setGenericOption(project, "C32CPP", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                    conf.setGenericOption(project, "C32-LD", "generate-micro-compressed-code", Boolean.toString(valueMicromips));            
-                }
+            if(setMicromips) {
+                conf.setGenericOption(project, "C32-AS", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
+                conf.setGenericOption(project, "C32", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
+                conf.setGenericOption(project, "C32CPP", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
+                conf.setGenericOption(project, "C32-LD", "generate-micro-compressed-code", Boolean.toString(valueMicromips));            
             }
-            catch(Exception e)
-            {
-                // do nothing for now
-            }
+        }
+        catch(Exception e)
+        {
+            // do nothing for now
         }
     }
 }
