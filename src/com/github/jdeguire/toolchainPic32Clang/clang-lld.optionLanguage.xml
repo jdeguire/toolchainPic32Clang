@@ -52,6 +52,7 @@
         <opt:booleanOption opt:id="generate-micro-compressed-code" opt:groupid="pre" opt:name="Link micro MIPS compressed startup code and libraries" opt:trueemission="" opt:grayif="${micromips.gray}" opt:suppressif="${target.arch.isARM}">
             <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
         </opt:booleanOption>
+        <opt:booleanOption opt:id="generate-thumb-code" opt:groupid="pre" opt:name="Link Thumb startup code and libraries" opt:default="false" opt:trueemission="" opt:grayif="${thumb.gray}" opt:suppressif="${target.arch.isMIPS32}"/>
         <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
     </opt:optionCategory>
 
@@ -204,6 +205,7 @@
     <opt:enablePattern opt:idref="exclude-standard-libraries" opt:expr="-nostdlib"/>
     <opt:enablePattern opt:idref="generate-16-bit-code" opt:expr="-mips16"/>
     <opt:enablePattern opt:idref="generate-micro-compressed-code" opt:expr="-mmicromips"/>
+    <opt:enablePattern opt:idref="generate-thumb-code" opt:expr="-mthumb"/>
     <opt:enablePattern opt:idref="exclude-floating-point-library" opt:expr="-mno-float"/>
     <opt:submatchPattern opt:idref="ld-extra" opt:expr="--fill=(.+)">
         <opt:submatchPattern opt:idref="fill-flash-const" opt:expr="(.+[0-9].+).*"/>

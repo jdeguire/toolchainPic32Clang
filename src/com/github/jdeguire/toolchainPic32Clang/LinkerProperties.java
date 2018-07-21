@@ -234,23 +234,26 @@ public class LinkerProperties extends CommonProperties {
     /* Return the "-L<dir>" option string that will point to the particular multilib variant that we 
      * need given our options and architecture.
      *
-     * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'isa' and
-     * and 'dsp' apply only to MIPS devices.
+     * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'dsp'
+     * applies only to MIPS devices.
      */
-    private static String getMultilibDirectoryOpt(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getMultilibDirectoryOpt(MakeConfigurationBook confBook, MakeConfiguration conf) {
         String arch = getProjectOption(confBook, conf, "C32Global", "target.arch", "");
+        String toolchainDir = getToolchainBinDirectory();
+        String multilibOpt = "-L" + toolchainDir;
 
         if(arch.equals("mipsel-unknown-elf"))
-            return "-L" + getMips32Multilib(confBook, conf) + getCommonMultilibs(confBook, conf);
+            multilibOpt += getMips32Multilib(confBook, conf);
         else if(arch.equals("arm-none-eabi"))
-            return "-L" + getArmMultilib(confBook, conf) + getCommonMultilibs(confBook, conf);
+            multilibOpt += getArmMultilib(confBook, conf);
         else
             return "";
+
+        multilibOpt += getCommonMultilibs(confBook, conf);
+        return multilibOpt;
     }
 
-    /* 
-     */
-    private static String getMips32Multilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getMips32Multilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
         String libdir = "";
         String opt;
 
@@ -294,14 +297,22 @@ public class LinkerProperties extends CommonProperties {
         return libdir;
     }
 
-    private static String getArmMultilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getArmMultilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
         String libdir = "";
         String opt;
 
         /* Get CPU type.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.cpu", "cortex-m0");
+        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.cpu", "cortex-m0plus");
         libdir += opt.replace('-', '_');
+
+        /* Get ISA.
+         */
+        opt = getProjectOption(confBook, conf, "C32-LD", "generate-thumb-code", "false");
+
+        if(opt.equalsIgnoreCase("true")) {
+            libdir += "/thumb";
+        }
 
         /* Get FPU.
          */
@@ -326,7 +337,7 @@ public class LinkerProperties extends CommonProperties {
 
     /* Output the multilib dirctories for options common to all architectures we support.
      */
-    private static String getCommonMultilibs(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getCommonMultilibs(MakeConfigurationBook confBook, MakeConfiguration conf) {
         String libdir = "";
         String opt;
 

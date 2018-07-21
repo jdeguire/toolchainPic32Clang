@@ -20,6 +20,8 @@ import org.netbeans.api.project.Project;
  */
 public class CommonProperties extends MPLABXSpecificProperties {
 
+    private String toolchainBinDir;
+    
     public CommonProperties(MakeConfigurationBook projectDescriptor,
             MakeConfiguration conf,
             Properties commandLineProperties) {
@@ -30,9 +32,10 @@ public class CommonProperties extends MPLABXSpecificProperties {
         commandLineProperties.put("LEGACY_LIBC", emission);
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros(projectDescriptor, conf));
-        commandLineProperties.put("SYSROOT_DIR", "${MP_CC_DIR}");
-        
-// TODO:  Do we need to put the --sysroot (or -isysroot for headers only) and -I options here?
+//        commandLineProperties.put("SYSROOT_DIR", "${MP_CC_DIR}");
+// TODO:  Do we even need sysroot?
+
+        toolchainBinDir = commandLineProperties.getProperty("MP_CC_DIR", "");
     }
 
     /* Get the current value of the given option using the MakeConfiguration supplied to this class.
@@ -56,6 +59,11 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return ret;
     }
     
+    public String getToolchainBinDirectory()
+    {
+        return toolchainBinDir;
+    }
+
     public static String getLibcEmission(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {
         return LTUtils.getLegacyLibcEmissionValue(projectDescriptor, conf, "1.41", "C32Global", "legacy-libc");
     }

@@ -124,6 +124,8 @@
                 <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="${target.arch.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.mips32.dsp" opt:text="${target.mips32.dsp.default}"/>
                 <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="${target.arch.isARM.default}"/>
+                <opt:enumOptionAssigner opt:idref="target.arm.isa" opt:text="${target.arm.isa.default}"/>
+                <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="${target.arm.isARM.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.arm.cpu" opt:text="${target.arm.cpu.default}"/>
                 <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="${target.arch.isMIPS32.default}"/>
                 <opt:enumOptionAssigner opt:idref="target.arm.fpu" opt:text="${target.arm.fpu.default}"/>
@@ -134,6 +136,7 @@
                 <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="false"/>
+                <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="true"/>
             </opt:selection>
@@ -142,6 +145,7 @@
                 <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="true"/>
                 <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="true"/>
+                <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="false"/>
                 <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="false"/>
             </opt:selection>
@@ -168,9 +172,15 @@
             <opt:selection opt:text="" opt:name="Unsupported"/>
             <opt:selection opt:text="-mdspr2" opt:name="Supported"/>
         </opt:enumOption>
+        <opt:enumOption opt:id="target.arm.isa" opt:groupid="target" opt:name="ARM Instruction Set" opt:textdefault="${target.arm.isa.default}" opt:neveremits="true">
+            <opt:selection opt:text="${target.arm.isa.default}" opt:name="Auto-detect"/>
+            <opt:selection opt:text="thumb" opt:name="Thumb Only"/>
+            <opt:selection opt:text="arm+thumb" opt:name="ARM and Thumb"/>
+        </opt:enumOption>
         <opt:enumOption opt:id="target.arm.cpu" opt:groupid="target" opt:name="ARM CPU Type" opt:textdefault="${target.arm.cpu.default}" opt:emissionprefix="-mcpu=" opt:emitswhendefault="true">
             <opt:selection opt:text="${target.arm.cpu.default}" opt:name="Auto-detect"/>
-            <opt:selection opt:text="cortex-m0" opt:name="Cortex M0"/>
+            <opt:selection opt:text="cortex-m0plus" opt:name="Cortex M0+"/>
+            <opt:selection opt:text="cortex-m23" opt:name="Cortex M23"/>
             <opt:selection opt:text="cortex-m4" opt:name="Cortex M4"/>
             <opt:selection opt:text="cortex-m7" opt:name="Cortex M7"/>
             <opt:selection opt:text="cortex-a5" opt:name="Cortex A5"/>
