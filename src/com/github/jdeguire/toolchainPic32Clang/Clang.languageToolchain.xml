@@ -6,6 +6,8 @@
     <mp:dynamicCapabilitiesProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangDynamicCapabilitiesProvider"/>
     <mp:helpFileProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangHelpFileProvider"/>
 
+    <!-- The mp:id fields here match the XML element nodes in the MPLAB X project configuration file.
+         This may not be a coincidence, so we'll keep these as C32blahblahblah. -->
     <mp:configurationObject mp:id="C32Global" opt:src="Clanglanguagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AS" opt:src="clang-as.optionLanguage.xml" mp:idref="xc32-as" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangASRuntimeProperties"/>
     <mp:configurationObject mp:id="C32" opt:src="clang-c.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCRuntimeProperties"/>
@@ -104,6 +106,7 @@
             <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${MULTILIB_DIR_OPT}"/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
@@ -161,6 +164,7 @@
             <mp:textEmitter mp:ifnot="${SIMULATOR} || ${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${MULTILIB_DIR_OPT}"/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
@@ -348,6 +352,7 @@
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${CHIPKIT_DEBUG_SYMBOL}${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto.link" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${MULTILIB_DIR_OPT}"/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
@@ -386,6 +391,7 @@
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto.link" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="post" mp:separator="," mp:prefix=","/>
+            <mp:textEmitter mp:text="${MULTILIB_DIR_OPT}"/>
             <mp:textEmitter mp:text="${IDE_DASHBOARD}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
             <mp:redirectStop/>

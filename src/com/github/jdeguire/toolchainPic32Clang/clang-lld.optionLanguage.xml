@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="Clang-ld" opt:name="MPLAB Linker for 32-bit Devices">
+<!-- NOTE:  We'll keep orginal opt:id name here for compatibility with Microchip tools.  -->
+<!-- TODO:  Do these opd:id names even matter? -->
+<opt:optionLanguage xmlns:opt="http://crownking/opt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd" opt:id="xc32-ld" opt:name="LLVM Linker">
     <opt:optionCategory opt:id="general" opt:name="General">
         <opt:stringOption opt:id="heap-size" opt:groupid="post" opt:name="Heap size (bytes)" opt:emissionprefix="--defsym=_min_heap_size="/>
         <opt:stringOption opt:id="stack-size" opt:groupid="post" opt:name="Minimum stack size (bytes)" opt:emissionprefix="--defsym=_min_stack_size="/>
@@ -44,7 +46,9 @@
             </opt:xhtml>
         </opt:stringListOption>
         <opt:booleanOption opt:id="exclude-standard-libraries" opt:groupid="pre" opt:name="Exclude Standard Libraries" opt:trueemission="-nostdlib"/>
+        <opt:booleanOption opt:id="exclude-cxx-libraries" opt:groupid="pre" opt:name="Exclude C++ Standard Libraries" opt:booldefault="false" opt:trueemission="-nostdlib++" opt:falseemission="-stdlib=libc++"/>
         <opt:booleanOption opt:id="no-startup-files" opt:groupid="pre" opt:name="Do not link crt0 startup code" opt:trueemission="-nostartfiles"/>
+        <!-- TODO:  We may not be able to remove startup code -->
         <opt:booleanOption opt:id="no-device-startup-code" opt:groupid="pre" opt:name="Do not link device startup code" opt:trueemission="-mno-device-startup-code" opt:unsuppressif="${target.arch.isARM}">
             <opt:version opt:fromversion="2.00"/>
         </opt:booleanOption>
@@ -53,7 +57,10 @@
             <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
         </opt:booleanOption>
         <opt:booleanOption opt:id="generate-thumb-code" opt:groupid="pre" opt:name="Link Thumb startup code and libraries" opt:default="false" opt:trueemission="" opt:grayif="${thumb.gray}" opt:suppressif="${target.arch.isMIPS32}"/>
-        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="pre" opt:name="Exclude floating-point library" opt:trueemission="-mno-float" opt:suppressif="${target.arch.isARM}"/>
+        <opt:booleanOption opt:id="exclude-floating-point-library" opt:groupid="post" opt:name="Exclude floating-point library" opt:booldefault="false" opt:trueemission="" opt:falseemission="-lm"/>
+        <opt:booleanOption opt:id="include-cxx-experimental" opt:groupid="post" opt:name="Link experimental C++ features library" opt:booldefault="false" opt:trueemission="-lc++experimental">
+            <opt:xhtml>Libc++ puts experimental C++ features into a separate library.  Enable this option if the project uses &lt;experimental/...&gt; headers. </opt:xhtml>
+        </opt:booleanOption>
     </opt:optionCategory>
 
     <!-- Do fill option a la picc18 so we gain the GUI -->
@@ -203,10 +210,13 @@
     <opt:submatchPattern opt:idref="extra-lib-directories" opt:expr="-L(.+)"/>
     <opt:submatchPattern opt:idref="optimization-level" opt:expr="(-O[123s])"/>
     <opt:enablePattern opt:idref="exclude-standard-libraries" opt:expr="-nostdlib"/>
+    <opt:enablePattern opt:idref="exclude-cxx-libraries" opt:expr="-nostdlib++"/>
+    <opt:disablePattern opt:idref="exclude-cxx-libraries" opt:expr="-stdlib=libc++"/>
     <opt:enablePattern opt:idref="generate-16-bit-code" opt:expr="-mips16"/>
     <opt:enablePattern opt:idref="generate-micro-compressed-code" opt:expr="-mmicromips"/>
     <opt:enablePattern opt:idref="generate-thumb-code" opt:expr="-mthumb"/>
-    <opt:enablePattern opt:idref="exclude-floating-point-library" opt:expr="-mno-float"/>
+    <opt:disablePattern opt:idref="exclude-floating-point-library" opt:expr="-lm"/>
+    <opt:enablePattern opt:idref="include-cxx-experimental" opt:expr="-lc++experimental"/>
     <opt:submatchPattern opt:idref="ld-extra" opt:expr="--fill=(.+)">
         <opt:submatchPattern opt:idref="fill-flash-const" opt:expr="(.+[0-9].+).*"/>
         <opt:submatchPattern opt:idref="fill-flash-increment" opt:expr="-="/>

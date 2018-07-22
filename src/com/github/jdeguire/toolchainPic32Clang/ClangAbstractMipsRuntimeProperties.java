@@ -18,7 +18,7 @@ import org.netbeans.api.project.Project;
  * @author Marian Golea <marian.golea@microchip.com>
  * Modified by jdeguire for toolchainPic32Clang.
  */ 
-// TODO: Rename this class because it has ARM stuff, too.
+// TODO: Rename this class because it has ARM stuff, too (Mips->Target ?).
 public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRuntimePropertiesAccessor {
 
     private enum TargetFamily {

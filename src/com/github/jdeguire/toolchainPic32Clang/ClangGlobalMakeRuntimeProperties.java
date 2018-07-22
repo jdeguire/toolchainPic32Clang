@@ -65,7 +65,7 @@ public class ClangGlobalMakeRuntimeProperties {
                 if (props != null) {
                     List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
                     if (emissionPairs != null) {
-                        for (Pair p : emissionPairs) {
+                        for (Pair<String, String> p : emissionPairs) {
                             if (p.first.equals("additional-options-use-response-files") && p.second.equals("true")) {
                                 res = true;
                                 break;

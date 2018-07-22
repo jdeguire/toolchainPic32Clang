@@ -50,7 +50,7 @@ public class LinkerProperties extends CommonProperties {
         commandLineProperties.put("DEBUG_MEMORY_RANGES", memRanges);
         commandLineProperties.put("CHIPKIT_DEBUG_SYMBOL", getChipKITDebugSymbol(cfg));
 
-        commandLineProperties.put("MULTILIB_DIR", getMultilibDirectoryOpt(projectDescriptor, conf));
+        commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt(projectDescriptor, conf));
     }
 
     private static String getChipKITDebugSymbol(final LTUtilsConfiguration cfg) {
@@ -239,8 +239,7 @@ public class LinkerProperties extends CommonProperties {
      */
     private String getMultilibDirectoryOpt(MakeConfigurationBook confBook, MakeConfiguration conf) {
         String arch = getProjectOption(confBook, conf, "C32Global", "target.arch", "");
-        String toolchainDir = getToolchainBinDirectory();
-        String multilibOpt = "-L" + toolchainDir;
+        String multilibOpt = "-L" + getToolchainBasePath(conf);
 
         if(arch.equals("mipsel-unknown-elf"))
             multilibOpt += getMips32Multilib(confBook, conf);

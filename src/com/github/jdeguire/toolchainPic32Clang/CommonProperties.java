@@ -10,6 +10,11 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import com.microchip.mplab.nbide.toolchainCommon.properties.MPLABXSpecificProperties;
+import java.io.File;
+// TODO: Remove commented-out stuff in this class once we know stuff actually works.
+//import java.io.File;
+//import java.nio.file.Paths;
+//import java.nio.file.Path;
 import java.util.Properties;
 import org.netbeans.api.project.Project;
 
@@ -20,7 +25,7 @@ import org.netbeans.api.project.Project;
  */
 public class CommonProperties extends MPLABXSpecificProperties {
 
-    private String toolchainBinDir;
+//    private String toolchainPath;
     
     public CommonProperties(MakeConfigurationBook projectDescriptor,
             MakeConfiguration conf,
@@ -35,7 +40,8 @@ public class CommonProperties extends MPLABXSpecificProperties {
 //        commandLineProperties.put("SYSROOT_DIR", "${MP_CC_DIR}");
 // TODO:  Do we even need sysroot?
 
-        toolchainBinDir = commandLineProperties.getProperty("MP_CC_DIR", "");
+//        toolchainPath = findToolchainPath(commandLineProperties);
+//        toolchainPath = findToolchainPath(conf);
     }
 
     /* Get the current value of the given option using the MakeConfiguration supplied to this class.
@@ -59,9 +65,16 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return ret;
     }
     
-    public String getToolchainBinDirectory()
-    {
-        return toolchainBinDir;
+    /* Return the base install path for the current toolchain with the file separator always at the
+     * end (so "/foo/bar/" instead of "/foo/bar").
+     */
+    public String getToolchainBasePath(MakeConfiguration conf) {
+        String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
+
+        if(File.separatorChar != toolchainPath.charAt(toolchainPath.length() - 1))
+            toolchainPath += File.separator;
+
+        return toolchainPath;
     }
 
     public static String getLibcEmission(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {
@@ -83,4 +96,37 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         return ret;
     }
+    
+/*
+    private String findToolchainPath(Properties commandLineProperties) {
+        String toolchainDir;
+
+        try {
+            Path ccPath = Paths.get(commandLineProperties.getProperty("MP_CC_DIR", ""));
+            toolchainDir = ccPath.getParent().getParent().toString();
+    
+            // We want the path to end in the separator (so "/foo/bar/" instead of "/foo/bar" because
+            // calling methods will probably build upon this.
+            if(File.separatorChar != toolchainDir.charAt(toolchainDir.length() - 1))
+                toolchainDir += File.separator;
+        }
+        catch(Exception e) {
+            toolchainDir = "";
+        }
+        
+        return toolchainDir;
+    }
+*/
+/*
+    private String findToolchainPath(MakeConfiguration conf) {
+        String toolchainDir = conf.getLanguageToolchain().getDir().getValue();
+
+        // We want the path to end in the separator (so "/foo/bar/" instead of "/foo/bar" because
+        // calling methods will probably build upon this.
+        if(File.separatorChar != toolchainDir.charAt(toolchainDir.length() - 1))
+            toolchainDir += File.separator;
+
+        return toolchainDir;
+    }
+*/
 }

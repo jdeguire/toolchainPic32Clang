@@ -4,6 +4,7 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
+import com.microchip.crownking.mplabinfo.FamilyDefinitions;
 import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
@@ -78,9 +79,10 @@ public class ClangLanguageToolchain {
         return supported ? "-mafrlcsj" : "";
     }
 
+    // TODO:  Can this go away (or be replaced by a check for target.arch.isARM)?
     public static boolean isPIC32C(final xPIC pic) {
         LTUtils.preventNullObjects(pic);
-        boolean isPIC32C = pic.getFamily().ARM32BIT == pic.getFamily();
+        boolean isPIC32C = FamilyDefinitions.Family.ARM32BIT == pic.getFamily();
         return isPIC32C;
     }
 }
