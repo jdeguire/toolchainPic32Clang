@@ -13,7 +13,7 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com>
  */
-public class ClangCPPUserIncludeModifier extends UserIncludeModifier {
+public final class ClangCPPUserIncludeModifier extends UserIncludeModifier {
 
     private final UserIncludeModifier uip;
 
@@ -23,7 +23,7 @@ public class ClangCPPUserIncludeModifier extends UserIncludeModifier {
     }
 
     @Override
-    public List<String> getIncludes(Project project, ProjectConfiguration projectConf, String itemPath) {
+    public List<String> getIncludes(final Project project, final ProjectConfiguration projectConf, final String itemPath) {
         List<String> includes = super.getIncludes(project, projectConf, itemPath);
         includes.addAll(uip.getIncludes(project, projectConf, itemPath));
         return includes;

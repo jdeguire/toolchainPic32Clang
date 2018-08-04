@@ -13,9 +13,9 @@ import com.microchip.mplab.nbide.toolchainCommon.predicate.IPredicate.ToolchainD
  * Modified by jdeguire for toolchainPic32Clang.
  */ 
 // TOOD:  Can we just remove this?
-public class ClangLicensingInfoProvider extends LicenseInfoRetriever {
+public final class ClangLicensingInfoProvider extends LicenseInfoRetriever {
 
-    public ClangLicensingInfoProvider(String pathToBin, String toolchainID, String version) {
+    public ClangLicensingInfoProvider(final String pathToBin, final String toolchainID, final String version) {
         super(pathToBin, "Clang", version, new CompilerIsEligibleForRoamingPredicate(new ToolchainData("Clang", pathToBin, "1.10")));
     }
 }

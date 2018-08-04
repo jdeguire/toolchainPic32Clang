@@ -1,5 +1,7 @@
 package com.github.jdeguire.toolchainPic32Clang;
 
+// TODO:  This file was removed in SDK 5.00 for toolchainXC32.  Can we remove it, too?
+
 import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.spi.IncludeProvider;
 import java.util.ArrayList;

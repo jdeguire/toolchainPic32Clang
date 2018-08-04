@@ -12,32 +12,34 @@ import org.openide.util.Utilities;
 
 /**
  * Dynamic capabilities provider for Clang compiler tool plugin.
+ *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class ClangDynamicCapabilitiesProvider implements DynamicCapabilities{
+public final class ClangDynamicCapabilitiesProvider implements DynamicCapabilities {
+
+	private final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
 
     @Override
-    public Pair<Boolean, String> hasCapability(Project project, ProjectConfiguration projectConf, String capability) {
-        Pair<Boolean, String> res = new Pair<Boolean, String>(false, "");    // for the future assume false is default
-        if (capability.equalsIgnoreCase("memoryfile")){
-            MakeConfiguration conf = LTUtils.getMakeConfiguration(projectConf);
-            res.first = ClangLanguageToolchain.supportsMemorySummary(conf);
-            if (res.first){
+   public Pair<Boolean, String> hasCapability(final Project project, final ProjectConfiguration projectConf, final String capability) {
+        Pair<Boolean, String> res = new Pair<>(false, "");    // for the future assume false is default
+        MakeConfiguration conf = calc.getMakeConfiguration(projectConf);
+        if (capability.equalsIgnoreCase("memoryfile")) {
+            res.first = calc.supportsMemorySummary(conf);
+            if (res.first) {
                 res.second = LTUtils.MEMORY_FILE_ADDRESS;
             }
         } else if (capability.equalsIgnoreCase(DefaultCompilerMacrosProvider.SKIP_LICENSE_CHECK_CAPABILITY)) {
-            MakeConfiguration conf = LTUtils.getMakeConfiguration(projectConf);
-            res.first = ClangLanguageToolchain.supportsSkipLicenseCheck(conf);
+            res.first = calc.supportsSkipLicenseCheck(conf);
             if (res.first) {
                 res.second = " -mskip-license-check";
             }
         } else if (capability.equalsIgnoreCase("parallel")) {
             res.first = true;
-        } else if (capability.equalsIgnoreCase("responsefiles")){
+        } else if (capability.equalsIgnoreCase("responsefiles")) {
             res.first = Utilities.isWindows();
-        } else if (capability.equalsIgnoreCase(XMLBaseMakefileWriter.BUILD_COMPARISON)){
-            MakeConfiguration conf = LTUtils.getMakeConfiguration(projectConf);
-            res.second = ClangLanguageToolchain.getBuildComparisonCommandLineArgument(conf);
+        } else if (capability.equalsIgnoreCase(XMLBaseMakefileWriter.BUILD_COMPARISON)) {
+            boolean supported = calc.supportsBuildComparison(conf);
+            res.second = supported ? "-mafrlcsj" : "";
             res.first = res.second != null && !res.second.isEmpty();
         }
         return res;

@@ -6,7 +6,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.Additio
  *
  * @author c14014
  */
-public class ClangLLDAdditionalOptionsModifier extends AdditionalOptionsModifier {
+public final class ClangLLDAdditionalOptionsModifier extends AdditionalOptionsModifier {
     
     public static final String OPT_ID = "C32-LD";
 

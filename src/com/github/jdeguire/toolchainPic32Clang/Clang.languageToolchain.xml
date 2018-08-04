@@ -5,6 +5,8 @@
     <mp:hasCapability mp:id="library" mp:bool="true"/>
     <mp:dynamicCapabilitiesProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangDynamicCapabilitiesProvider"/>
     <mp:helpFileProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangHelpFileProvider"/>
+    <mp:licensingInfoProvider mp:class="com.microchip.mplab.nbide.toolchainPic32Clang.ClangLicensingInfoProvider"/>
+	<!-- TODO:  Do I actually need a licensing provider? -->
 
     <!-- The mp:id fields here match the XML element nodes in the MPLAB X project configuration file.
          This may not be a coincidence, so we'll keep these as C32blahblahblah. -->
@@ -343,7 +345,7 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${LEGACY_LIBC} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="linker" mp:separator=" "/>
-            <mp:textEmitter mp:text=" $(COMPARISON_BUILD) " mp:macroDetectionExclude="true"/>        
+            <mp:textEmitter mp:text=" $(COMPARISON_BUILD) " mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:if="${HAS_DEBUG_RANGES}" mp:onlydebug="true" mp:text=" ${DEBUG_MEMORY_RANGES} "/>
             <mp:textEmitter mp:text=" -Wl,--defsym=__MPLAB_BUILD=1"/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_POST)"/>
@@ -439,15 +441,13 @@
     <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*Clang*/bin"/>
     <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*Clang*/v*/bin"/>
 
-    <mp:folderResidenceTester mp:class="com.github.jdeguire.toolchainPic32Clang.ClangFolderResidenceTester"/>
+	<!-- TODO:  Figure out if we really need this residence tester.
+	<mp:folderResidenceTester mp:class="com.github.jdeguire.toolchainPic32Clang.ClangFolderResidenceTester"/>
+	-->
 
-    <!-- Can we just remove this licensing thing? -->
-    <mp:licensingInfoProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLicensingInfoProvider"/>
-
-    <!-- Change these file names. -->
+    <!-- TODO:  Change these file names. -->
     <mp:ccCompiler mp:file="Clang-g++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
-        <mp:systemIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPSystemDefineProvider"/>
         <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPUserIncludeProvider"/>
         <mp:userIncludeModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPUserIncludeModifier"/>
@@ -458,7 +458,6 @@
     </mp:ccCompiler>
     <mp:cCompiler mp:file="Clang-gcc" mp:name="MPLAB C Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
-        <mp:systemIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCSystemDefineProvider"/>
         <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeProvider"/>
         <mp:userIncludeModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeModifier"/>
@@ -469,19 +468,18 @@
     </mp:cCompiler>
     <mp:assembler mp:file="Clang-as" mp:name="MPLAB Assembler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
-        <mp:systemIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsProvider"/>
-        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsModifier"/>        
+        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsModifier"/>
     </mp:assembler>
     <mp:linker mp:file="Clang-ld" mp:name="MPLAB Linker for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsProvider"/>
-        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsModifier"/>        
+        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsModifier"/>
     </mp:linker>
     <mp:archiver mp:file="Clang-ar" mp:name="MPLAB Archiver for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsProvider"/>
-        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsModifier"/>        
+        <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsModifier"/>
     </mp:archiver>
 
 <!--
@@ -520,1064 +518,1620 @@
       ******************************************************************************
       ******************************************************************************
     -->
-    <!-- TODO: Can we just enable this line to look in MPLAB? -->
     <!--<mp:deviceSupport mp:lookInMplab="true" mp:mplabName="mc"/>-->
+	<!-- TOOD:  Do we need to update these version numbers? -->
     <mp:deviceSupport>
-<!--    <mp:family mp:family="arm32bit">
-        <mp:device mp:name="PIC32CZ2038CA70144">
-            <opt:version opt:fromversion="1.95"/>
-        </mp:device>
-    </mp:family>-->
-    <mp:family mp:family="32x">
-    <mp:device mp:name="MEC1404">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
-      <opt:version opt:fromversion="1.40"/>
-    </mp:device>
-    <mp:device mp:name="MEC1406">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
-      <opt:version opt:fromversion="1.40"/>
-    </mp:device>
-    <mp:device mp:name="MEC1408">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
-      <opt:version opt:fromversion="1.40"/>
-    </mp:device>
-    <mp:device mp:name="MEC1414">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="MEC1416">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="MEC1418">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
-      <opt:version opt:fromversion="1.40"/>
-    </mp:device>
-    <mp:device mp:name="MEC1424">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="MEC1426">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="MEC1428">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="MGC3140">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="MGC3430">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="MGC3431">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="MGC3450">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="MGC3451">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32M4KCORE">
-      <opt:version opt:toversion="1.30"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512GPD064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512GPD100">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512GPE064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512GPE100">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512MCF064">
-      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
-		<opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK0512MCF100">
-      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
-		<opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024GPD064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024GPD100">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024GPE064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024GPE100">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024MCF064">
-      <mp:betaVersion opt:fromversion="1.43" opt:toversion="1.43"/>
-		<opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MK1024MCF100">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0016GPL020">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0016GPL028">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0016GPL036">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0032GPL020">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0032GPL028">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0032GPL036">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPL020">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPL028">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPL036">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPM028">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPM036">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPM048">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0064GPM064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0128GPM028">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0128GPM036">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0128GPM048">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0128GPM064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0256GPM028">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0256GPM036">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0256GPM048">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MM0256GPM064">
-      <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX110F016B"/>
-    <mp:device mp:name="PIC32MX110F016C"/>
-    <mp:device mp:name="PIC32MX110F016D"/>
-    <mp:device mp:name="PIC32MX120F032B"/>
-    <mp:device mp:name="PIC32MX120F032C"/>
-    <mp:device mp:name="PIC32MX120F032D"/>
-    <mp:device mp:name="PIC32MX120F064H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX130F064B"/>
-    <mp:device mp:name="PIC32MX130F064C"/>
-    <mp:device mp:name="PIC32MX130F064D"/>
-    <mp:device mp:name="PIC32MX130F128H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX130F128L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX130F256B">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX130F256D">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX150F128B"/>
-    <mp:device mp:name="PIC32MX150F128C"/>
-    <mp:device mp:name="PIC32MX150F128D"/>
-    <mp:device mp:name="PIC32MX150F256H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX150F256L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX151F128E">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX151F128H">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX154F128B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX154F128D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX155F128B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX155F128D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX170F256B">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-      <opt:version opt:fromversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX170F256C">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX170F256D">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-      <opt:version opt:fromversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX170F512H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX170F512L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX174F256B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX174F256D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX175F256B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX175F256D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX210F016B"/>
-    <mp:device mp:name="PIC32MX210F016C"/>
-    <mp:device mp:name="PIC32MX210F016D"/>
-    <mp:device mp:name="PIC32MX220F032B"/>
-    <mp:device mp:name="PIC32MX220F032C"/>
-    <mp:device mp:name="PIC32MX220F032D"/>
-    <mp:device mp:name="PIC32MX230F064B"/>
-    <mp:device mp:name="PIC32MX230F064C"/>
-    <mp:device mp:name="PIC32MX230F064D"/>
-    <mp:device mp:name="PIC32MX230F128H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX230F128L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX230F256B">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX230F256D">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX250F128B"/>
-    <mp:device mp:name="PIC32MX250F128C"/>
-    <mp:device mp:name="PIC32MX250F128D"/>
-    <mp:device mp:name="PIC32MX250F256H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX250F256L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX251F128E">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX251F128H">
-      <mp:betaVersion opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX254F128B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX254F128D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX255F128B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F256B">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-      <opt:version opt:fromversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F256C">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F256D">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
-      <opt:version opt:fromversion="1.32"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F256DB">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F256D_IPTS21">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F512H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX270F512L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX274F256B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX274F256D">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX275F256B">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX275F256D">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX320F032H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX320F064H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX320F128H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX320F128L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX330F064H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
-      <opt:version opt:fromversion="1.20"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX330F064L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
-      <opt:version opt:fromversion="1.20"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX340F128H"/>
-    <mp:device mp:name="PIC32MX340F128L"/>
-    <mp:device mp:name="PIC32MX340F256H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX340F512H"/>
-    <mp:device mp:name="PIC32MX350F128H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX350F128L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX350F256H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX350F256L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX360F256L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX360F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX370F512H">
-      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
-      <opt:version opt:fromversion="1.22"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX370F512L">
-      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
-      <opt:version opt:fromversion="1.22"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX420F032H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX430F064H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
-      <opt:version opt:fromversion="1.20"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX430F064L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
-      <opt:version opt:fromversion="1.20"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX440F128H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX440F128L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX440F256H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX440F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F128H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F128L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F256H">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F256HB">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F256H_IPTS21">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX450F256L">
-      <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
-      <opt:version opt:fromversion="1.21"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX460F256L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX460F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX470F512H">
-      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
-      <opt:version opt:fromversion="1.22"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX470F512L">
-      <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
-      <opt:version opt:fromversion="1.22"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX470F512LB">
-      <mp:betaVersion opt:fromversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX470F512L_IPTS21">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX530F128H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX530F128L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX534F064H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX534F064L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX550F256H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX550F256L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX564F064H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX564F064L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX564F128H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX564F128L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX570F512H">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX570F512L">
-      <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX575F256H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX575F256L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX575F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX575F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX664F064H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX664F064L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX664F128H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX664F128L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX675F256H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX675F256L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX675F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX675F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX695F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX695F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX764F128H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX764F128L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX775F256H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX775F256L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX775F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX775F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX795F512H">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MX795F512L">
-      <opt:version opt:fromversion="1.00"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MXGENERIC">
-      <opt:version opt:toversion="1.30"/>
-      <mp:betaVersion opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFE064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFE100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFE124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFE144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFF064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFF100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFF124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFF144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFK064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFK100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFK124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ0512EFK144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECG064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECG100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECG124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECG144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECH064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECH100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECH124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECH144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECM064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECM100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECM124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024ECM144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFE064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFE100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFE124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFE144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFF064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFF100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFF124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFF144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFG064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFG100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFG124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFG144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFH064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFH100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFH124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFH144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFK064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFK100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFK124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFK144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFM064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFM100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFM124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1024EFM144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAA169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAA176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAA288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAB169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAB176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAB288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAG169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAG176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAH169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1025DAH176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAA169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAA176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAA288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAB169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAB176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAB288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAG169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAG176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAH169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ1064DAH176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAA169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAA176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAA288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAB169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAB176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAB288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAG169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAG176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAH169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2025DAH176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECG064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECG100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECG124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECG144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECH064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECH100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECH124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECH144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECM064">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECM100">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECM124">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048ECM144">
-      <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
-      <opt:version opt:fromversion="1.34"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFG064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFG100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFG124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFG144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFH064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFH100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFH124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFH144">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFM064">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFM100">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFM124">
-      <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2048EFM144">
-      <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.41"/>
-      <opt:version opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAA169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAA176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAA288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAB169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAB176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAB288">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAG169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAG176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAH169">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32MZ2064DAH176">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-      <opt:version opt:fromversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32WK2057GPB132">
-      <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
-    </mp:device>
-    <mp:device mp:name="PIC32WK2057GPD132">
-      <mp:betaVersion opt:fromversion="1.41"/>
-    </mp:device>
-    <mp:device mp:name="USB49XX">
-      <mp:betaVersion opt:fromversion="1.43"/>
-    </mp:device>
-  </mp:family>
-</mp:deviceSupport>
+	  <mp:family mp:family="32x">
+		<mp:device mp:name="ATSAMC20E15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20E16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20E17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20E18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20G15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20G16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20G17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20G18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J17AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20J18AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20N17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC20N18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21E15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21E16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21E17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21E18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21G15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21G16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21G17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21G18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J17AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21J18AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21N17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMC21N18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E14">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E14B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E15">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E16">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E17">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20E18">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G14">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G14B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G15">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G16">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G17">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G17U">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G18">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20G18U">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J14">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J14B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J15">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J16">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J17">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD20J18">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E15BU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E15CU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E15L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E16BU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E16CU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E16L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E17D">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E17DU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E17L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21E18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G15L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G16L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G17AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G17D">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G17L">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21G18AU">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J15A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J15B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J16A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J16B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J17A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J17D">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMD21J18A">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70J21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70N21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAME70Q21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70J21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70N21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMS70Q21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70J19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70J19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70J20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70J20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70N19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70N19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70N20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70N20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70Q19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70Q19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70Q20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV70Q20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71J21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71N21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q19">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q19B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q20">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q20B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q21">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="ATSAMV71Q21B">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="CEC1302">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="CEC1702">
+		  <mp:betaVersion opt:fromversion="2.05"/>
+		</mp:device>
+		<mp:device mp:name="MEC1404">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
+		  <opt:version opt:fromversion="1.40"/>
+		</mp:device>
+		<mp:device mp:name="MEC1406">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
+		  <opt:version opt:fromversion="1.40"/>
+		</mp:device>
+		<mp:device mp:name="MEC1408">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.40"/>
+		  <opt:version opt:fromversion="1.40"/>
+		</mp:device>
+		<mp:device mp:name="MEC1414">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="MEC1416">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="MEC1418">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.40"/>
+		  <opt:version opt:fromversion="1.40"/>
+		</mp:device>
+		<mp:device mp:name="MEC1424">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="MEC1426">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="MEC1428">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="MEC1701H">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1701K">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1701Q">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1703H">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1703K">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1703Q">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1704H">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1704K">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1704Q">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1705H">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1705K">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MEC1705Q">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="MGC3140">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="MGC3430">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="MGC3431">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="MGC3450">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="MGC3451">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32M4KCORE">
+		  <opt:version opt:toversion="1.30"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPD064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPD100">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPE064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPE100">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPG064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPK064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPK100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPL064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512GPL100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512MCF064">
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512MCF100">
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512MCH064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512MCM064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK0512MCM100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPD064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPD100">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPE064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPE100">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPK064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPK100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPL064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024GPL100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024MCF064">
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024MCF100">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024MCM064">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MK1024MCM100">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0016GPL020">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0016GPL028">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0016GPL036">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0032GPL020">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0032GPL028">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0032GPL036">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPL020">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPL028">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPL036">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPM028">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPM036">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPM048">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0064GPM064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0128GPM028">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0128GPM036">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0128GPM048">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0128GPM064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0256GPM028">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0256GPM036">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0256GPM048">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MM0256GPM064">
+		  <mp:betaVersion opt:fromversion="1.42" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX110F016B"/>
+		<mp:device mp:name="PIC32MX110F016C"/>
+		<mp:device mp:name="PIC32MX110F016D"/>
+		<mp:device mp:name="PIC32MX120F032B"/>
+		<mp:device mp:name="PIC32MX120F032C"/>
+		<mp:device mp:name="PIC32MX120F032D"/>
+		<mp:device mp:name="PIC32MX120F064H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX130F064B"/>
+		<mp:device mp:name="PIC32MX130F064C"/>
+		<mp:device mp:name="PIC32MX130F064D"/>
+		<mp:device mp:name="PIC32MX130F128H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX130F128L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX130F256B">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX130F256D">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX150F128B"/>
+		<mp:device mp:name="PIC32MX150F128C"/>
+		<mp:device mp:name="PIC32MX150F128D"/>
+		<mp:device mp:name="PIC32MX150F256H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX150F256L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX151F128E">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX151F128H">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX154F128B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX154F128D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX155F128B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX155F128D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX170F256B">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		  <opt:version opt:fromversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX170F256C">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX170F256D">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		  <opt:version opt:fromversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX170F512H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX170F512L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX174F256B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX174F256D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX175F256B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX175F256D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX210F016B"/>
+		<mp:device mp:name="PIC32MX210F016C"/>
+		<mp:device mp:name="PIC32MX210F016D"/>
+		<mp:device mp:name="PIC32MX220F032B"/>
+		<mp:device mp:name="PIC32MX220F032C"/>
+		<mp:device mp:name="PIC32MX220F032D"/>
+		<mp:device mp:name="PIC32MX230F064B"/>
+		<mp:device mp:name="PIC32MX230F064C"/>
+		<mp:device mp:name="PIC32MX230F064D"/>
+		<mp:device mp:name="PIC32MX230F128H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX230F128L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX230F256B">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX230F256D">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX250F128B"/>
+		<mp:device mp:name="PIC32MX250F128C"/>
+		<mp:device mp:name="PIC32MX250F128D"/>
+		<mp:device mp:name="PIC32MX250F256H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX250F256L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX251F128E">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX251F128H">
+		  <mp:betaVersion opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX254F128B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX254F128D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX255F128B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F256B">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		  <opt:version opt:fromversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F256C">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F256D">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.32"/>
+		  <opt:version opt:fromversion="1.32"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F256DB">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F256D_IPTS21">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F512H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX270F512L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX274F256B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX274F256D">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX275F256B">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX275F256D">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX320F032H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX320F064H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX320F128H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX320F128L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX330F064H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+		  <opt:version opt:fromversion="1.20"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX330F064L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+		  <opt:version opt:fromversion="1.20"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX340F128H"/>
+		<mp:device mp:name="PIC32MX340F128L"/>
+		<mp:device mp:name="PIC32MX340F256H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX340F512H"/>
+		<mp:device mp:name="PIC32MX350F128H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX350F128L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX350F256H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX350F256L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX360F256L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX360F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX370F512H">
+		  <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+		  <opt:version opt:fromversion="1.22"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX370F512L">
+		  <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+		  <opt:version opt:fromversion="1.22"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX420F032H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX430F064H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+		  <opt:version opt:fromversion="1.20"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX430F064L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.20"/>
+		  <opt:version opt:fromversion="1.20"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX440F128H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX440F128L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX440F256H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX440F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F128H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F128L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F256H">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F256HB">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F256H_IPTS21">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX450F256L">
+		  <mp:betaVersion opt:fromversion="1.10" opt:toversion="1.21"/>
+		  <opt:version opt:fromversion="1.21"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX460F256L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX460F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX470F512H">
+		  <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+		  <opt:version opt:fromversion="1.22"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX470F512L">
+		  <mp:betaVersion opt:fromversion="1.21" opt:toversion="1.22"/>
+		  <opt:version opt:fromversion="1.22"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX470F512LB">
+		  <mp:betaVersion opt:fromversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX470F512L_IPTS21">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.42"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX530F128H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX530F128L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX534F064H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX534F064L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX550F256H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX550F256L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX564F064H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX564F064L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX564F128H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX564F128L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX570F512H">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX570F512L">
+		  <mp:betaVersion opt:fromversion="1.33" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX575F256H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX575F256L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX575F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX575F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX664F064H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX664F064L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX664F128H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX664F128L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX675F256H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX675F256L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX675F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX675F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX695F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX695F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX764F128H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX764F128L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX775F256H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX775F256L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX775F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX775F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX795F512H">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MX795F512L">
+		  <opt:version opt:fromversion="1.00"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MXGENERIC">
+		  <opt:version opt:toversion="1.30"/>
+		  <mp:betaVersion opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFE064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFE100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFE124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFE144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFF064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFF100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFF124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFF144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFK064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFK100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFK124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ0512EFK144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECG064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECG100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECG124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECG144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECH064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECH100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECH124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECH144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECM064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECM100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECM124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024ECM144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFE064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFE100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFE124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFE144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFF064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFF100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFF124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFF144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFG064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFG100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFG124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFG144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFH064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFH100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFH124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFH144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFK064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFK100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFK124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFK144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFM064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFM100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFM124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1024EFM144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAA169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAA176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAA288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAB169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAB176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAB288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAG169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAG176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAH169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025DAH176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1025W104132">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAA169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAA176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAA288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAB169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAB176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAB288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAG169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAG176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAH169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ1064DAH176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAA169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAA176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAA288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAB169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAB176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAB288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAG169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAG176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAH169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2025DAH176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECG064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECG100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECG124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECG144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECH064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECH100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECH124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECH144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECM064">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECM100">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECM124">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048ECM144">
+		  <mp:betaVersion opt:fromversion="1.30" opt:toversion="1.34"/>
+		  <opt:version opt:fromversion="1.34"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFG064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFG100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFG124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFG144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFH064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFH100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFH124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFH144">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFM064">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFM100">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFM124">
+		  <mp:betaVersion opt:fromversion="1.40" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2048EFM144">
+		  <mp:betaVersion opt:fromversion="1.34" opt:toversion="1.41"/>
+		  <opt:version opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAA169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAA176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAA288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAB169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAB176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAB288">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAG169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAG176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAH169">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32MZ2064DAH176">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		  <opt:version opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32WK2057GPB132">
+		  <mp:betaVersion opt:fromversion="1.41" opt:toversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="PIC32WK2057GPD132">
+		  <mp:betaVersion opt:fromversion="1.41"/>
+		</mp:device>
+		<mp:device mp:name="USB49XX">
+		  <mp:betaVersion opt:fromversion="1.43"/>
+		</mp:device>
+		<mp:device mp:name="USB70XX">
+		  <mp:betaVersion opt:fromversion="2.10"/>
+		</mp:device>
+	  </mp:family>
+	</mp:deviceSupport>
 
 </mp:languageToolchain>

@@ -18,15 +18,14 @@ import org.openide.util.Utilities;
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com> 
  * Modified by jdeguire for toolchainPic32Clang.
  */
-public class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
     
-    public ClangRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
         super(desc, conf);
         supressResponseFileOption();
         setImola2Properties(desc);
         setThinLtoThreads();
     }
-
 
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
      *        These do not have built-in flash, but load from an on-package serial PROM.

@@ -5,52 +5,148 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
+import com.microchip.crownking.Pair;
 import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.OptionConfiguration;
 import com.microchip.mplab.nbide.toolchainCommon.properties.MPLABXSpecificProperties;
 import java.io.File;
-// TODO: Remove commented-out stuff in this class once we know stuff actually works.
-//import java.io.File;
-//import java.nio.file.Paths;
-//import java.nio.file.Path;
+import java.util.List;
 import java.util.Properties;
+import org.openide.util.Utilities;
 import org.netbeans.api.project.Project;
 
 /**
  * Common runtime properties usable during makefile generation process.
  *
  * @author Marian Golea <marian.golea@microchip.com>
+ * Modified by jdeguire for toolchainPic32Clang.
  */
 public class CommonProperties extends MPLABXSpecificProperties {
 
-//    private String toolchainPath;
+    final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
     
-    public CommonProperties(MakeConfigurationBook projectDescriptor,
-            MakeConfiguration conf,
-            Properties commandLineProperties) {
+    public CommonProperties(final MakeConfigurationBook projectDescriptor,
+            final MakeConfiguration conf,
+            final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
-        Boolean pic32CDeviceSelected = ClangLanguageToolchain.isPIC32C(getPic());
+        Boolean pic32CDeviceSelected = isPIC32C();
         commandLineProperties.put("PIC32C", pic32CDeviceSelected.toString());
-        String emission = pic32CDeviceSelected ? "" : getLibcEmission(projectDescriptor, conf);
+        String emission = pic32CDeviceSelected ? "" : getLibcEmission();
         commandLineProperties.put("LEGACY_LIBC", emission);
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros(projectDescriptor, conf));
-//        commandLineProperties.put("SYSROOT_DIR", "${MP_CC_DIR}");
-// TODO:  Do we even need sysroot?
-
-//        toolchainPath = findToolchainPath(commandLineProperties);
-//        toolchainPath = findToolchainPath(conf);
     }
 
+    final boolean isPIC32C() {
+        return calc.isPIC32C(getPic());
+    }
+
+    private String getLibcEmission() {
+        return getLegacyLibcEmissionValue(ClangLanguageToolchain.LIBC_SUPPORT_FIRST_VERSION, "C32Global", "legacy-libc");
+    }
+
+    final void addDebuggerNameOptions() {
+
+        String debuggerOptionsAsSymbol = "";
+        String debuggerOptionsAsMacro = "";
+        String debuggerName = getCommonDebuggerMacro();
+        if (debuggerName != null && debuggerName.length() > 0) {
+            debuggerOptionsAsSymbol = "--defsym=" + debuggerName + "=1";
+            debuggerOptionsAsMacro = "-D" + debuggerName + "=1";
+        }
+        if (debuggerOptionsAsSymbol.length() > 0) {
+            commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", ",");
+            boolean isPIC32C = isPIC32C();
+            String debuggerOptionString = isPIC32C ? "" : "-mdebugger";
+            commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", debuggerOptionString);
+        } else {
+            commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", "");
+            commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", "");
+        }
+
+        commandLineProperties.put("DEBUGGER_NAME_AS_SYMBOL", debuggerOptionsAsSymbol);
+        commandLineProperties.put("DEBUGGER_NAME_AS_MACRO", debuggerOptionsAsMacro);
+    }
+
+    final String getLinkerGldFileName() {
+        List<String> filesInGldDir = desc.getFilesFromLinkerFolder(conf);
+        String res = null;
+
+        if (filesInGldDir != null && filesInGldDir.size() > 0) {
+            res = filesInGldDir.get(0);
+            // File has unix style escape sequence.
+            res = getFileNameQuoted(res);
+            // TODO add logging if size() > 1
+        }
+
+        return res; // NOI18N
+    }
+
+    final boolean getUseResponseFiles() {
+        boolean res = false;
+        if (!Utilities.isWindows()) {
+            return res;
+        }
+        // Check the option value
+        OptionConfiguration confObject = desc.getSynthesizedOptionConfiguration(conf.getName(), "C32-LD", null);
+        if (confObject != null) {
+            ClangRuntimeProperties props = new ClangRuntimeProperties(desc, conf);
+            List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
+            if (emissionPairs != null) {
+                for (Pair<String, String> p : emissionPairs) {
+                    if (p.first.equals("additional-options-use-response-files") && p.second.equals("true")) {
+                        res = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    /**
+     * See return
+     *
+     * @param deviceName
+     * @return value of processor to be fed to assembler. Override as needed
+     */
+    final String getProcessorNameForCompiler() {
+        if (deviceName.toUpperCase().startsWith("PIC32")) {
+            return deviceName.substring(3, deviceName.length());
+        } else {
+            return deviceName;
+        }
+    }
+    
+// TODO:  Remove 'confBook' and 'conf' from this signature.
+// TODO:  Does this need to be static?
+    private static String getXC32CompatibilityMacros(MakeConfigurationBook confBook, MakeConfiguration conf) {
+        String ret = "";
+
+        String doCompat = getProjectOption(confBook, conf, "C32Global", "fake-xc32", "false");
+
+        if(doCompat.equalsIgnoreCase("true")) {
+            String compatVersion = getProjectOption(confBook, conf, "C32Global", "fake-xc32-version", "");
+
+            if(!compatVersion.isEmpty()) {
+                ret = "-D__XC -D__XC32 -D__XC32_VERSION__=" + compatVersion;
+            }
+        }
+
+        return ret;
+    }
+    
     /* Get the current value of the given option using the MakeConfiguration supplied to this class.
      * The optionBookId is the name given to the mp:configurationObject in the Clang.languageToolchain.xml
      * file, such as "C32Global", "C32", "C32CPP", etc.  The optionId is the name of the option itself.
      * This will return the given default value if the option could not be read for some reason.
      */
+// TODO:  Remove 'confBook' and 'conf' from this signature.
+// TODO:  Does this need to be static?
     public static String getProjectOption(MakeConfigurationBook confBook, MakeConfiguration conf, 
-                                             String optionBookId, String optionId, String defaultVal) {
+										  String optionBookId, String optionId, String defaultVal) {
         String ret = defaultVal;
         Project project = confBook.getProject();
 
@@ -68,6 +164,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
     /* Return the base install path for the current toolchain with the file separator always at the
      * end (so "/foo/bar/" instead of "/foo/bar").
      */
+// TODO:  Remove 'conf' from this signature.
     public String getToolchainBasePath(MakeConfiguration conf) {
         String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
 
@@ -77,56 +174,4 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return toolchainPath;
     }
 
-    public static String getLibcEmission(MakeConfigurationBook projectDescriptor, MakeConfiguration conf) {
-        return LTUtils.getLegacyLibcEmissionValue(projectDescriptor, conf, "1.41", "C32Global", "legacy-libc");
-    }
-    
-    private static String getXC32CompatibilityMacros(MakeConfigurationBook confBook, MakeConfiguration conf) {
-        String ret = "";
-
-        String doCompat = getProjectOption(confBook, conf, "C32Global", "fake-xc32", "false");
-
-        if(doCompat.equalsIgnoreCase("true")) {
-            String compatVersion = getProjectOption(confBook, conf, "C32Global", "fake-xc32-version", "");
-
-            if(!compatVersion.isEmpty()) {
-                ret = "-D__XC -D__XC32 -D__XC32_VERSION__=" + compatVersion;
-            }
-        }
-
-        return ret;
-    }
-    
-/*
-    private String findToolchainPath(Properties commandLineProperties) {
-        String toolchainDir;
-
-        try {
-            Path ccPath = Paths.get(commandLineProperties.getProperty("MP_CC_DIR", ""));
-            toolchainDir = ccPath.getParent().getParent().toString();
-    
-            // We want the path to end in the separator (so "/foo/bar/" instead of "/foo/bar" because
-            // calling methods will probably build upon this.
-            if(File.separatorChar != toolchainDir.charAt(toolchainDir.length() - 1))
-                toolchainDir += File.separator;
-        }
-        catch(Exception e) {
-            toolchainDir = "";
-        }
-        
-        return toolchainDir;
-    }
-*/
-/*
-    private String findToolchainPath(MakeConfiguration conf) {
-        String toolchainDir = conf.getLanguageToolchain().getDir().getValue();
-
-        // We want the path to end in the separator (so "/foo/bar/" instead of "/foo/bar" because
-        // calling methods will probably build upon this.
-        if(File.separatorChar != toolchainDir.charAt(toolchainDir.length() - 1))
-            toolchainDir += File.separator;
-
-        return toolchainDir;
-    }
-*/
 }

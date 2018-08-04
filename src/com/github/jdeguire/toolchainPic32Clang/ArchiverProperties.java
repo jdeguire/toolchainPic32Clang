@@ -7,7 +7,6 @@ package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-//import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
 import java.util.Properties;
 
 /**
@@ -17,25 +16,25 @@ import java.util.Properties;
  * @author Marian Golea <marian.golea@microchip.com> 
  * Modified by jdeguire for toolchainPic32Clang.
  */
-public class ArchiverProperties extends CommonProperties {
+public final class ArchiverProperties extends CommonProperties {
 
-    public ArchiverProperties(MakeConfigurationBook projectDescriptor,
-            MakeConfiguration conf,
-            Properties commandLineProperties) {
+    public ArchiverProperties(final MakeConfigurationBook projectDescriptor,
+            final MakeConfiguration conf,
+            final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
-        setMProcessor(projectDescriptor, conf, commandLineProperties);
+        setMProcessor();
     }
 
-    private void setMProcessor(MakeConfigurationBook projectDescriptor, MakeConfiguration conf, Properties commandLineProperties) {
+    private void setMProcessor() {
 // TODO: Does llvm-ar need anything like this?  I don't see why it would.
 //
 //        String emission = "";
 //        //TODO Marian: remove this check once xc32 v2.00 fixes its problem related to expected use of this option.
 //        //The option is supposed to also work with non mips devices!
-//        if (XC32LanguageToolchain.isPIC32C(getPic())) {
+//        if (isPIC32C()) {
 //            //Marian: Normally, PIC32C is only supported starting with 2.00, so next check might seem redundant.
 //            //It stays here because in the future this option will also work for mips devices, when 2.00 compiler is fixed.
-//            Boolean mprocessorSupported = LTUtils.toolchainVersionGreaterOrEqualTo("2.00", conf);
+//            Boolean mprocessorSupported = toolchainVersionGreaterOrEqualTo("2.00");
 //            if (mprocessorSupported) {
 //                emission = " -mprocessor=$(MP_PROCESSOR_OPTION) ";
 //            }

@@ -14,9 +14,9 @@ import com.microchip.mplab.mdbcore.assemblies.Assembly;
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class ClangCRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangCRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public ClangCRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangCRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
         super(desc, conf);
         setProperty("appio.suppress", shouldSuppressAppIO());
     }

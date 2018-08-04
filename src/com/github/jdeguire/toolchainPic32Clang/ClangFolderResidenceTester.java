@@ -4,6 +4,8 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
+// TODO:  This file was remoed in SDK 5.00 for toolchainXC32.  Can we remove it, too?
+
 import com.microchip.crownking.mplabinfo.FolderResidenceTester;
 import com.microchip.crownking.mplabinfo.mpLanguageTool;
 import com.microchip.crownking.mplabinfo.mpLanguageToolchain;
@@ -36,7 +38,9 @@ public class ClangFolderResidenceTester extends FolderResidenceTester.Default {
         if (!hasAllButCPP) {
             return false;
         }
-        final boolean requiregcc = ClangLanguageToolchain.xcHasCPPSupport(dir);
+// TODO:  Actually fix this or just remove this file since we may not need it anymore.
+//        final boolean requiregcc = ClangLanguageToolchain.xcHasCPPSupport(dir);
+        final boolean requiregcc = true;
         if (requiregcc) {
             return hasAllExecutableFiles(toolchainMeta, dir);
         } else {

@@ -4,6 +4,8 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
+// TODO:  This class was removed in SDK 5.00.  Can we remove it here?
+
 import com.microchip.crownking.opt.OptionLanguage;
 import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.ConfigurationBookProvider;

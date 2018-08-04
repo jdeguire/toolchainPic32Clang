@@ -13,15 +13,15 @@ import java.util.Properties;
  * @author jose
  * Modified by jdeguire for toolchainPic32Clang.
  */
-public class AssemblerProperties extends CommonProperties {
+public final class AssemblerProperties extends CommonProperties {
 
-    public AssemblerProperties(MakeConfigurationBook projectDescriptor,
-            MakeConfiguration conf,
-            Properties commandLineProperties) {
+    public AssemblerProperties(final MakeConfigurationBook projectDescriptor,
+            final MakeConfiguration conf,
+            final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
 
-        commandLineProperties.put("PROCESSOR_NAME_FOR_ASSEMBLER", CompilerProperties.getProcessorNameForCompiler(conf.getDevice().getValue()));
-        LinkerProperties.addDebuggerNameOptions(conf.getPlatformTool().getValue(), getPic(), commandLineProperties);
-        commandLineProperties.put("project_cpp", CompilerProperties.buildWithGPP(projectDescriptor, conf));
+        commandLineProperties.put("PROCESSOR_NAME_FOR_ASSEMBLER", getProcessorNameForCompiler());
+        addDebuggerNameOptions();
+        commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
     }
 }

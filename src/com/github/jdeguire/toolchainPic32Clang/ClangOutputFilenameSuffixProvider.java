@@ -58,9 +58,10 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author drmc
  */
-public class ClangOutputFilenameSuffixProvider implements FilenameSuffixProvider {
+public final class ClangOutputFilenameSuffixProvider implements FilenameSuffixProvider {
 
-    public String getFilenameSuffix(Project project, ProjectConfiguration projectConf, boolean isDebug) {
+    @Override
+    public String getFilenameSuffix(final Project project, final ProjectConfiguration projectConf, final boolean isDebug) {
         if (!isDebug) {
             return "hex"; // NOI18N
         }

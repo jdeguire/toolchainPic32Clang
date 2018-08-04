@@ -10,7 +10,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.UserDef
  *
  * @author Venkat
  */
-public class ClangCPPUserDefineModifier extends UserDefineModifier {
+public final class ClangCPPUserDefineModifier extends UserDefineModifier {
 
     public ClangCPPUserDefineModifier() {
         super(ClangCPPUserDefineProvider.OPT_ID, ClangCPPUserDefineProvider.OPT_PROP);

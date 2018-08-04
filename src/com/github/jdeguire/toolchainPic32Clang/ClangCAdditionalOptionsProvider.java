@@ -6,7 +6,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.Additio
  *
  * @author c14014
  */
-public class ClangCAdditionalOptionsProvider extends AdditionalOptionsProvider {
+public final class ClangCAdditionalOptionsProvider extends AdditionalOptionsProvider {
     
     public static final String OPT_ID = "C32";
 

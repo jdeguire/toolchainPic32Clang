@@ -7,7 +7,7 @@ package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
-import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
+import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolchainPropertiesUtils;
 import com.microchip.mplab.nbide.toolchainCommon.provider.CCISystemDefineProvider;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,9 @@ import org.netbeans.spi.project.ProjectConfiguration;
  * @author Marian Golea <marian.golea@microchip.com>
  */
 abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider{
-    
+
+    private CommonLanguageToolchainPropertiesUtils calculator = new CommonLanguageToolchainPropertiesUtils();
+
     public String getDeviceNameMacro(String device) {
         String res = "";
 
@@ -55,6 +57,9 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
             deviceMacro = getDeviceNameMacro(device);
         if (deviceMacro != null)
             res.add(deviceMacro);
+
+		// TODO:  Update these defines for Clang.  Some of these we'll provide oursevles, like the
+		//        CPU name.
 
         //add call to hook method, for inheritors who might want to do additional computations.
         getDefinesHook(makeConf, project, res);
@@ -114,7 +119,7 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
             res.add("__PIC32_FEATURE_SET__ " + set);
         }
         res.add("__C32__");
-        String version = LTUtils.getVersion(makeConf);
+		String version = calculator.getVersion(makeConf);
         if (version.startsWith("2.")) {
             res.add("__STDC_HOSTED__");
         }

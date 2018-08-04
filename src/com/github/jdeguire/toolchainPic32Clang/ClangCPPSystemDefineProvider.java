@@ -8,10 +8,10 @@ import org.netbeans.api.project.Project;
  * System define provider for C++ files.
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class ClangCPPSystemDefineProvider extends ClangAbstractSystemDefineProvider {
+public final class ClangCPPSystemDefineProvider extends ClangAbstractSystemDefineProvider {
 
     @Override
-    void getDefinesHook(MakeConfiguration makeConf, Project project, List<String> res) {
+    void getDefinesHook(final MakeConfiguration makeConf, final Project project, final List<String> res) {
         super.addCCIMacro(makeConf, project, res, "C32CPP", "use-cci");
     }
 

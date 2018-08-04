@@ -6,7 +6,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.spi.configurations.UserDef
  *
  * @author drmc
  */
-public class ClangCPPUserDefineProvider extends UserDefineProvider {
+public final class ClangCPPUserDefineProvider extends UserDefineProvider {
     
     public static final String OPT_ID = "C32CPP";
     public static final String OPT_PROP = "preprocessor-macros";    

@@ -5,9 +5,9 @@
 package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
-import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.LanguageToolRuntimePropertiesAccessor;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
+import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPropertiesAccessor;
 import org.netbeans.api.project.Project;
 
 /**
@@ -19,7 +19,7 @@ import org.netbeans.api.project.Project;
  * Modified by jdeguire for toolchainPic32Clang.
  */ 
 // TODO: Rename this class because it has ARM stuff, too (Mips->Target ?).
-public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRuntimePropertiesAccessor {
+public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchainPropertiesAccessor {
 
     private enum TargetFamily {
       Unknown,
@@ -57,17 +57,22 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
      */
     public static final String PIC32C_SELECTED_PROPERTY = "pic32C.selected";
     final Boolean pic32CSelected;
+	final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
     
     protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
         super(desc, conf);
         
         setTargetDefaultProperties(conf);
         
-        pic32CSelected = ClangLanguageToolchain.isPIC32C(getPic());
+        pic32CSelected = isPIC32C();
         setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
 
         // This must be called after setTargetDefaultProperties().
         setArchSpecificBehavior(desc, conf);
+    }
+
+    final boolean isPIC32C(){
+        return calc.isPIC32C(getPic());
     }
 
     /* Get the current value of the given option using the MakeConfiguration supplied to this class.
@@ -77,6 +82,8 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
      *
      * This just calls the implementation in CommonProperties.java and is here for convenience.
      */
+// TODO:  Remove 'confBook' and 'conf' from signature.
+// TODO:  Can this be made non-static (we may have to remove dependence on CommonProperties)?
     public static String getProjectOption(MakeConfigurationBook confBook, MakeConfiguration conf, 
                                              String optionBookId, String optionId, String defaultVal) {
         return CommonProperties.getProjectOption(confBook, conf, optionBookId, optionId, defaultVal);
@@ -167,6 +174,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
      * the default option values ("Auto-detect") in the "Target Specific" section of the General
      * Options.
      */
+// TODO:  Remove 'conf' from signature.
     private void setTargetDefaultProperties(MakeConfiguration conf) {
         String targetName = conf.getDevice().getValue().toUpperCase();
         TargetFamily family = getTargetFamily(targetName);
@@ -305,6 +313,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends LanguageToolRun
      * section of the General Options page.  Mainly this figures out if the selected arch is MIPS32
      * or ARM and then sets up MIPS16e and microMIPS availability (or ARM/Thumb for ARM devices).
      */
+// TODO:  Remove 'desc' and 'conf' from signature.
     private void setArchSpecificBehavior(MakeConfigurationBook desc, MakeConfiguration conf) {
         boolean isMips32 = false;
         boolean isArm = false;

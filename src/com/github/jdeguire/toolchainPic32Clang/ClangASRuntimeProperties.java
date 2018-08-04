@@ -12,9 +12,9 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public class ClangASRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangASRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public ClangASRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
+    public ClangASRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
         super(desc, conf);
     }
 }

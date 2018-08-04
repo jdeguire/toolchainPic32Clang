@@ -9,7 +9,7 @@ import org.netbeans.spi.project.ProjectConfiguration;
  *
  * @author drmc
  */
-public class ClangCPPUserIncludeProvider extends UserIncludeProvider {
+public final class ClangCPPUserIncludeProvider extends UserIncludeProvider {
 
     public static final String OPT_ID = "C32CPP";
     public static final String OPT_PROP = "extra-include-directories";
@@ -21,7 +21,7 @@ public class ClangCPPUserIncludeProvider extends UserIncludeProvider {
     }
 
     @Override
-    public List<String> getIncludes(Project project, ProjectConfiguration projectConf, String itemPath) {
+    public List<String> getIncludes(final Project project, final ProjectConfiguration projectConf, final String itemPath) {
         List<String> includes = super.getIncludes(project, projectConf, itemPath);
         includes.addAll(uip.getIncludes(project, projectConf, itemPath));
         return includes;
