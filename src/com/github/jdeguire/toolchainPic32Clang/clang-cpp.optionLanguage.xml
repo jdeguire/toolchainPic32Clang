@@ -166,6 +166,7 @@
 		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
 		opt:id="extra-include-directories"
+                opt:groupid="include-dirs"
 		opt:name="Include directories"
 		opt:emissionprefix="-I"
 		opt:emissionseparator=" -I"
@@ -180,7 +181,10 @@
         <br/>If you want a single place to have include paths for compilers and assembler, use the include paths in the global options node.
       </opt:xhtml>
     </opt:stringListOption>
-    <!-- TODO:  Add option here to use C includes to get around annoyances with the MPLAB Harmony Configurator. -->
+    <opt:booleanOption
+		opt:id="c-includes-in-cpp"
+		opt:name="Also use C include directroies"
+		opt:trueemission=""/>
     <opt:booleanOption
 		opt:id="make-warnings-into-errors"
 		opt:name="Make warnings into errors"

@@ -73,8 +73,11 @@
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -flto -fwhole-program -mprocessor=$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
@@ -131,8 +134,11 @@
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -flto -fwhole-program -mprocessor=$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
+            <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:if="${project_cpp}" mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="pre" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="ld-extra" mp:prefix=" " mp:separator=" "/>
@@ -204,7 +210,10 @@
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -x c++ -c -mprocessor=$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:if="${c_includes_in_cpp}" mp:idref="C32" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:textEmitter mp:text=" ${XC32_COMPAT_MACROS} "/>
             <mp:textEmitter mp:text=" -MMD -MF " mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; -o " mp:macroDetectionExclude="true"/>
@@ -236,7 +245,9 @@
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:textEmitter mp:text=" ${XC32_COMPAT_MACROS} "/>
             <mp:textEmitter mp:text=" -MMD -MF " mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; -o " mp:macroDetectionExclude="true"/>
@@ -266,6 +277,7 @@
             <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:text=" ${XC32_COMPAT_MACROS} "/>
             <mp:textEmitter mp:text=" -o "/>
@@ -298,6 +310,7 @@
             <mp:textEmitter mp:text=" -c -mprocessor=$(MP_PROCESSOR_OPTION)"/>
             <mp:textEmitter mp:text=" "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="pre" mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${SYS_INCLUDE_OPT} "/>
             <mp:textEmitter mp:text=" ${XC32_COMPAT_MACROS} "/>
             <mp:textEmitter mp:text=" -MMD -MF "/>
             <mp:textEmitter mp:text="&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; "/>
@@ -445,8 +458,7 @@
 	<mp:folderResidenceTester mp:class="com.github.jdeguire.toolchainPic32Clang.ClangFolderResidenceTester"/>
 	-->
 
-    <!-- TODO:  Change these file names. -->
-    <mp:ccCompiler mp:file="Clang-g++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
+    <mp:ccCompiler mp:file="clang++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPSystemDefineProvider"/>
         <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPUserIncludeProvider"/>
@@ -456,7 +468,7 @@
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCPPAdditionalOptionsModifier"/>
     </mp:ccCompiler>
-    <mp:cCompiler mp:file="Clang-gcc" mp:name="MPLAB C Compiler for 32-bit Devices">
+    <mp:cCompiler mp:file="clang" mp:name="MPLAB C Compiler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemDefineProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCSystemDefineProvider"/>
         <mp:userIncludeProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeProvider"/>
@@ -466,17 +478,17 @@
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsModifier"/>
     </mp:cCompiler>
-    <mp:assembler mp:file="Clang-as" mp:name="MPLAB Assembler for 32-bit Devices">
+    <mp:assembler mp:file="clang" mp:name="MPLAB Assembler for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsModifier"/>
     </mp:assembler>
-    <mp:linker mp:file="Clang-ld" mp:name="MPLAB Linker for 32-bit Devices">
+    <mp:linker mp:file="lld" mp:name="MPLAB Linker for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsModifier"/>
     </mp:linker>
-    <mp:archiver mp:file="Clang-ar" mp:name="MPLAB Archiver for 32-bit Devices">
+    <mp:archiver mp:file="llvm-ar" mp:name="MPLAB Archiver for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsModifier"/>

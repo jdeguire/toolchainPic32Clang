@@ -30,6 +30,8 @@ public final class CompilerProperties extends CommonProperties {
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
         commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
+
+        commandLineProperties.put("c_includes_in_cpp", shouldUseCIncludesInCPP());
     }
 
     final String getTraceMediumMacro(boolean isDisabled, int traceMedium, int tracePort, int traceSPI) {
@@ -115,8 +117,11 @@ public final class CompilerProperties extends CommonProperties {
         return "".substring(0);
     }
 
-    //-----------------------------------------------------------------------
     public String getFunctionLevelProfilingOptions(final TraceSetupInformationInterface tsi, final String projBaseDir) {
         return "-mit=profile".substring(0);
-    } // getFunctionLevelProfilingOptions
+    }
+
+    private String shouldUseCIncludesInCPP() {
+        return getProjectOption(desc, conf, "C32CPP", "c-includes-in-cpp", "false");
+    }    
 }

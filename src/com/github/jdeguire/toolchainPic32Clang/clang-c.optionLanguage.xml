@@ -139,6 +139,7 @@
 		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
 		opt:id="extra-include-directories"
+                opt:groupid="include-dirs"
 		opt:name="Include directories"
 		opt:emissionprefix="-I"
 		opt:emissionseparator=" -I"

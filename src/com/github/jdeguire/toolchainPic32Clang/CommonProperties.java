@@ -37,6 +37,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
         commandLineProperties.put("LEGACY_LIBC", emission);
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros(projectDescriptor, conf));
+        commandLineProperties.put("SYS_INCLUDE_OPT", getSystemIncludeDirOpt());
     }
 
     final boolean isPIC32C() {
@@ -137,7 +138,19 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         return ret;
     }
-    
+
+    private String getSystemIncludeDirOpt() {
+        String arch = getProjectOption(desc, conf, "C32Global", "target.arch", "");
+        String opt = "-isystem " + getToolchainBasePath(conf);
+        
+        if(arch.equals("mipsel-unknown-elf"))
+            opt += "include/mipsel";
+        else if(arch.equals("arm-none-eabi"))
+            opt += "include/arm";
+
+        return opt;
+    }
+
     /* Get the current value of the given option using the MakeConfiguration supplied to this class.
      * The optionBookId is the name given to the mp:configurationObject in the Clang.languageToolchain.xml
      * file, such as "C32Global", "C32", "C32CPP", etc.  The optionId is the name of the option itself.
@@ -146,13 +159,13 @@ public class CommonProperties extends MPLABXSpecificProperties {
 // TODO:  Remove 'confBook' and 'conf' from this signature.
 // TODO:  Does this need to be static?
     public static String getProjectOption(MakeConfigurationBook confBook, MakeConfiguration conf, 
-										  String optionBookId, String optionId, String defaultVal) {
+					  String optionBookId, String optionId, String defaultVal) {
         String ret = defaultVal;
         Project project = confBook.getProject();
 
         if(null != project) {
             String val = EmbeddedProjectSupport.getSynthesizedOption(project, conf, optionBookId, 
-                                                              optionId, null); // NOI18N
+                                                                     optionId, null); // NOI18N
 
             if(null != val)
                 ret = val;
