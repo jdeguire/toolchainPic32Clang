@@ -9,6 +9,6 @@ import com.microchip.mplab.nbide.toolchainCommon.provider.CommonVersionProvider;
 public class ClangVersionProvider extends CommonVersionProvider
 {
     public ClangVersionProvider() {
-        super("clang", "version.+([\\d\\.]+)", 1, false);
+        super("clang", "version\\s*([\\d\\.]+)", 1, false);
     }
 }
