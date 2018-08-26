@@ -9,20 +9,20 @@
 	<!-- TODO:  Do I actually need a licensing provider? -->
 
     <!-- The mp:id fields here match the XML element nodes in the MPLAB X project configuration file.
-         This may not be a coincidence, so we'll keep these as C32blahblahblah. -->
-    <mp:configurationObject mp:id="C32Global" opt:src="Clanglanguagetoolchain.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32-AS" opt:src="clang-as.optionLanguage.xml" mp:idref="xc32-as" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangASRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32" opt:src="clang-c.optionLanguage.xml" mp:idref="xc32-gcc" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32-LD" opt:src="clang-lld.optionLanguage.xml" mp:idref="xc32-ld" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32CPP" opt:src="clang-cpp.optionLanguage.xml" mp:idref="xc32-g++" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCPPRuntimeProperties"/>
-    <mp:configurationObject mp:id="C32-AR" opt:src="clang-ar.optionLanguage.xml" mp:idref="xc32-ar" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
+         Keep these as "C32blahblah" to stay compatible with Microchip tools. -->
+    <mp:configurationObject mp:id="C32Global" opt:src="Clanglanguagetoolchain.optionLanguage.xml" mp:idref="clang" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-AS" opt:src="clang-as.optionLanguage.xml" mp:idref="clang" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangASRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32" opt:src="clang-c.optionLanguage.xml" mp:idref="clang" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-LD" opt:src="clang-lld.optionLanguage.xml" mp:idref="lld" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32CPP" opt:src="clang-cpp.optionLanguage.xml" mp:idref="clang++" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangCPPRuntimeProperties"/>
+    <mp:configurationObject mp:id="C32-AR" opt:src="clang-ar.optionLanguage.xml" mp:idref="llvm-ar" opt:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
 
     <mp:customizerNode mp:idref="C32Global" mp:name="Clang (Global Options)" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode">
-        <mp:customizerNode mp:idref="C32-AS" mp:name="xc32-as" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAS"/>
-        <mp:customizerNode mp:idref="C32" mp:name="xc32-gcc" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeGCC"/>
-        <mp:customizerNode mp:idref="C32CPP" mp:name="xc32-g++" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeGPP"/>
-        <mp:customizerNode mp:idref="C32-LD" mp:name="xc32-ld" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode"/>
-        <mp:customizerNode mp:idref="C32-AR" mp:name="xc32-ar" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAR"/>
+        <mp:customizerNode mp:idref="C32-AS" mp:name="Assembler" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAS"/>
+        <mp:customizerNode mp:idref="C32" mp:name="C" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeGCC"/>
+        <mp:customizerNode mp:idref="C32CPP" mp:name="C++" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeGPP"/>
+        <mp:customizerNode mp:idref="C32-LD" mp:name="Linker" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode"/>
+        <mp:customizerNode mp:idref="C32-AR" mp:name="Archiver" mp:class="com.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAR"/>
     </mp:customizerNode>
 
     <mp:makefileWriter mp:checkos="true" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.ClangGlobalMakeRuntimeProperties">
@@ -483,6 +483,10 @@
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="com.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsModifier"/>
     </mp:assembler>
+    <!-- TODO:  lld outputs 
+                "lld is a generic driver.
+                 Invoke ld.lld (Unix), ld (macOS) or lld-link (Windows) instead."
+                Will we need to handle this here somehow? -->
     <mp:linker mp:file="lld" mp:name="MPLAB Linker for 32-bit Devices">
         <mp:versionProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsProvider"/>

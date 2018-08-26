@@ -8,6 +8,26 @@
 
   <opt:optionCategory opt:id="general" opt:name="General">
     <opt:enumOption
+        opt:id="c-standard"
+        opt:name="Language standard"
+        opt:textdefault=""
+        opt:emitswhendefault="false"
+        opt:emissionprefix="-std=">
+        <opt:selection opt:text="" opt:name="Compiler Default"/>
+        <opt:selection opt:text="c89" opt:name="C89"/>
+        <opt:selection opt:text="gnu89" opt:name="GNU89"/>
+        <opt:selection opt:text="c99" opt:name="C99"/>
+        <opt:selection opt:text="gnu99" opt:name="GNU99"/>
+        <opt:selection opt:text="c11" opt:name="C11"/>
+        <opt:selection opt:text="gnu11" opt:name="GNU11"/>
+        <opt:selection opt:text="c17" opt:name="C17"/>
+        <opt:selection opt:text="gnu17" opt:name="GNU17"/>
+        <op:xhmtl>
+            Set the desired C language standard, with the GNU versions containing GCC-compatible extensions.  
+            The default depends on the version of Clang, but is GNU11 as of Clang 3.6.
+        </op:xhmtl>
+    </opt:enumOption>
+    <opt:enumOption
 		opt:id="unaligned-access"
 		opt:name="Enable unaligned access"
 		opt:textdefault=""
@@ -84,20 +104,28 @@
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
     <opt:enumOption 
 		opt:id="optimization-level"
+                opt:name="Optimization level"
 		opt:textdefault=""
 		opt:emissionprefix=""
 		opt:emitswhendefault="false">
-      <opt:xhtml>- 0 - Do not optimize. The compiler’s goal is to reduce the cost of compilation and to make debugging produce the expected results.
-      <br/>- 1 - Optimize. Optimizing compilation takes somewhat longer, and a lot more host memory for a large function. The compiler tries to reduce code size and execution time.
-      <br/>- 2 - Optimize even more. The compiler performs nearly all supported optimizations that do not involve a space-speed trade-off.
-      <br/>- 3 - Optimize yet more favoring speed (superset of O2).
-      <br/>- s - Optimize yet more favoring size (superset of O2).
-      </opt:xhtml>
+        <opt:xhtml>Higher levels of optimization take longer and use more memory, especially for larger functions.
+        <br/>- 0 - Do not optimize.  This compiles the fastest and generates the most debuggable code.
+        <br/>- g - Currently the same as O1, but may be used to optimize for debuggability in the future (like GCC).
+        <br/>- 1 - Perform basic optimizations, reducing both code size and execution time.
+        <br/>- 2 - Perform nearly all supported optimizations that do not involve a space-speed trade-off.
+        <br/>- 3 - Like 02, but enables optimizations that may generate larger code.
+        <br/>- fast - Like 03, but allows optimizations that may not strictly comply with language standards.
+        <br/>- s - Like 02, but enables optimizations to reduce code size.
+        <br/>- z - Like 0s, but tries to reduce size even further.
+        </opt:xhtml>
       <opt:selection opt:text="" opt:name="0"/>
+      <opt:selection opt:text="-Og" opt:name="g"/>
       <opt:selection opt:text="-O1" opt:name="1"/>
       <opt:selection opt:text="-O2" opt:name="2"/>
       <opt:selection opt:text="-O3" opt:name="3"/>
+      <opt:selection opt:text="-Ofast" opt:name="fast"/>
       <opt:selection opt:text="-Os" opt:name="s"/>
+      <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
     <!--opt:booleanOption opt:id="keep-inline" opt:name="Do not override 'inline'" opt:trueemission="-mno-override-inline" opt:booldefault="false" opt:fromversion="1.10"/-->
     <opt:booleanOption

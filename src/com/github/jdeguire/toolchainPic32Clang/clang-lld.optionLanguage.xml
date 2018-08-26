@@ -79,12 +79,16 @@
 		opt:groupid="pre"
 		opt:name="Optimization level of Standard Libraries"
 		opt:textdefault=""
-		opt:emissionprefix="">
+		opt:emissionprefix=""
+                opt:neveremits="true">
+      <!-- Selection used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
       <opt:selection opt:text="" opt:name="None"/>
       <opt:selection opt:text="-O1" opt:name="1"/>
       <opt:selection opt:text="-O2" opt:name="2"/>
       <opt:selection opt:text="-O3" opt:name="3"/>
+      <opt:selection opt:text="-Ofast" opt:name="fast"/>
       <opt:selection opt:text="-Os" opt:name="s"/>
+      <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
     <opt:stringListOption
 		opt:id="input-libraries"
