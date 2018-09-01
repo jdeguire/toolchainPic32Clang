@@ -6,6 +6,7 @@ package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
 
 /**
  * Handles the AS compiler options.
@@ -14,7 +15,8 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  */
 public final class ClangASRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public ClangASRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
+    public ClangASRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
+                             throws IllegalArgumentException, MakeConfigurationException {
         super(desc, conf);
     }
 }

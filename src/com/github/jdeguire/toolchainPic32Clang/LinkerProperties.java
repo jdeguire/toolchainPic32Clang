@@ -25,13 +25,13 @@ import java.util.logging.Level;
  */
 public final class LinkerProperties extends CommonProperties {
 
-	private final ReservedMemoryRangesCalculator memCalc;
+    private final ReservedMemoryRangesCalculator memCalc;
 
     public LinkerProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
-		memCalc = new ReservedMemoryRangesCalculator(conf, assembly, getPic());
+	memCalc = new ReservedMemoryRangesCalculator(conf, assembly, getPic());
 
         addDebuggerNameOptions();
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
@@ -45,7 +45,8 @@ public final class LinkerProperties extends CommonProperties {
         commandLineProperties.put("DEBUG_MEMORY_RANGES", memRanges);
         commandLineProperties.put("CHIPKIT_DEBUG_SYMBOL", getChipKITDebugSymbol());
 
-        commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt(projectDescriptor, conf));
+        commandLineProperties.put("THINLTO_THREADS_OPT", getThinLtoThreadsOpt());
+        commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt());
     }
 
     private String getChipKITDebugSymbol() {
@@ -138,56 +139,74 @@ public final class LinkerProperties extends CommonProperties {
         return "-lcppcfl ".substring(0);
     }
 
+    /* Get the option value for the number of threads to use for Clang's ThinLTO mode and build the
+     * string to be passed to the linker.  An option value of 0 or less will tell this to use half
+     * of the available logical processors on the machine.
+     */
+    private String getThinLtoThreadsOpt() {
+        String opt = "";
+
+        if(optAccessor.getBooleanProjectOption("C32Global", "wpo-lto", false)  &&
+           optAccessor.getBooleanProjectOption("C32Global", "lto.enable-thin", false))
+        {
+            int maxthreads = Runtime.getRuntime().availableProcessors();
+            int defaultthreads = (maxthreads + 1) / 2;
+
+            int ltothreads = optAccessor.getIntProjectOption("C32Global", "lto.link.threads", 0);
+
+            if(ltothreads > maxthreads)
+                ltothreads = maxthreads;
+            else if(ltothreads <= 0)
+                ltothreads = defaultthreads;
+
+            opt = ",--thinlto-jobs=" + Integer.toString(ltothreads);
+        }
+
+        return opt;
+    }
+
     /* Return the "-L<dir>" option string that will point to the particular multilib variant that we 
      * need given our options and architecture.
      *
      * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'dsp'
      * applies only to MIPS devices.
      */
-// TODO:  Remove 'confBook' and 'conf' arguments from signature.
-    private String getMultilibDirectoryOpt(MakeConfigurationBook confBook, MakeConfiguration conf) {
-        String arch = getProjectOption(confBook, conf, "C32Global", "target.arch", "");
-        String multilibOpt = "-L" + getToolchainBasePath(conf);
+    private String getMultilibDirectoryOpt() {
+        String arch = optAccessor.getProjectOption("C32Global", "target.arch", "");
+        String multilibOpt = "-L" + getToolchainBasePath();
 
         if(arch.equals("mipsel-unknown-elf"))
-            multilibOpt += getMips32Multilib(confBook, conf);
+            multilibOpt += getMips32Multilib();
         else if(arch.equals("arm-none-eabi"))
-            multilibOpt += getArmMultilib(confBook, conf);
+            multilibOpt += getArmMultilib();
         else
             return "";
 
-        multilibOpt += getCommonMultilibs(confBook, conf);
+        multilibOpt += getCommonMultilibs();
         return multilibOpt;
     }
 
-// TODO:  Remove 'confBook' and 'conf' arguments from signature.
-    private String getMips32Multilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getMips32Multilib() {
         String libdir = "";
         String opt;
 
         /* Get CPU type.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.cpu", "mips32r2");
-        libdir += opt;
+        libdir += optAccessor.getProjectOption("C32Global", "target.mips32.cpu", "mips32r2");
 
         /* Get ISA.
          */
-        opt = getProjectOption(confBook, conf, "C32-LD", "generate-16-bit-code", "false");
-
-        if(opt.equalsIgnoreCase("true")) {
+        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
             libdir += "/mips16e";
         }
-        else {
-            opt = getProjectOption(confBook, conf, "C32-LD", "generate-micro-compressed-code", "false");
-
-            if(opt.equalsIgnoreCase("true")) {
-                libdir += "/micromips";
-            }
+        else if(optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
+            libdir += "/micromips";
         }
+        // else will be MIPS32
 
         /* Get DSP.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.dsp", "");
+        opt = optAccessor.getProjectOption("C32Global", "target.mips32.dsp", "");
 
         if(opt.equals("-mdspr2")) {
             libdir += "/dspr2";
@@ -195,7 +214,7 @@ public final class LinkerProperties extends CommonProperties {
 
         /* Get FPU.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.mips32.fpu", "");
+        opt = optAccessor.getProjectOption("C32Global", "target.mips32.fpu", "");
 
         if(opt.contains("hard")) {
             libdir += "/fpu64";
@@ -204,27 +223,25 @@ public final class LinkerProperties extends CommonProperties {
         return libdir;
     }
 
-// TODO:  Remove 'confBook' and 'conf' arguments from signature.
-    private String getArmMultilib(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getArmMultilib() {
         String libdir = "";
         String opt;
 
         /* Get CPU type.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.cpu", "cortex-m0plus");
+        opt = optAccessor.getProjectOption("C32Global", "target.arm.cpu", "cortex-m0plus");
         libdir += opt.replace('-', '_');
 
         /* Get ISA.
          */
-        opt = getProjectOption(confBook, conf, "C32-LD", "generate-thumb-code", "false");
-
-        if(opt.equalsIgnoreCase("true")) {
+        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
             libdir += "/thumb";
         }
+        // Else will be ARM
 
         /* Get FPU.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "target.arm.fpu", "");
+        opt = optAccessor.getProjectOption("C32Global", "target.arm.fpu", "");
 
         if(opt.contains("vfp4-sp-d16")) {
             libdir += "/vfp4_sp_d16";
@@ -244,22 +261,18 @@ public final class LinkerProperties extends CommonProperties {
 
     /* Output the multilib dirctories for options common to all architectures we support.
      */
-// TODO:  Remove 'confBook' and 'conf' arguments from signature.
-    private String getCommonMultilibs(MakeConfigurationBook confBook, MakeConfiguration conf) {
+    private String getCommonMultilibs() {
         String libdir = "";
-        String opt;
 
         /* Get fast math.
          */
-        opt = getProjectOption(confBook, conf, "C32Global", "relaxed-math", "false");
-
-        if(opt.equalsIgnoreCase("true")) {
+        if(optAccessor.getBooleanProjectOption("C32Global", "relaxed-math", false)) {
             libdir += "/fastmath";
         }        
 
         /* Get optimization level.
          */
-        opt = getProjectOption(confBook, conf, "C32-LD", "optimization-level", "");
+        String opt = optAccessor.getProjectOption("C32-LD", "optimization-level", "");
 
         if(!opt.isEmpty()) {
             libdir += "/" + (opt.substring(1));

@@ -7,7 +7,7 @@ package com.github.jdeguire.toolchainPic32Clang;
 import com.microchip.mplab.mdbcore.common.streamingdata.interfaces.StreamingDataCapabilitiesInterface;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.mdbcore.assemblies.Assembly;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
 
 /**
  * Handles the C compiler options.
@@ -16,7 +16,8 @@ import com.microchip.mplab.mdbcore.assemblies.Assembly;
  */
 public final class ClangCRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
 
-    public ClangCRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
+    public ClangCRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
+                            throws IllegalArgumentException, MakeConfigurationException {
         super(desc, conf);
         setProperty("appio.suppress", shouldSuppressAppIO());
     }

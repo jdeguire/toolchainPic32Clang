@@ -4,11 +4,10 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
 import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPropertiesAccessor;
-import org.netbeans.api.project.Project;
 
 /**
  * Handle the common behavior related to mips16 and micromips instruction 
@@ -57,38 +56,26 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
      */
     public static final String PIC32C_SELECTED_PROPERTY = "pic32C.selected";
     final Boolean pic32CSelected;
-	final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
-    
-    protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) {
-        super(desc, conf);
-        
-        setTargetDefaultProperties(conf);
-        
-        pic32CSelected = isPIC32C();
-        setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
+    final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
+    final private ProjectOptionAccessor optAccessor;
 
-        // This must be called after setTargetDefaultProperties().
-        setArchSpecificBehavior(desc, conf);
+    protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
+                                          throws IllegalArgumentException, MakeConfigurationException {
+        super(desc, conf);
+
+        optAccessor = new ProjectOptionAccessor(desc, conf);        
+        pic32CSelected = isPIC32C();
+        super.setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
+
+        // Keep this call order.
+        setTargetDefaultProperties();
+        setArchSpecificBehavior();     // This one may throw because it sets options
     }
 
     final boolean isPIC32C(){
         return calc.isPIC32C(getPic());
     }
 
-    /* Get the current value of the given option using the MakeConfiguration supplied to this class.
-     * The optionBookId is the name given to the mp:configurationObject in the Clang.languageToolchain.xml
-     * file, such as "C32Global", "C32", "C32CPP", etc.  The optionId is the name of the option itself.
-     * This will return the given default value if the option could not be read for some reason.
-     *
-     * This just calls the implementation in CommonProperties.java and is here for convenience.
-     */
-// TODO:  Remove 'confBook' and 'conf' from signature.
-// TODO:  Can this be made non-static (we may have to remove dependence on CommonProperties)?
-    public static String getProjectOption(MakeConfigurationBook confBook, MakeConfiguration conf, 
-                                             String optionBookId, String optionId, String defaultVal) {
-        return CommonProperties.getProjectOption(confBook, conf, optionBookId, optionId, defaultVal);
-    }
-    
     /* Get the device family based on the device's name.
      */
     private TargetFamily getTargetFamily(String targetName) {
@@ -174,8 +161,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
      * the default option values ("Auto-detect") in the "Target Specific" section of the General
      * Options.
      */
-// TODO:  Remove 'conf' from signature.
-    private void setTargetDefaultProperties(MakeConfiguration conf) {
+    private void setTargetDefaultProperties() {
         String targetName = conf.getDevice().getValue().toUpperCase();
         TargetFamily family = getTargetFamily(targetName);
 
@@ -302,7 +288,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
         setProperty("target.mips32.cpu.default", mipsDefaultCpu);
         setProperty("target.mips32.fpu.default", mipsDefaultFpu);
         setProperty("target.mips32.dsp.default", mipsDefaultDsp);
-        setProperty("target.arm.isa.default", mipsDefaultIsa);
+        setProperty("target.arm.isa.default", armDefaultIsa);
         setProperty("target.arm.cpu.default", armDefaultCpu);
         setProperty("target.arm.fpu.default", armDefaultFpu);
         setProperty("target.arch.isARM.default", Boolean.toString(isARM));
@@ -313,8 +299,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
      * section of the General Options page.  Mainly this figures out if the selected arch is MIPS32
      * or ARM and then sets up MIPS16e and microMIPS availability (or ARM/Thumb for ARM devices).
      */
-// TODO:  Remove 'desc' and 'conf' from signature.
-    private void setArchSpecificBehavior(MakeConfigurationBook desc, MakeConfiguration conf) {
+    private void setArchSpecificBehavior() throws IllegalArgumentException, MakeConfigurationException {
         boolean isMips32 = false;
         boolean isArm = false;
         boolean grayMips16 = false;
@@ -327,15 +312,15 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
         boolean valueMicromips = false;
         boolean valueThumb = false;
         
-        String arch = getProjectOption(desc, conf, "C32Global", "target.arch", "");
+        String arch = optAccessor.getProjectOption("C32Global", "target.arch", "");
 
         if(!arch.isEmpty()) {
             if(arch.equals("mipsel-unknown-elf")) {
                 isMips32 = true;
                 isArm = false;
 
-                String mipsIsa = getProjectOption(desc, conf, "C32Global", "target.mips32.isa",
-                                                  "mips32+mips16e");
+                String mipsIsa = optAccessor.getProjectOption("C32Global", "target.mips32.isa", 
+                                                              "mips32+mips16e");
 
                 if(mipsIsa.equals("mips32+mips16e")) {
                     grayMicromips = true;
@@ -363,7 +348,7 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
                 isMips32 = false;
                 isArm = true;
 
-                String armIsa = getProjectOption(desc, conf, "C32Global", "target.arm.isa", "thumb");
+                String armIsa = optAccessor.getProjectOption("C32Global", "target.arm.isa", "thumb");
 
                 if(armIsa.equals("thumb")) {
                     grayThumb = true;
@@ -385,33 +370,25 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
         setProperty("micromips.gray", Boolean.toString(grayMicromips));
         setProperty("thumb.gray", Boolean.toString(grayThumb));
 
-        try {
-            Project project = desc.getProject();
-            
-            if(setMips16) {
-                conf.setGenericOption(project, "C32-AS", "generate-16-bit-code", Boolean.toString(valueMips16));
-                conf.setGenericOption(project, "C32", "generate-16-bit-code", Boolean.toString(valueMips16));
-                conf.setGenericOption(project, "C32CPP", "generate-16-bit-code", Boolean.toString(valueMips16));
-                conf.setGenericOption(project, "C32-LD", "generate-16-bit-code", Boolean.toString(valueMips16));
-            }
-
-            if(setMicromips) {
-                conf.setGenericOption(project, "C32-AS", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                conf.setGenericOption(project, "C32", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                conf.setGenericOption(project, "C32CPP", "generate-micro-compressed-code", Boolean.toString(valueMicromips));
-                conf.setGenericOption(project, "C32-LD", "generate-micro-compressed-code", Boolean.toString(valueMicromips));            
-            }
-
-            if(setThumb) {
-                conf.setGenericOption(project, "C32-AS", "generate-thumb-code", Boolean.toString(valueThumb));
-                conf.setGenericOption(project, "C32", "generate-thumb-code", Boolean.toString(valueThumb));
-                conf.setGenericOption(project, "C32CPP", "generate-thumb-code", Boolean.toString(valueThumb));
-                conf.setGenericOption(project, "C32-LD", "generate-thumb-code", Boolean.toString(valueThumb));            
-            }
+        if(setMips16) {
+            optAccessor.setBooleanProjectOption("C32-AS", "generate-16-bit-code", valueMips16);
+            optAccessor.setBooleanProjectOption("C32", "generate-16-bit-code", valueMips16);
+            optAccessor.setBooleanProjectOption("C32CPP", "generate-16-bit-code", valueMips16);
+            optAccessor.setBooleanProjectOption("C32-LD", "generate-16-bit-code", valueMips16);
         }
-        catch(Exception e)
-        {
-            // do nothing for now
+
+        if(setMicromips) {
+            optAccessor.setBooleanProjectOption("C32-AS", "generate-micro-compressed-code", valueMicromips);
+            optAccessor.setBooleanProjectOption("C32", "generate-micro-compressed-code", valueMicromips);
+            optAccessor.setBooleanProjectOption("C32CPP", "generate-micro-compressed-code", valueMicromips);
+            optAccessor.setBooleanProjectOption("C32-LD", "generate-micro-compressed-code", valueMicromips);
+        }
+
+        if(setThumb) {
+            optAccessor.setBooleanProjectOption("C32-AS", "generate-thumb-code", valueThumb);
+            optAccessor.setBooleanProjectOption("C32", "generate-thumb-code", valueThumb);
+            optAccessor.setBooleanProjectOption("C32CPP", "generate-thumb-code", valueThumb);
+            optAccessor.setBooleanProjectOption("C32-LD", "generate-thumb-code", valueThumb);            
         }
     }
 }

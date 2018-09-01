@@ -122,6 +122,6 @@ public final class CompilerProperties extends CommonProperties {
     }
 
     private String shouldUseCIncludesInCPP() {
-        return getProjectOption(desc, conf, "C32CPP", "c-includes-in-cpp", "false");
+        return optAccessor.getProjectOption("C32CPP", "c-includes-in-cpp", "false");
     }    
 }

@@ -13,7 +13,10 @@
 		opt:name="Don't delete intermediate files"
 		opt:trueemission="-save-temps=obj"
 		opt:booldefault="false">
-      <opt:xhtml>Don't delete intermediate files. Place them in the object directory and name them based on the source file.</opt:xhtml>
+      <opt:xhtml>
+        Don't delete intermediate files. Place them in the object directory and name them based on
+        the source file.
+      </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="fake-xc32"
@@ -22,14 +25,14 @@
 		opt:trueemission=""
 		opt:booldefault="true">
       <opt:xhtml>
-        If True, define the __XC, __XC32, and __XC32_VERSION__ macros for compatibility with code that expects those.  
-        Clang-specific macros, like __clang__, are still defined.
+        If True, define the __XC, __XC32, and __XC32_VERSION__ macros for compatibility with code
+        that expects those.  Clang-specific macros, like __clang__, are still defined.
       </opt:xhtml>
       <opt:falseModifiers>
         <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="true"/>
       </opt:falseModifiers>
       <opt:trueModifiers>
-        <opt:optionGrayer opt:idref="fake-xc2-version" opt:bool="false"/>
+        <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="false"/>
       </opt:trueModifiers>
     </opt:booleanOption>
     <opt:stringOption
@@ -38,7 +41,10 @@
 		opt:name="XC32 version macro value"
 		opt:textdefault="2100"
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
-      <opt:xhtml>Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times 1000 (eg. 2100 for XC32 v2.10).</opt:xhtml>
+      <opt:xhtml>
+        Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times
+        1000 (eg. 2100 for XC32 v2.10).
+      </opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:groupid="gp-relative-treshhold"
@@ -47,7 +53,10 @@
 		opt:emissionprefix="-G "
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator"
 		opt:suppressif="${target.arch.isARM}">
-      <opt:xhtml>Put definitions of externally-visible data in a small data section for fast access if that data is no bigger than num bytes.</opt:xhtml>
+      <opt:xhtml>
+        Put definitions of externally-visible data in a small data section for fast access if that 
+        data is no bigger than num bytes.
+      </opt:xhtml>
     </opt:stringOption>
     <opt:booleanOption
 		opt:id="extended-got"
@@ -56,7 +65,10 @@
 		opt:trueemission="-mxgot"
 		opt:booldefault="false"
 		opt:suppressif="${target.arch.isARM}">
-      <opt:xhtml>Allow a global offset table larger than 64kB at the expense of slower access (3 instructions instead of 1).</opt:xhtml>
+      <opt:xhtml>
+        Allow a global offset table larger than 64kB at the expense of slower access (3 instructions
+        instead of 1).
+      </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="relaxed-math"
@@ -64,11 +76,15 @@
 		opt:name="Relaxed floating-point math"
 		opt:trueemission="-ffast-math"
 		opt:booldefault="false">
-      <opt:xhtml>Allow the compiler to more aggresively optimize floating-poing math by making certain assumptions about floating-point math that may result in some loss of precision, including (but not limited to):
-      <br/> - floating-point math follows regular algebraic rules such as the associative and distributive properties,
-      <br/> - operands to floating-point operations are not NaN or Inf,
-      <br/> - and that +0 and -0 are interchangeable.
-      <br/>Enabling this option defines the __FAST_MATH__ preprocessor macro.
+      <opt:xhtml>
+        Allow the compiler to more aggresively optimize floating-poing math by making certain
+        assumptions about floating-point math that may result in some loss of precision, including
+        (but not limited to): 
+        <br/> - floating-point math follows regular algebraic rules such as	the associative and 
+        distributive properties, 
+        <br/> - operands to floating-point operations are not NaN or Inf, 
+        <br/> - and that +0 and -0 are interchangeable.  
+        <br/>Enabling this option defines the __FAST_MATH__ preprocessor macro.
       </opt:xhtml>
     </opt:booleanOption>
     <opt:stringListOption
@@ -127,9 +143,11 @@
 		opt:groupid="wpo"
 		opt:name="Enable Link-Time Optimizations"
 		opt:trueemission="">
-      <opt:xhtml>When this feature is enabled, the build will be constrained in the following ways if ThinLTO is NOT used:
-      <br/> - The per-file build settings will be ignored;
-      <br/> - The build will no longer be an incremental one (full build only).
+      <opt:xhtml>
+        When this feature is enabled, the build will be constrained in the following ways if ThinLTO
+        is NOT used:
+        <br/> - The per-file build settings will be ignored;
+        <br/> - The build will no longer be an incremental one (full build only).
       </opt:xhtml>
       <opt:falseModifiers>
         <opt:optionSuppressor opt:idref="lto.enable-vtable-opts" opt:bool="true"/>
@@ -147,7 +165,7 @@
     <opt:booleanOption
 		opt:id="lto.enable-vtable-opts"
 		opt:groupid="lto"
-		opt:name="Enable Whole-program vtable optimizations"
+		opt:name="Enable whole-program vtable optimizations"
 		opt:trueemission="-fwhole-program-vtables">
     </opt:booleanOption>    
     <opt:booleanOption
@@ -156,9 +174,10 @@
 		opt:name="Use ThinLTO"
 		opt:trueemission="-flto=thin"
 		opt:booldefault="true">
-      <opt:xhtml>Use Clang's ThinLTO mode, which uses a cache to enable incremental builds and build times similar to non-LTO builds.
-      The cache is stored in "build/{config_name}/ltocache".  
-      <br/>See https://clang.llvm.org/docs/ThinLTO.html for more info.
+      <opt:xhtml>
+        Use Clang's ThinLTO mode, which uses a cache to enable incremental builds and build times
+        similar to non-LTO builds.  The cache is stored in "build/{config_name}/ltocache".  
+        <br/>See https://clang.llvm.org/docs/ThinLTO.html for more info.
       </opt:xhtml>
       <opt:falseModifiers>
         <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="true"/>
@@ -171,24 +190,29 @@
         <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="false"/>
       </opt:trueModifiers>
     </opt:booleanOption>
-    <opt:rangeOption
+    <!-- This next option is set up in LinkerProperties::getThinLtoThreadsOpt(), so it is ignored.-->
+    <opt:stringOption
 		opt:id="lto.link.threads"
-		opt:groupid="lto.link"
-		opt:name="Threads for ThinLTO link"
-		opt:fromvalue="1"
-		opt:tovalue="${lto.link.threads.maxval}"
-		opt:defaultvalue="${lto.link.threads.default}"
-		opt:emissionprefix="--thinlto-jobs=">
-      <opt:xhtml>Set the number of threads to use during a ThinLTO link.  This will default to half of the available threads on the current machine.
-	  </opt:xhtml>
-    </opt:rangeOption>
+		opt:groupid="ignore-me"
+		opt:name="Threads for ThinLTO link (0: Auto)"
+		opt:textdefault="0"
+		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
+      <opt:xhtml>
+        Set the number of threads to use during a ThinLTO link.  If set to 0, this will use half of
+        the available threads on the current machine.
+      </opt:xhtml>
+    </opt:stringOption>
     <opt:stringOption
 		opt:id="lto.link.cachesize"
 		opt:groupid="lto.link"
 		opt:name="Max size of ThinLTO cache"
 		opt:textdefault="1024m"
 		opt:emissionprefix="--thinlto-cache-policy,cache_size_bytes=">
-      <opt:xhtml>Set max size of the ThinLTO cache before it is pruned.  Use a suffix of "k" for kilobytes, "m" for megabytes or "g" for gigatbytes.  For example, using "1024m" will set the max size of 1024MiB.  Use 0 for no pruning.</opt:xhtml>
+      <opt:xhtml>
+        Set max size of the ThinLTO cache before it is pruned.  Use a suffix of "k" for kilobytes,
+        "m" for megabytes or "g" for gigatbytes.  For example, using "1024m" will set the max size
+        of 1024MiB.  Use 0 for no pruning.
+      </opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:id="lto.link.cachedir"
@@ -197,13 +221,16 @@
 		opt:textdefault="${OBJECTDIR}/ltocache"
 		opt:emissionprefix="--thinlto-cache-dir="
 		opt:hideif="true">
-      <opt:xhtml>Set the location of the ThinLTO cache directory.  This option is not meant to be visible and is here to make adding the directory to the output easier.
+      <opt:xhtml>
+        Set the location of the ThinLTO cache directory.  This option is not meant to be visible 
+        and is here to make adding the directory to the output easier.
       </opt:xhtml>
     </opt:stringOption>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="target-options" opt:name="Target Specific">
-    <opt:enumOption
+  <!-- TODO:  Do I need to specify both floating-point options for MIPS? -->
+<!--    <opt:enumOption
 		opt:id="target.arch"
 		opt:groupid="target"
 		opt:name="Target Architecture"
@@ -250,7 +277,7 @@
 		opt:groupid="target"
 		opt:name="MIPS Instruction Set"
 		opt:textdefault="${target.mips32.isa.default}"
-		opt:neveremits="true">
+                opt:neveremits="true">
       <opt:selection opt:text="${target.mips32.isa.default}" opt:name="Auto-detect"/>
       <opt:selection opt:text="mips32+mips16e" opt:name="MIPS32 and MIPS16e"/>
       <opt:selection opt:text="mips32+micromips" opt:name="MIPS32 and microMIPS"/>
@@ -274,7 +301,6 @@
 		opt:textdefault="${target.mips32.fpu.default}"
 		opt:emissionprefix=""
 		opt:emitswhendefault="true">
-      <!-- TODO:  Do I need to specify both of these floating-point options for MIPS? -->
       <opt:selection opt:text="${target.mips32.fpu.default}" opt:name="Auto-detect"/>
       <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
       <opt:selection opt:text="-mhard-float -mfloat-abi=hard" opt:name="Hardware"/>
@@ -295,7 +321,7 @@
 		opt:groupid="target"
 		opt:name="ARM Instruction Set"
 		opt:textdefault="${target.arm.isa.default}"
-		opt:neveremits="true">
+                opt:neveremits="true">
       <opt:selection opt:text="${target.arm.isa.default}" opt:name="Auto-detect"/>
       <opt:selection opt:text="thumb" opt:name="Thumb Only"/>
       <opt:selection opt:text="arm+thumb" opt:name="ARM and Thumb"/>
@@ -327,7 +353,7 @@
       <opt:selection opt:text="-mfpu=vfp4-dp-d16 -mfloat-abi=hard" opt:name="VFPv4"/>
       <opt:selection opt:text="-mfpu=vfp5-dp-d16 -mfloat-abi=hard" opt:name="VFPv5"/>
       <opt:selection opt:text="-mfpu=neon-vfpv4 -mfloat-abi=hard" opt:name="NEON"/>
-    </opt:enumOption>
+    </opt:enumOption>-->
   </opt:optionCategory>
 
   <opt:enablePattern opt:idref="save-temps"  opt:expr="-save-temps.*"/>

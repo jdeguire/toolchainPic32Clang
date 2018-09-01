@@ -76,7 +76,7 @@
   <opt:optionCategory opt:id="libraries" opt:name="Libraries">
     <opt:enumOption
 		opt:id="optimization-level"
-		opt:groupid="pre"
+		opt:groupid="ignore-me"
 		opt:name="Optimization level of Standard Libraries"
 		opt:textdefault=""
 		opt:emissionprefix=""
@@ -186,7 +186,7 @@
 		opt:name="Link experimental C++ features library"
 		opt:booldefault="false"
 		opt:trueemission="-lc++experimental">
-      <opt:xhtml>Libc++ puts experimental C++ features into a separate library.  Enable this option if the project uses &lt;experimental/...&gt; headers.</opt:xhtml>
+      <opt:xhtml>Libc++ puts experimental C++ features into a separate library.  Enable this option if the project uses &lt; experimental/... &gt; headers.</opt:xhtml>
     </opt:booleanOption>
   </opt:optionCategory>
 

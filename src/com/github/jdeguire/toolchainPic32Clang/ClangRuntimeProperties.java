@@ -8,6 +8,7 @@ import com.microchip.crownking.mplabinfo.FamilyDefinitions;
 import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
 import org.openide.util.Utilities;
 
 /** 
@@ -20,11 +21,11 @@ import org.openide.util.Utilities;
  */
 public final class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
     
-    public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) {
+    public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
+                           throws IllegalArgumentException, MakeConfigurationException {
         super(desc, conf);
         supressResponseFileOption();
         setImola2Properties(desc);
-        setThinLtoThreads();
     }
 
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
@@ -62,18 +63,4 @@ public final class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProper
         }
         setProperty("opt-Clang-linker-response-files.suppress", value);
     }
-
-    private void setThinLtoThreads() {
-        int maxthreads = Runtime.getRuntime().availableProcessors();
-        int defaultthreads = maxthreads / 2;
-        
-        if(maxthreads <= 0)
-            maxthreads = 1;
-        if(defaultthreads <= 0)
-            defaultthreads = 1;
-        
-        setProperty("lto.link.threads.maxval", Integer.toString(maxthreads));
-        setProperty("lto.link.threads.default", Integer.toString(defaultthreads));
-    }
-
 }

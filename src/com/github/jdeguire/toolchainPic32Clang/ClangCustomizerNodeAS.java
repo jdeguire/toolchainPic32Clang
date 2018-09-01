@@ -9,6 +9,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.Languag
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.ui.CustomizerNode;
 import com.microchip.mplab.nbide.toolchainCommon.customizers.CommonAbstractCustomizerNode;
+import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPropertiesAccessor;
 
 /**
  *
@@ -22,6 +23,10 @@ public final class ClangCustomizerNodeAS extends CommonAbstractCustomizerNode {
 
     @Override
     protected LanguageToolRuntimePropertiesAccessor getPropertiesFile(final MakeConfigurationBook desc) {
-        return new ClangASRuntimeProperties(desc, conf);
+        try {
+            return new ClangASRuntimeProperties(desc, conf);
+        } catch(Exception ex) {
+            return new CommonToolchainPropertiesAccessor(desc, conf);
+        }
     }
 }

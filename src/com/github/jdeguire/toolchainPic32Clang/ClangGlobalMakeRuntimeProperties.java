@@ -27,19 +27,17 @@ public class ClangGlobalMakeRuntimeProperties extends CommonProperties {
             return "false";
         }
 
-        return getProjectOption(desc, conf, "C32-AR", "additional-options-chop-files", "false");
+        return optAccessor.getProjectOption("C32-AR", "additional-options-chop-files", "false");
     }
 
     public final String getUseLTO() {
-        String ret = getProjectOption(desc, conf, "C32Global", "wpo-lto", "false");
+        String ret = "false";
 
-        if(ret.equalsIgnoreCase("true")) {
-                String doThinLto = getProjectOption(desc, conf, "C32Global", "lto.enable-thin", "false");
-
-                if(doThinLto.equalsIgnoreCase("true")) {
-                    // ThinLTO is handled like a normal build, so we want this to be false.
-                    ret = "false";
-                }
+        if(optAccessor.getBooleanProjectOption("C32Global", "wpo-lto", false)) {
+            // ThinLTO is handled like a normal build, so we want this False if it is enabled.
+            if(!optAccessor.getBooleanProjectOption("C32Global", "lto.enable-thin", false)) {
+                ret = "true";
+            }
         }
 
         return ret;
