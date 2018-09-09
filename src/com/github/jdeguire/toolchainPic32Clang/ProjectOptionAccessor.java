@@ -24,8 +24,7 @@ public class ProjectOptionAccessor
     
     /* Create a new accessor object with the given configuration and book.
      */
-    ProjectOptionAccessor(MakeConfigurationBook book, MakeConfiguration conf)
-    {
+    ProjectOptionAccessor(MakeConfigurationBook book, MakeConfiguration conf) {
         book_ = book;
         conf_ = conf;
         project_ = book_.getProject();
@@ -39,8 +38,7 @@ public class ProjectOptionAccessor
      * assigned to the opt:id attribute.  This will return the given default value if the option could 
      * not be read for some reason.
      */
-    public String getProjectOption(String optionBookId, String optionId, String defaultVal)
-    {
+    public String getProjectOption(String optionBookId, String optionId, String defaultVal) {
         String ret = defaultVal;
 
         if(null != project_)
@@ -59,8 +57,7 @@ public class ProjectOptionAccessor
      * if the option is "true" (ignoring case) or returns False otherwise.  This returns the given
      * default if the option could not be read for some reason.
      */
-    public boolean getBooleanProjectOption(String optionBookId, String optionId, boolean defaultVal)
-    {
+    public boolean getBooleanProjectOption(String optionBookId, String optionId, boolean defaultVal) {
         return Boolean.parseBoolean(getProjectOption(optionBookId, optionId, Boolean.toString(defaultVal)));
     }
 
@@ -72,8 +69,7 @@ public class ProjectOptionAccessor
      *
      * to have the option validated as the user enters the value.
      */
-    public int getIntProjectOption(String optionBookId, String optionId, int defaultVal)
-    {
+    public int getIntProjectOption(String optionBookId, String optionId, int defaultVal) {
         return Integer.getInteger(getProjectOption(optionBookId, optionId, Integer.toString(defaultVal)));
     }
 
@@ -88,24 +84,21 @@ public class ProjectOptionAccessor
      * get it).
     */
     public void setProjectOption(String optionBookId, String optionId, String val)
-                          throws IllegalArgumentException, MakeConfigurationException
-    {
+                          throws IllegalArgumentException, MakeConfigurationException {
         conf_.setGenericOption(project_, optionBookId, optionId, val);
     }
 
     /* Like above, but sets a boolean value for boolean options such as <opt:booleanOption>.
      */
     public void setBooleanProjectOption(String optionBookId, String optionId, boolean val)
-                                 throws IllegalArgumentException, MakeConfigurationException
-    {
+                                 throws IllegalArgumentException, MakeConfigurationException {
         setProjectOption(optionBookId, optionId, Boolean.toString(val));
     }
 
     /* Like above, but sets an integer value for numeric options such as <opt:rangeOption>.
      */
     public void setIntProjectOption(String optionBookId, String optionId, int val)
-                             throws IllegalArgumentException, MakeConfigurationException
-    {
+                             throws IllegalArgumentException, MakeConfigurationException {
         setProjectOption(optionBookId, optionId, Integer.toString(val));
     }
 }

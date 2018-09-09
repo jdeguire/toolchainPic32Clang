@@ -52,7 +52,7 @@
 		opt:name="Use GP relative addressing threshold"
 		opt:emissionprefix="-G "
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator"
-		opt:suppressif="${target.arch.isARM}">
+		opt:suppressif="${target.isARM}">
       <opt:xhtml>
         Put definitions of externally-visible data in a small data section for fast access if that 
         data is no bigger than num bytes.
@@ -64,7 +64,7 @@
 		opt:name="Allow extended global offset table"
 		opt:trueemission="-mxgot"
 		opt:booldefault="false"
-		opt:suppressif="${target.arch.isARM}">
+		opt:suppressif="${target.isARM}">
       <opt:xhtml>
         Allow a global offset table larger than 64kB at the expense of slower access (3 instructions
         instead of 1).
@@ -111,8 +111,8 @@
 		opt:name="Data TCM size in bytes"
 		opt:emissionprefix="-mdtcm="
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:unsuppressif="${target.arch.isARM}"
-		opt:showif="${target.arch.isARM}">
+		opt:unsuppressif="${target.isARM}"
+		opt:showif="${target.isARM}">
       <opt:xhtml>Enable data Tightly Coupled Memory with the specified size.</opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
@@ -121,8 +121,8 @@
 		opt:name="Instruction TCM size in bytes"
 		opt:emissionprefix="-mitcm="
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:unsuppressif="${target.arch.isARM}"
-		opt:showif="${target.arch.isARM}">
+		opt:unsuppressif="${target.isARM}"
+		opt:showif="${target.isARM}">
       <opt:xhtml>Enable instruction Tightly Coupled Memory with the specified size.</opt:xhtml>
     </opt:stringOption>
     <opt:booleanOption
@@ -131,8 +131,8 @@
 		opt:booldefault="false"
 		opt:groupid="both"
 		opt:id="mstacktcm"
-		opt:unsuppressif="${target.arch.isARM}"
-		opt:showif="${target.arch.isARM}">
+		opt:unsuppressif="${target.isARM}"
+		opt:showif="${target.isARM}">
       <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
     </opt:booleanOption>
   </opt:optionCategory>
@@ -226,134 +226,6 @@
         and is here to make adding the directory to the output easier.
       </opt:xhtml>
     </opt:stringOption>
-  </opt:optionCategory>
-
-  <opt:optionCategory opt:id="target-options" opt:name="Target Specific">
-  <!-- TODO:  Do I need to specify both floating-point options for MIPS? -->
-<!--    <opt:enumOption
-		opt:id="target.arch"
-		opt:groupid="target"
-		opt:name="Target Architecture"
-		opt:textdefault="${target.arch.defualt}"
-		opt:emissionprefix="-target "
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.arch.default}" opt:name="Auto-detect">
-        <opt:enumOptionAssigner opt:idref="target.mips32.isa" opt:text="${target.mips32.isa.default}"/>
-        <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="${target.arch.isARM.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.mips32.cpu" opt:text="${target.mips32.cpu.default}"/>
-        <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="${target.arch.isARM.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.mips32.fpu" opt:text="${target.mips32.fpu.default}"/>
-        <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="${target.arch.isARM.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.mips32.dsp" opt:text="${target.mips32.dsp.default}"/>
-        <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="${target.arch.isARM.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.arm.isa" opt:text="${target.arm.isa.default}"/>
-        <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="${target.arm.isARM.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.arm.cpu" opt:text="${target.arm.cpu.default}"/>
-        <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="${target.arch.isMIPS32.default}"/>
-        <opt:enumOptionAssigner opt:idref="target.arm.fpu" opt:text="${target.arm.fpu.default}"/>
-        <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="${target.arch.isMIPS32.default}"/>
-      </opt:selection>
-      <opt:selection opt:text="mipsel-unknown-elf" opt:name="MIPS32 (mipsel-unknown-elf)">
-        <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="true"/>
-      </opt:selection>
-      <opt:selection opt:text="arm-none-eabi" opt:name="ARM (arm-none-eabi)">
-        <opt:optionSuppressor opt:idref="target.mips32.isa" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.mips32.cpu" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.mips32.fpu" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.mips32.dsp" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="target.arm.isa" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.arm.cpu" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="target.arm.fpu" opt:bool="false"/>
-      </opt:selection>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.mips32.isa"
-		opt:groupid="target"
-		opt:name="MIPS Instruction Set"
-		opt:textdefault="${target.mips32.isa.default}"
-                opt:neveremits="true">
-      <opt:selection opt:text="${target.mips32.isa.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="mips32+mips16e" opt:name="MIPS32 and MIPS16e"/>
-      <opt:selection opt:text="mips32+micromips" opt:name="MIPS32 and microMIPS"/>
-      <opt:selection opt:text="micromips" opt:name="microMIPS only"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.mips32.cpu"
-		opt:groupid="target"
-		opt:name="MIPS CPU Type"
-		opt:textdefault="${target.mips32.cpu.default}"
-		opt:emissionprefix="-march="
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.mips32.cpu.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="mips32r2" opt:name="MIPS32r2"/>
-      <opt:selection opt:text="mips32r5" opt:name="MIPS32r5"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.mips32.fpu"
-		opt:groupid="target"
-		opt:name="MIPS Floating-point"
-		opt:textdefault="${target.mips32.fpu.default}"
-		opt:emissionprefix=""
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.mips32.fpu.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
-      <opt:selection opt:text="-mhard-float -mfloat-abi=hard" opt:name="Hardware"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.mips32.dsp"
-		opt:groupid="target"
-		opt:name="MIPS DSP ASE"
-		opt:textdefault="${target.mips32.dsp.default}"
-		opt:emissionprefix=""
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.mips32.dsp.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="" opt:name="Unsupported"/>
-      <opt:selection opt:text="-mdspr2" opt:name="Supported"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.arm.isa"
-		opt:groupid="target"
-		opt:name="ARM Instruction Set"
-		opt:textdefault="${target.arm.isa.default}"
-                opt:neveremits="true">
-      <opt:selection opt:text="${target.arm.isa.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="thumb" opt:name="Thumb Only"/>
-      <opt:selection opt:text="arm+thumb" opt:name="ARM and Thumb"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.arm.cpu"
-		opt:groupid="target"
-		opt:name="ARM CPU Type"
-		opt:textdefault="${target.arm.cpu.default}"
-		opt:emissionprefix="-mcpu="
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.arm.cpu.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="cortex-m0plus" opt:name="Cortex M0+"/>
-      <opt:selection opt:text="cortex-m23" opt:name="Cortex M23"/>
-      <opt:selection opt:text="cortex-m4" opt:name="Cortex M4"/>
-      <opt:selection opt:text="cortex-m7" opt:name="Cortex M7"/>
-      <opt:selection opt:text="cortex-a5" opt:name="Cortex A5"/>
-    </opt:enumOption>
-    <opt:enumOption
-		opt:id="target.arm.fpu"
-		opt:groupid="target"
-		opt:name="ARM Floating-point"
-		opt:textdefault="${target.arm.fpu.default}"
-		opt:emissionprefix="-mfpu="
-		opt:emitswhendefault="true">
-      <opt:selection opt:text="${target.arm.fpu.default}" opt:name="Auto-detect"/>
-      <opt:selection opt:text="-msoft-float -mfloat-abi=soft" opt:name="Software"/>
-      <opt:selection opt:text="-mfpu=vfp4-sp-d16 -mfloat-abi=hard" opt:name="VFPv4 (Single-precision only)"/>
-      <opt:selection opt:text="-mfpu=vfp4-dp-d16 -mfloat-abi=hard" opt:name="VFPv4"/>
-      <opt:selection opt:text="-mfpu=vfp5-dp-d16 -mfloat-abi=hard" opt:name="VFPv5"/>
-      <opt:selection opt:text="-mfpu=neon-vfpv4 -mfloat-abi=hard" opt:name="NEON"/>
-    </opt:enumOption>-->
   </opt:optionCategory>
 
   <opt:enablePattern opt:idref="save-temps"  opt:expr="-save-temps.*"/>

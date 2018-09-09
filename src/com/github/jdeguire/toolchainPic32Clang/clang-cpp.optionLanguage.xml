@@ -60,8 +60,8 @@
 		opt:id="unaligned-access"
 		opt:name="Enable unaligned access"
 		opt:textdefault=""
-		opt:unsuppressif="${target.arch.isARM}"
-		opt:showif="${target.arch.isARM}">
+		opt:unsuppressif="${target.isARM}"
+		opt:showif="${target.isARM}">
       <opt:selection opt:text="" opt:name="Compiler Default"/>
       <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
       <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
@@ -79,7 +79,7 @@
 		opt:id="enable-app-io"
 		opt:name="Enable App IO"
 		opt:trueemission="-mappio-debug"
-		opt:suppressif="${target.arch.isARM}"/>
+		opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
 		opt:id="isolate-each-function"
 		opt:name="Isolate each function in a section"
@@ -107,27 +107,27 @@
 		opt:trueemission="-mips16"
 		opt:default="false"
 		opt:grayif="${mips16.gray}"
-		opt:suppressif="${target.arch.isARM}"/>
+		opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
 		opt:id="generate-micro-compressed-code"
 		opt:name="Generate microMIPS compressed code"
 		opt:default="false"
 		opt:trueemission="-mmicromips"
 		opt:grayif="${micromips.gray}"
-		opt:suppressif="${target.arch.isARM}"/>
+		opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
 		opt:id="generate-thumb-code"
 		opt:name="Generate Thumb code"
 		opt:default="false"
 		opt:trueemission="-mthumb"
 		opt:grayif="${thumb.gray}"
-		opt:suppressif="${target.arch.isMIPS32}"/>
+		opt:suppressif="${target.isMIPS32}"/>
 	<!-- TODO:  Isn't this already handled by the linker options? -->
     <opt:booleanOption
 		opt:id="exclude-floating-point"
 		opt:name="Exclude floating-point library"
 		opt:trueemission="-mno-float"
-		opt:suppressif="${target.arch.isARM}"/>
+		opt:suppressif="${target.isARM}"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
@@ -237,7 +237,7 @@
 		opt:name="Use CCI syntax"
 		opt:trueemission="-mcci"
 		opt:booldefault="false"
-		opt:suppressif="${target.arch.isARM}">
+		opt:suppressif="${target.isARM}">
     </opt:booleanOption>
   </opt:optionCategory>
 

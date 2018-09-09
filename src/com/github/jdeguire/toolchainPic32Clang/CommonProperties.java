@@ -25,6 +25,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
     final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
     final protected ProjectOptionAccessor optAccessor;
+    final protected TargetDevice target;
 
     public CommonProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
@@ -32,6 +33,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
         super(projectDescriptor, conf, commandLineProperties);
 
         optAccessor = new ProjectOptionAccessor(projectDescriptor, conf);
+        target = new TargetDevice(conf.getDevice().getValue());
 
         Boolean pic32CDeviceSelected = isPIC32C();
         commandLineProperties.put("PIC32C", pic32CDeviceSelected.toString());
@@ -40,6 +42,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
         commandLineProperties.put("SYS_INCLUDE_OPT", getSystemIncludeDirOpt());
+        commandLineProperties.put("TARGET_OPTS", getTargetSpecificOpts());
     }
 
     final boolean isPIC32C() {
@@ -144,17 +147,39 @@ public class CommonProperties extends MPLABXSpecificProperties {
     }
 
     private String getSystemIncludeDirOpt() {
-        String arch = optAccessor.getProjectOption("C32Global", "target.arch", "");
-        String opt = "-isystem " + getToolchainBasePath();
-        
-        if(arch.equals("mipsel-unknown-elf"))
-            opt += "include/mipsel";
-        else if(arch.equals("arm-none-eabi"))
-            opt += "include/arm";
+        String triple = target.getTargetTripleName();
 
-        return opt;
+        return ("-isystem " + getToolchainBasePath() + "include/" + 
+                triple.substring(0, triple.indexOf('-')));
     }
-    
+
+    private String getTargetSpecificOpts() {
+        String triple = "-target " + target.getTargetTripleName();
+
+        String cpu = "";
+        if(target.isMips32()) {
+            cpu = "-march=" + target.getCpuName();
+        } else if(target.isArm()) {
+            cpu = "-mcpu=" + target.getCpuName();
+        }
+
+        String fpu = "-msoft-float -mfloat-abi=soft";
+        if(target.hasFpu()) {
+            if(target.isMips32()) {
+                fpu = "-mhard-float -mfloat-abi=hard";
+            } else if(target.isArm()) {
+                fpu = "-mfpu=" + target.getArmFpuName() + " -mfloat-abi=hard";
+            }
+        }
+
+        String dsp = "";
+        if(target.supportsDspR2Ase()) {
+            dsp = "-mdspr2";
+        }
+
+        return triple + " " + cpu + " " + fpu + " " + dsp;
+    }
+
     /* Return the base install path for the current toolchain with the file separator always at the
      * end (so "/foo/bar/" instead of "/foo/bar").
      */

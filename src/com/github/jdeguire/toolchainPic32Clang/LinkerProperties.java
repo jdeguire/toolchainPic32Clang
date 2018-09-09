@@ -172,12 +172,11 @@ public final class LinkerProperties extends CommonProperties {
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
-        String arch = optAccessor.getProjectOption("C32Global", "target.arch", "");
         String multilibOpt = "-L" + getToolchainBasePath();
 
-        if(arch.equals("mipsel-unknown-elf"))
+        if(target.isMips32())
             multilibOpt += getMips32Multilib();
-        else if(arch.equals("arm-none-eabi"))
+        else if(target.isArm())
             multilibOpt += getArmMultilib();
         else
             return "";
@@ -188,14 +187,10 @@ public final class LinkerProperties extends CommonProperties {
 
     private String getMips32Multilib() {
         String libdir = "";
-        String opt;
 
-        /* Get CPU type.
-         */
-        libdir += optAccessor.getProjectOption("C32Global", "target.mips32.cpu", "mips32r2");
+        libdir += target.getCpuName();
 
-        /* Get ISA.
-         */
+        // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
             libdir += "/mips16e";
         }
@@ -204,19 +199,11 @@ public final class LinkerProperties extends CommonProperties {
         }
         // else will be MIPS32
 
-        /* Get DSP.
-         */
-        opt = optAccessor.getProjectOption("C32Global", "target.mips32.dsp", "");
-
-        if(opt.equals("-mdspr2")) {
+        if(target.supportsDspR2Ase()) {
             libdir += "/dspr2";
         }
 
-        /* Get FPU.
-         */
-        opt = optAccessor.getProjectOption("C32Global", "target.mips32.fpu", "");
-
-        if(opt.contains("hard")) {
+        if(target.hasFpu()) {
             libdir += "/fpu64";
         }
 
@@ -225,15 +212,10 @@ public final class LinkerProperties extends CommonProperties {
 
     private String getArmMultilib() {
         String libdir = "";
-        String opt;
 
-        /* Get CPU type.
-         */
-        opt = optAccessor.getProjectOption("C32Global", "target.arm.cpu", "cortex-m0plus");
-        libdir += opt.replace('-', '_');
+        libdir += target.getCpuName().replace('-', '_');
 
-        /* Get ISA.
-         */
+        // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
             libdir += "/thumb";
         }
@@ -241,19 +223,8 @@ public final class LinkerProperties extends CommonProperties {
 
         /* Get FPU.
          */
-        opt = optAccessor.getProjectOption("C32Global", "target.arm.fpu", "");
-
-        if(opt.contains("vfp4-sp-d16")) {
-            libdir += "/vfp4_sp_d16";
-        }
-        else if(opt.contains("vfp4-dp-d16")) {
-            libdir += "/vfp4_dp_d16";
-        }
-        else if(opt.contains("vfp5-dp-d16")) {
-            libdir += "/vfp5_dp_d16";
-        }
-        else if(opt.contains("neon-vfpv4")) {
-            libdir += "/neon_vfpv4";
+        if(target.hasFpu()) {
+            libdir += "/" + target.getArmFpuName();
         }
         
         return libdir;        

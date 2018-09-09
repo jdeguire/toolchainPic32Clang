@@ -18,7 +18,7 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolch
  */
 public final class CommonPropertiesCalculator extends CommonLanguageToolchainPropertiesUtils {
 
-// TODO:  We might be able to remove this because we use the "target.arch.isARM" property now.
+// TODO:  We might be able to remove this because we use the "target.isARM" property now.
     final boolean isPIC32C(final xPIC pic) {
         if (pic == null) {
             return false;
