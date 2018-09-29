@@ -59,7 +59,8 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
             res.add(deviceMacro);
 
 		// TODO:  Update these defines for Clang.  Some of these we'll provide oursevles, like the
-		//        CPU name.
+		//        CPU name.  Also, get project options for defined like __FAST_MATH__, the XC32
+        //        compatibility macros and the C/C++ standards options.
 
         //add call to hook method, for inheritors who might want to do additional computations.
         getDefinesHook(makeConf, project, res);

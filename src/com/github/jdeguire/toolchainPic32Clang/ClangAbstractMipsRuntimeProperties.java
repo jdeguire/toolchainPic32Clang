@@ -29,6 +29,8 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
     final private ProjectOptionAccessor optAccessor;
     final private TargetDevice target;
 
+    private static boolean settingArchOpts = false;
+    
     protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
                                           throws IllegalArgumentException, MakeConfigurationException {
         super(desc, conf);
@@ -38,7 +40,16 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
         pic32CSelected = isPIC32C();
         super.setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
 
-        setArchSpecificBehavior();     // This one may throw because it sets options
+        // It turns out that setting options might end up trying to construct a new instance of this
+        // class, which will set options, which will construct YET another new instance of this class,
+        // which will set options, and so on.  Doing this breaks the recursion chain in a cheesy
+        // manner because whatever.
+        if(!settingArchOpts)
+        {
+            settingArchOpts = true;
+            setArchSpecificBehavior();      // This one may throw because it sets options
+            settingArchOpts = false;
+        }
     }
 
     final boolean isPIC32C(){

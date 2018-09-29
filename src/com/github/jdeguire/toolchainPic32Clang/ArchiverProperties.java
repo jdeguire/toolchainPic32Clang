@@ -22,23 +22,6 @@ public final class ArchiverProperties extends CommonProperties {
             final MakeConfiguration conf,
             final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
-        setMProcessor();
     }
 
-    private void setMProcessor() {
-// TODO: Does llvm-ar need anything like this?  I don't see why it would.
-//
-//        String emission = "";
-//        //TODO Marian: remove this check once xc32 v2.00 fixes its problem related to expected use of this option.
-//        //The option is supposed to also work with non mips devices!
-//        if (isPIC32C()) {
-//            //Marian: Normally, PIC32C is only supported starting with 2.00, so next check might seem redundant.
-//            //It stays here because in the future this option will also work for mips devices, when 2.00 compiler is fixed.
-//            Boolean mprocessorSupported = toolchainVersionGreaterOrEqualTo("2.00");
-//            if (mprocessorSupported) {
-//                emission = " -mprocessor=$(MP_PROCESSOR_OPTION) ";
-//            }
-//        }
-//        commandLineProperties.put("MPROCESSOR_CALL", emission);
-    }
 }

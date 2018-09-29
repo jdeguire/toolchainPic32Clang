@@ -41,7 +41,7 @@ public class TargetDevice {
       MEC17,            // Cortex-M4F, FPv4 D16 single-precision FPU
     };
 
-    private String name_;
+    final private String name_;
     final private TargetFamily family_;
     private String cpuName_;
     private String targetTripleName_;

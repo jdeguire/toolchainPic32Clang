@@ -7,11 +7,13 @@ import org.netbeans.api.project.Project;
 /**
  * System define provider for C files.
  * @author Marian Golea <marian.golea@microchip.com>
+ *
+ * Modified by jdeguire for toolchainPIC32Clang.
  */
 public final class ClangCSystemDefineProvider extends ClangAbstractSystemDefineProvider {
 
     @Override
     void getDefinesHook(final MakeConfiguration makeConf, final Project project, final List<String> res) {
-        super.addCCIMacro(makeConf, project, res, "C32", "use-cci");
+        // This is apparently required, so just do nothing.
     }
 }

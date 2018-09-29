@@ -27,24 +27,24 @@ public final class CommonPropertiesCalculator extends CommonLanguageToolchainPro
         return isPIC32C;
     }
 
+    /* These are meant to check if a given version of an XC compiler supports certain
+     * Microchip-specific features.  None of these apply to Clang, so they'll just return False.
+     * They are still here just in case MPLAB X depends on them.
+     */
     final boolean supportsMemorySummary(final MakeConfiguration conf) {
-//        return toolchainVersionGreaterOrEqualTo(XC32LanguageToolchain.MEMORY_SUMMARY_SUPPORT_FIRST_VERSION, conf);
-		return false;
+    	return false;
     }
 
     final boolean supportsSkipLicenseCheck(final MakeConfiguration conf) {
-//        return toolchainVersionGreaterOrEqualTo(XC32LanguageToolchain.SKIP_LICENSE_CHECK_SUPPORT_FIRST_VERSION, conf);
-		return false;
+        return false;
     }
 
     final boolean supportsBuildComparison(final MakeConfiguration conf) {
-//        return toolchainVersionGreaterOrEqualTo(XC32LanguageToolchain.BUILD_COMPARISON_SUPPORT_FIRST_VERSION, conf);
-		return false;
+        return false;
     }
     
-     final boolean supportsLegacyLibc(final MakeConfiguration conf) {
-//        return toolchainVersionGreaterOrEqualTo(XC32LanguageToolchain.LIBC_SUPPORT_FIRST_VERSION, conf);
-		 return false;
+    final boolean supportsLegacyLibc(final MakeConfiguration conf) {
+        return false;
     }
 
 }

@@ -25,7 +25,6 @@ public final class CompilerProperties extends CommonProperties {
             final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
 
-        commandLineProperties.put("PROCESSOR_NAME_FOR_COMPILER", getProcessorNameForCompiler());
         addDebuggerNameOptions();
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04

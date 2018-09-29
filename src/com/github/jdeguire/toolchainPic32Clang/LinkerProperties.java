@@ -37,65 +37,10 @@ public final class LinkerProperties extends CommonProperties {
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
         commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
-        Boolean hasMemReservation = hasMemReservation();
-        commandLineProperties.put("HAS_DEBUG_RANGES", hasMemReservation.toString());
-        commandLineProperties.put("IDE_DASHBOARD", getIdeDashboardProperty());
-
-        String memRanges = hasMemReservation ? getDebugMemRanges() : "";
-        commandLineProperties.put("DEBUG_MEMORY_RANGES", memRanges);
-        commandLineProperties.put("CHIPKIT_DEBUG_SYMBOL", getChipKITDebugSymbol());
 
         commandLineProperties.put("THINLTO_THREADS_OPT", getThinLtoThreadsOpt());
         commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt());
     }
-
-    private String getChipKITDebugSymbol() {
-        boolean applicable = toolchainVersionGreaterOrEqualTo(ClangLanguageToolchain.CHIPKIT_SUPPORT_FIRST_VERSION);
-        return applicable ? ",-D=__DEBUG_D" : "";
-    }
-
-    private String getIdeDashboardProperty() {
-        boolean applicable = calc.supportsMemorySummary(conf);
-        return applicable ? ",--memorysummary," + LTUtils.MEMORY_FILE_ADDRESS : "";
-    }
-
-    private boolean hasMemReservation() {
-        boolean isPIC32C = isPIC32C();
-        if (isPIC32C) {
-            return false;
-        }
-
-        return toolchainVersionGreaterOrEqualTo(ClangLanguageToolchain.MEM_RESERVATION_SUPPORT_FIRST_VERSION);
-    }
-
-    private String getDebugMemRanges() {
-        final Map<MemRegionType, List<Pair<Long, Long>>> ranges = memCalc.getReservedMemoryRanges();
-        final List<Pair<Long, Long>> prgRanges = ranges.get(MemRegionType.PROGRAM);
-        final List<Pair<Long, Long>> dataRanges = ranges.get(MemRegionType.DATA);
-        final List<Pair<Long, Long>> bootRanges = ranges.get(MemRegionType.BOOT);
-        final String prgStr = rangesToString(prgRanges, "program");
-        final String dataStr = rangesToString(dataRanges, "data");
-        final String bootStr = rangesToString(bootRanges, "boot");
-        return prgStr + " " + dataStr + " " + bootStr;
-    }
-
-    private String rangesToString(final List<Pair<Long, Long>> rs, final String region) {
-        final String tmpl = String.format("-mreserve=%s@0x%s:0x%s", region, "%s", "%s");
-        final StringBuilder sb = new StringBuilder("");
-        boolean first = true;
-        for (Pair<Long, Long> r : rs) {
-            if (!first) {
-                sb.append(" ");
-            }
-            first = false;
-//            r = new Pair<Long, Long>(LTUtils.ensureVirtualAddress(vatt, r.first), LTUtils.ensureVirtualAddress(vatt, r.second));
-            final String begin = Long.toString(r.first, 16).toUpperCase();
-            final String end = Long.toString(r.second - 1, 16).toUpperCase();
-            sb.append(String.format(tmpl, begin, end));
-        }
-        return sb.toString();
-    }
-
 
     final String getTraceOptions() {
         if (assembly == null) {
@@ -172,7 +117,7 @@ public final class LinkerProperties extends CommonProperties {
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
-        String multilibOpt = "-L" + getToolchainBasePath();
+        String multilibOpt = "-L\"" + getToolchainBasePath() + "target/\"";
 
         if(target.isMips32())
             multilibOpt += getMips32Multilib();

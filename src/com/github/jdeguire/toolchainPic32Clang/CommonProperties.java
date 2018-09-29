@@ -37,8 +37,6 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         Boolean pic32CDeviceSelected = isPIC32C();
         commandLineProperties.put("PIC32C", pic32CDeviceSelected.toString());
-        String emission = pic32CDeviceSelected ? "" : getLibcEmission();
-        commandLineProperties.put("LEGACY_LIBC", emission);
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
         commandLineProperties.put("SYS_INCLUDE_OPT", getSystemIncludeDirOpt());
@@ -47,10 +45,6 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
     final boolean isPIC32C() {
         return calc.isPIC32C(getPic());
-    }
-
-    private String getLibcEmission() {
-        return getLegacyLibcEmissionValue(ClangLanguageToolchain.LIBC_SUPPORT_FIRST_VERSION, "C32Global", "legacy-libc");
     }
 
     final void addDebuggerNameOptions() {
@@ -149,7 +143,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
     private String getSystemIncludeDirOpt() {
         String triple = target.getTargetTripleName();
 
-        return ("-isystem " + getToolchainBasePath() + "include/" + 
+        return ("-isystem \"" + getToolchainBasePath() + "target/include/\"" + 
                 triple.substring(0, triple.indexOf('-')));
     }
 

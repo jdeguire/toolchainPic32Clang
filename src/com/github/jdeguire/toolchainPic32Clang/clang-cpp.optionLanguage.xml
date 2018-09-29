@@ -8,29 +8,40 @@
 
   <opt:optionCategory opt:id="cpp" opt:name="C++ specific">
     <opt:booleanOption 
-		opt:name="Generate run time type descriptor information"
+    	opt:name="Generate run time type descriptor information"
         opt:trueemission="-frtti"
         opt:falseemission="-fno-rtti"
         opt:booldefault="true"
-		opt:id="rtti"/>
+    	opt:id="rtti"/>
     <opt:booleanOption
-		opt:name="Enable C++ exception handling"
+        opt:name="Enable C++ exception handling"
         opt:trueemission="-fexceptions"
-		opt:falseemission="-fno-exceptions"
-		opt:booldefault="true"
-		opt:id="exceptions"/>
+    	opt:falseemission="-fno-exceptions"
+    	opt:booldefault="true"
+    	opt:id="exceptions"/>
     <opt:booleanOption
-		opt:name="Check that the pointer returned by operator 'new' is non-null"
+    	opt:name="Check that the pointer returned by operator 'new' is non-null"
         opt:trueemission="-fcheck-new"
-		opt:falseemission="-fno-check-new"
-		opt:booldefault="false"
-		opt:id="check-new"/>
+    	opt:falseemission="-fno-check-new"
+    	opt:booldefault="false"
+    	opt:id="check-new"/>
     <opt:booleanOption
-		opt:name="Generate code to check for violation of exception specifications at runtime"
-		opt:trueemission="-fenforce-eh-specs"
-		opt:falseemission="-fno-enforce-eh-specs"
-		opt:booldefault="true"
-		opt:id="eh-specs"/>
+    	opt:name="Generate code to check for violation of exception specifications at runtime"
+    	opt:trueemission="-fenforce-eh-specs"
+    	opt:falseemission="-fno-enforce-eh-specs"
+    	opt:booldefault="true"
+    	opt:id="eh-specs"/>
+    <opt:booleanOption
+        opt:name="Enable C++ Modules TS (Experimental)"
+        opt:trueemission="-fmodules-ts"
+        opt:booldefault="false"
+        opt:id="cxx_modules">
+        <opt:xhtml>
+            Enable experimental (as of Clang 8) support for using modules in C++ code.  
+            See the Clang documentation on modules for more information and other options that may 
+            be needed to get modules working.
+        </opt:xhtml>
+    </opt:booleanOption>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="general" opt:name="General">
@@ -51,92 +62,94 @@
         <opt:selection opt:text="gnu++17" opt:name="GNU++17"/>
         <opt:selection opt:text="c++2a" opt:name="C++20 (working draft)"/>
         <opt:selection opt:text="gnu++2a" opt:name="GNU++20 (working draft)"/>
-        <op:xhmtl>
-            Set the desired C++ language standard, with the GNU versions containing GCC-compatible extensions.  
-            The default depends on the version of Clang, but is GNU++14 as of Clang 6.
-        </op:xhmtl>
+        <opt:xhtml>
+            Set the desired C++ language standard, with the GNU versions containing GCC-compatible 
+            extensions.  The default depends on the version of Clang, but is GNU++14 as of Clang 6.
+        </opt:xhtml>
     </opt:enumOption>
     <opt:enumOption 
-		opt:id="unaligned-access"
-		opt:name="Enable unaligned access"
-		opt:textdefault=""
-		opt:unsuppressif="${target.isARM}"
-		opt:showif="${target.isARM}">
+    	opt:id="unaligned-access"
+    	opt:name="Enable unaligned access"
+    	opt:textdefault=""
+    	opt:unsuppressif="${target.isARM}"
+    	opt:showif="${target.isARM}">
       <opt:selection opt:text="" opt:name="Compiler Default"/>
       <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
       <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
-      <opt:xhtml>      Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and all ARMv6-M architectures, and enabled for all other architectures. 
-      If unaligned access is not enabled then words in packed data structures are accessed a byte at a time.</opt:xhtml>
+      <opt:xhtml> Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are 
+          not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and 
+          all ARMv6-M architectures, and enabled for all other architectures.  If unaligned access is 
+          not enabled then words in packed data structures are accessed a byte at a time.
+      </opt:xhtml>
     </opt:enumOption>
     <opt:booleanOption 
-		opt:id="enable-symbols"
-		opt:groupid="symbols-on-release"
-		opt:name="Have symbols in production build"
-		opt:trueemission="-g"
-		opt:falseemission=""
-		opt:booldefault="true"/>
+    	opt:id="enable-symbols"
+    	opt:groupid="symbols-on-release"
+    	opt:name="Have symbols in production build"
+    	opt:trueemission="-g"
+    	opt:falseemission=""
+    	opt:booldefault="true"/>
     <opt:booleanOption
-		opt:id="enable-app-io"
-		opt:name="Enable App IO"
-		opt:trueemission="-mappio-debug"
-		opt:suppressif="${target.isARM}"/>
+    	opt:id="enable-app-io"
+    	opt:name="Enable App IO"
+    	opt:trueemission="-mappio-debug"
+    	opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
-		opt:id="isolate-each-function"
-		opt:name="Isolate each function in a section"
-		opt:trueemission="-ffunction-sections"/>
+    	opt:id="isolate-each-function"
+    	opt:name="Isolate each function in a section"
+    	opt:trueemission="-ffunction-sections"/>
     <opt:booleanOption
-		opt:id="place-data-into-section"
-		opt:name="Place data into its own section"
-		opt:trueemission="-fdata-sections"/>
+    	opt:id="place-data-into-section"
+    	opt:name="Place data into its own section"
+    	opt:trueemission="-fdata-sections"/>
     <opt:enumOption
-		opt:id="toplevel-reordering"
-		opt:name="Enable toplevel reordering"
-		opt:emitswhendefault="false">
-      <opt:xhtml>Allow reordering of top-level functions, variables, and asm statements. They may not be output in the same order that they appear in the input file. When this option is disabled (-fno-toplevel-reorder), unreferenced static variables will not be removed.</opt:xhtml>
+    	opt:id="toplevel-reordering"
+    	opt:name="Enable toplevel reordering"
+    	opt:emitswhendefault="false">
+      <opt:xhtml>
+          Allow reordering of top-level functions, variables, and asm statements. They may not be 
+          output in the same order that they appear in the input file. When this option is disabled 
+          (-fno-toplevel-reorder), unreferenced static variables will not be removed.
+      </opt:xhtml>
       <opt:selection opt:text="" opt:name="Default for optimization level"/>
       <opt:selection opt:text="-fno-toplevel-reorder" opt:name="Disable"/>
       <opt:selection opt:text="-ftoplevel-reorder" opt:name="Enable"/>
     </opt:enumOption>
     <opt:booleanOption
-		opt:id="use-indirect-calls"
-		opt:name="Use indirect calls"
-		opt:trueemission="-mlong-calls"/>
+    	opt:id="use-indirect-calls"
+    	opt:name="Use indirect calls"
+    	opt:trueemission="-mlong-calls"/>
     <opt:booleanOption
-		opt:id="generate-16-bit-code"
-		opt:name="Generate MIPS16 16-bit code"
-		opt:trueemission="-mips16"
-		opt:default="false"
-		opt:grayif="${mips16.gray}"
-		opt:suppressif="${target.isARM}"/>
+    	opt:id="generate-16-bit-code"
+    	opt:name="Generate MIPS16 16-bit code"
+    	opt:trueemission="-mips16"
+    	opt:default="false"
+    	opt:grayif="${mips16.gray}"
+    	opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
-		opt:id="generate-micro-compressed-code"
-		opt:name="Generate microMIPS compressed code"
-		opt:default="false"
-		opt:trueemission="-mmicromips"
-		opt:grayif="${micromips.gray}"
-		opt:suppressif="${target.isARM}"/>
+    	opt:id="generate-micro-compressed-code"
+    	opt:name="Generate microMIPS compressed code"
+    	opt:default="false"
+    	opt:trueemission="-mmicromips"
+    	opt:grayif="${micromips.gray}"
+    	opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
-		opt:id="generate-thumb-code"
-		opt:name="Generate Thumb code"
-		opt:default="false"
-		opt:trueemission="-mthumb"
-		opt:grayif="${thumb.gray}"
-		opt:suppressif="${target.isMIPS32}"/>
+    	opt:id="generate-thumb-code"
+    	opt:name="Generate Thumb code"
+    	opt:default="false"
+    	opt:trueemission="-mthumb"
+    	opt:grayif="${thumb.gray}"
+    	opt:suppressif="${target.isMIPS32}"/>
 	<!-- TODO:  Isn't this already handled by the linker options? -->
-    <opt:booleanOption
-		opt:id="exclude-floating-point"
-		opt:name="Exclude floating-point library"
-		opt:trueemission="-mno-float"
-		opt:suppressif="${target.isARM}"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
     <opt:enumOption
-		opt:id="optimization-level"
-                opt:name="Optimization level"
-		opt:textdefault=""
-		opt:emissionprefix=""
-		opt:emitswhendefault="false">
+    	opt:id="optimization-level"
+        opt:name="Optimization level"
+        opt:textdefault=""
+    	opt:emissionprefix=""
+    	opt:emitswhendefault="false">
         <opt:xhtml>Higher levels of optimization take longer and use more memory, especially for larger functions.
         <br/>- 0 - Do not optimize.  This compiles the fastest and generates the most debuggable code.
         <br/>- g - Currently the same as O1, but may be used to optimize for debuggability in the future (like GCC).
@@ -157,29 +170,29 @@
       <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
     <opt:booleanOption
-		opt:id="enable-unroll-loops"
-		opt:name="Unroll loops"
-		opt:trueemission="-funroll-loops"/>
+    	opt:id="enable-unroll-loops"
+    	opt:name="Unroll loops"
+    	opt:trueemission="-funroll-loops"/>
     <opt:booleanOption
-		opt:id="enable-omit-frame-pointer"
-		opt:name="Omit frame pointer"
-		opt:trueemission="-fomit-frame-pointer"/>
+    	opt:id="enable-omit-frame-pointer"
+    	opt:name="Omit frame pointer"
+    	opt:trueemission="-fomit-frame-pointer"/>
     <opt:enumOption
-		opt:id="pre-instruction-scheduling"
-		opt:name="Pre-optimization instruction scheduling"
-		opt:textdefault="default"
-		opt:emissionprefix="-f"
-		opt:emitswhendefault="false">
+    	opt:id="pre-instruction-scheduling"
+    	opt:name="Pre-optimization instruction scheduling"
+    	opt:textdefault="default"
+    	opt:emissionprefix="-f"
+    	opt:emitswhendefault="false">
       <opt:selection opt:text="default" opt:name="Default for optimization level"/>
       <opt:selection opt:text="no-schedule-insns" opt:name="Disable"/>
       <opt:selection opt:text="schedule-insns" opt:name="Enable"/>
     </opt:enumOption>
     <opt:enumOption
-		opt:id="post-instruction-scheduling"
-		opt:name="Post-optimization instruction scheduling"
-		opt:textdefault="default"
-		opt:emissionprefix="-f"
-		opt:emitswhendefault="false">
+    	opt:id="post-instruction-scheduling"
+    	opt:name="Post-optimization instruction scheduling"
+    	opt:textdefault="default"
+    	opt:emissionprefix="-f"
+    	opt:emitswhendefault="false">
       <opt:selection opt:text="default" opt:name="Default for optimization level"/>
       <opt:selection opt:text="no-schedule-insns2" opt:name="Disable"/>
       <opt:selection opt:text="schedule-insns2" opt:name="Enable"/>
@@ -188,20 +201,20 @@
 
   <opt:optionCategory opt:id="errors-and-warnings" opt:name="Preprocessing and messages">
     <opt:stringListOption
-		opt:id="preprocessor-macros"
-		opt:name="Preprocessor macros"
-		opt:emissionprefix="-D"
-		opt:emissionseparator=" -D"
-		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+    	opt:id="preprocessor-macros"
+    	opt:name="Preprocessor macros"
+    	opt:emissionprefix="-D"
+    	opt:emissionseparator=" -D"
+    	opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
-		opt:id="extra-include-directories"
-                opt:groupid="include-dirs"
-		opt:name="Include directories"
-		opt:emissionprefix="-I"
-		opt:emissionseparator=" -I"
-		opt:slashnormalization="unix"
-		opt:isdirectory="true"
-		opt:isbrowsable="true">
+    	opt:id="extra-include-directories"
+        opt:groupid="include-dirs"
+    	opt:name="Include directories"
+    	opt:emissionprefix="-I"
+    	opt:emissionseparator=" -I"
+    	opt:slashnormalization="unix"
+    	opt:isdirectory="true"
+    	opt:isbrowsable="true">
       <opt:browseinfo>
         Relative paths are from <br/>MPLAB X project directory.
       </opt:browseinfo>
@@ -211,34 +224,27 @@
       </opt:xhtml>
     </opt:stringListOption>
     <opt:booleanOption
-		opt:id="c-includes-in-cpp"
-		opt:name="Also use C include directories"
-		opt:trueemission=""/>
+    	opt:id="c-includes-in-cpp"
+    	opt:name="Also use C include directories"
+    	opt:trueemission=""/>
     <opt:booleanOption
-		opt:id="make-warnings-into-errors"
-		opt:name="Make warnings into errors"
-		opt:trueemission="-Werror"/>
+    	opt:id="make-warnings-into-errors"
+    	opt:name="Make warnings into errors"
+    	opt:trueemission="-Werror"/>
     <opt:booleanOption
-		opt:id="additional-warnings"
-		opt:name="Additional warnings"
-		opt:trueemission="-Wall"/>
+        opt:id="additional-warnings"
+    	opt:name="Additional warnings"
+    	opt:trueemission="-Wall"/>
     <opt:booleanOption
-		opt:id="addresss-attribute-use"
-		opt:name="Enable address-attribute warning"
-		opt:trueemission="-Waddress-attribute-use">
+    	opt:id="addresss-attribute-use"
+    	opt:name="Enable address-attribute warning"
+    	opt:trueemission="-Waddress-attribute-use">
       <opt:xhtml>Emit a warning for all uses of the address() attribute. This option is for engineering-support use only.</opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
-		opt:id="strict-ansi"
-		opt:name=""
-		opt:trueemission="-pedantic"/>
-    <opt:booleanOption
-		opt:id="use-cci"
-		opt:name="Use CCI syntax"
-		opt:trueemission="-mcci"
-		opt:booldefault="false"
-		opt:suppressif="${target.isARM}">
-    </opt:booleanOption>
+    	opt:id="strict-ansi"
+    	opt:name=""
+    	opt:trueemission="-pedantic"/>
   </opt:optionCategory>
 
 
@@ -277,6 +283,5 @@
   <opt:enablePattern opt:idref="make-warnings-into-errors" opt:expr="-Werror"/>
   <opt:enablePattern opt:idref="additional-warnings" opt:expr="-Wall"/>
   <opt:enablePattern opt:idref="strict-ansi" opt:expr="-pedantic"/>
-  <opt:enablePattern opt:idref="use-cci" opt:expr="-mcci"/>
 
 </opt:optionLanguage>

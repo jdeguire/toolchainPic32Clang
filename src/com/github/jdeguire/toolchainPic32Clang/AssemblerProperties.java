@@ -20,7 +20,6 @@ public final class AssemblerProperties extends CommonProperties {
             final Properties commandLineProperties) {
         super(projectDescriptor, conf, commandLineProperties);
 
-        commandLineProperties.put("PROCESSOR_NAME_FOR_ASSEMBLER", getProcessorNameForCompiler());
         addDebuggerNameOptions();
         commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
     }

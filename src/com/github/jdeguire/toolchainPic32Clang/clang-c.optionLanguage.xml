@@ -22,22 +22,26 @@
         <opt:selection opt:text="gnu11" opt:name="GNU11"/>
         <opt:selection opt:text="c17" opt:name="C17"/>
         <opt:selection opt:text="gnu17" opt:name="GNU17"/>
-        <op:xhmtl>
+        <opt:xhtml>
             Set the desired C language standard, with the GNU versions containing GCC-compatible extensions.  
             The default depends on the version of Clang, but is GNU11 as of Clang 3.6.
-        </op:xhmtl>
+        </opt:xhtml>
     </opt:enumOption>
     <opt:enumOption
-		opt:id="unaligned-access"
-		opt:name="Enable unaligned access"
-		opt:textdefault=""
-		opt:unsuppressif="${target.isARM}"
-		opt:showif="${target.isARM}">
+    	opt:id="unaligned-access"
+    	opt:name="Enable unaligned access"
+    	opt:textdefault=""
+    	opt:unsuppressif="${target.isARM}"
+    	opt:showif="${target.isARM}">
       <opt:selection opt:text="" opt:name="Compiler Default"/>
       <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
       <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
-      <opt:xhtml>      Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and all ARMv6-M architectures, and enabled for all other architectures. 
-      If unaligned access is not enabled then words in packed data structures are accessed a byte at a time.</opt:xhtml>
+      <opt:xhtml>
+          Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are 
+          not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and 
+          all ARMv6-M architectures, and enabled for all other architectures.  If unaligned access is 
+          not enabled then words in packed data structures are accessed a byte at a time.
+      </opt:xhtml>
     </opt:enumOption>
     <opt:booleanOption
 		opt:id="enable-symbols"
@@ -63,7 +67,11 @@
 		opt:id="toplevel-reordering"
 		opt:name="Enable toplevel reordering"
 		opt:emitswhendefault="false">
-      <opt:xhtml>Allow reordering of top-level functions, variables, and asm statements. They may not be output in the same order that they appear in the input file. When this option is disabled (-fno-toplevel-reorder), unreferenced static variables will not be removed.</opt:xhtml>
+      <opt:xhtml>
+          Allow reordering of top-level functions, variables, and asm statements. They may not be 
+          output in the same order that they appear in the input file. When this option is disabled 
+          (-fno-toplevel-reorder), unreferenced static variables will not be removed.
+      </opt:xhtml>
       <opt:selection opt:text="" opt:name="Default for optimization level"/>
       <opt:selection opt:text="-fno-toplevel-reorder" opt:name="Disable"/>
       <opt:selection opt:text="-ftoplevel-reorder" opt:name="Enable"/>
@@ -93,12 +101,6 @@
 		opt:trueemission="-mthumb"
 		opt:grayif="${thumb.gray}"
 		opt:suppressif="${target.isMIPS32}"/>
-	<!-- TODO:  Isn't this already handled by the linker options? -->
-    <opt:booleanOption
-		opt:id="exclude-floating-point"
-		opt:name="Exclude floating-point library"
-		opt:trueemission="-mno-float"
-		opt:suppressif="${target.isARM}"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
@@ -127,7 +129,6 @@
       <opt:selection opt:text="-Os" opt:name="s"/>
       <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
-    <!--opt:booleanOption opt:id="keep-inline" opt:name="Do not override 'inline'" opt:trueemission="-mno-override-inline" opt:booldefault="false" opt:fromversion="1.10"/-->
     <opt:booleanOption
 		opt:id="enable-unroll-loops"
 		opt:name="Unroll loops"
@@ -204,13 +205,6 @@
 		opt:id="strict-ansi"
 		opt:name=""
 		opt:trueemission="-pedantic"/>
-    <opt:booleanOption
-		opt:id="use-cci"
-		opt:name="Use CCI syntax"
-		opt:trueemission="-mcci"
-		opt:booldefault="false"
-		opt:suppressif="${target.isARM}">
-    </opt:booleanOption>
   </opt:optionCategory>
 
   <opt:enablePattern opt:idref="enable-symbols" opt:expr="-g"/>
@@ -240,6 +234,5 @@
   <opt:enablePattern opt:idref="additional-warnings" opt:expr="-Wall"/>
   <opt:enablePattern opt:idref="support-ansi" opt:expr="-ansi"/>
   <opt:enablePattern opt:idref="strict-ansi" opt:expr="-pedantic"/>
-  <opt:enablePattern opt:idref="use-cci" opt:expr="-mcci"/>
 
 </opt:optionLanguage>

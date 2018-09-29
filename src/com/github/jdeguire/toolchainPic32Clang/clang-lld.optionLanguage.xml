@@ -449,11 +449,7 @@
   <opt:disablePattern opt:idref="enable-handles" opt:expr="--no-handles"/>
   <opt:disablePattern opt:idref="enable-default-isr" opt:expr="--no-isr"/>
   <opt:submatchPattern opt:idref="output-file" opt:expr="-o(.+)" opt:firstexpr="-o" opt:secondexpr=".+"/>
-  <!-- Avoid matching -legacy-libc which is not a library option.  ?! is the non-capturing, 
-       negative lookahead that will not match the expression if it is matched. The ^ at the
-       start is there so that it will not match -libc when the expression is evaluated after
-       the negative lookahead. -->
-  <opt:submatchPattern opt:idref="input-libraries" opt:expr="^-l(?!egacy-libc)(.+)"/>
+  <opt:submatchPattern opt:idref="input-libraries" opt:expr="-l(.+)"/>
   <opt:submatchPattern opt:idref="extra-lib-directories" opt:expr="-L(.+)"/>
   <opt:submatchPattern opt:idref="optimization-level" opt:expr="(-O[123s])"/>
   <opt:enablePattern opt:idref="exclude-standard-libraries" opt:expr="-nostdlib"/>

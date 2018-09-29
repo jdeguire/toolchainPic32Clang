@@ -24,7 +24,7 @@ public final class ProcessorDependentProperties extends CommonProperties {
         // Find if the project has a gld
         String gldName = getLinkerGldFileName();
         if (gldName != null && gldName.length() > 0) {
-            commandLineOption = ",--script=";
+            commandLineOption = ",-T";
             if (getUseResponseFiles()) {
                 // For cases where we use a response file, we cannot pass "..\t.ld", we need to pass ../t.ld.
                 // In other words, the linker likes the name of the scripts to be escaped using the
@@ -32,6 +32,7 @@ public final class ProcessorDependentProperties extends CommonProperties {
                 gldName = calc.getLinkerGldFileName(projectDescriptor, conf);
             }
         } else {
+// TODO:  We may need to manually use the default scripts found in the device libraries.
             // No gld in the project
             gldName = "";
             commandLineOption = "";

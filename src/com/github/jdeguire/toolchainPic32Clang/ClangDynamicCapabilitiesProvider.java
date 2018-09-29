@@ -28,20 +28,12 @@ public final class ClangDynamicCapabilitiesProvider implements DynamicCapabiliti
             if (res.first) {
                 res.second = LTUtils.MEMORY_FILE_ADDRESS;
             }
-        } else if (capability.equalsIgnoreCase(DefaultCompilerMacrosProvider.SKIP_LICENSE_CHECK_CAPABILITY)) {
-            res.first = calc.supportsSkipLicenseCheck(conf);
-            if (res.first) {
-                res.second = " -mskip-license-check";
-            }
         } else if (capability.equalsIgnoreCase("parallel")) {
             res.first = true;
         } else if (capability.equalsIgnoreCase("responsefiles")) {
             res.first = Utilities.isWindows();
-        } else if (capability.equalsIgnoreCase(XMLBaseMakefileWriter.BUILD_COMPARISON)) {
-            boolean supported = calc.supportsBuildComparison(conf);
-            res.second = supported ? "-mafrlcsj" : "";
-            res.first = res.second != null && !res.second.isEmpty();
         }
+
         return res;
     }
 }

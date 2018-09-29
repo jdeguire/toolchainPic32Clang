@@ -64,7 +64,6 @@
     <opt:submatchPattern opt:idref="assembler-symbols" opt:expr="--defsym=(.+)" opt:firstexpr="--defsym" opt:secondexpr=".+"/>
     <opt:submatchPattern opt:idref="preprocessor-macros" opt:expr="-D(.+)"/>
     <opt:submatchPattern opt:idref="extra-include-directories-for-preprocessor" opt:expr="-I(.+)"/>
-    <!-- TODO Warning: for legacy projects where a pattern is needed, how do we differentiate between -I and ,-I! -->
     <opt:submatchPattern opt:idref="extra-include-directories-for-assembler" opt:expr="-I(.+)"/>
     <opt:submatchPattern opt:idref="warning-level" opt:expr="--(no-warn)"/>
     <opt:submatchPattern opt:idref="warning-level" opt:expr="--(fatal-warnings)"/>
