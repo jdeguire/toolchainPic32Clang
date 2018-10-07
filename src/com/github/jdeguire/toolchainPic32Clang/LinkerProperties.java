@@ -29,9 +29,15 @@ public final class LinkerProperties extends CommonProperties {
 
     public LinkerProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
-            final Properties commandLineProperties) {
+            final Properties commandLineProperties) 
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException {
+
         super(projectDescriptor, conf, commandLineProperties);
-	memCalc = new ReservedMemoryRangesCalculator(conf, assembly, getPic());
+		memCalc = new ReservedMemoryRangesCalculator(conf, assembly, getPic());
 
         addDebuggerNameOptions();
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
@@ -133,7 +139,7 @@ public final class LinkerProperties extends CommonProperties {
     private String getMips32Multilib() {
         String libdir = "";
 
-        libdir += target.getCpuName();
+        libdir += target.getArchNameForClang();
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
@@ -158,7 +164,7 @@ public final class LinkerProperties extends CommonProperties {
     private String getArmMultilib() {
         String libdir = "";
 
-        libdir += target.getCpuName().replace('-', '_');
+        libdir += target.getArchNameForClang().replace('-', '_');
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {

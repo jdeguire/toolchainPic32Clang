@@ -22,7 +22,13 @@ import org.openide.util.Utilities;
 public final class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
     
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
-                           throws IllegalArgumentException, MakeConfigurationException {
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException,
+		MakeConfigurationException {
+
         super(desc, conf);
         supressResponseFileOption();
         setImola2Properties(desc);

@@ -28,8 +28,14 @@ public class CommonProperties extends MPLABXSpecificProperties {
     final protected TargetDevice target;
 
     public CommonProperties(final MakeConfigurationBook projectDescriptor,
-            final MakeConfiguration conf,
-            final Properties commandLineProperties) {
+							final MakeConfiguration conf,
+							final Properties commandLineProperties) 
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException {
+
         super(projectDescriptor, conf, commandLineProperties);
 
         optAccessor = new ProjectOptionAccessor(projectDescriptor, conf);
@@ -150,12 +156,14 @@ public class CommonProperties extends MPLABXSpecificProperties {
     private String getTargetSpecificOpts() {
         String triple = "-target " + target.getTargetTripleName();
 
-        String cpu = "";
-        if(target.isMips32()) {
-            cpu = "-march=" + target.getCpuName();
-        } else if(target.isArm()) {
-            cpu = "-mcpu=" + target.getCpuName();
-        }
+//        String cpu = "";
+//        if(target.isMips32()) {
+//            cpu = "-march=" + target.getCpuName();
+//        } else if(target.isArm()) {
+//            cpu = "-mcpu=" + target.getCpuName();
+//        }
+
+        String cpu = "-march=" + target.getArchNameForClang();
 
         String fpu = "-msoft-float -mfloat-abi=soft";
         if(target.hasFpu()) {

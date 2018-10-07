@@ -16,7 +16,13 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
 public final class ClangCPPRuntimeProperties extends ClangAbstractMipsRuntimeProperties{
     
     public ClangCPPRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
-                              throws IllegalArgumentException, MakeConfigurationException {
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException,
+		MakeConfigurationException {
+
         super(desc, conf);
     }
 }

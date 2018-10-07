@@ -32,8 +32,14 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
     private static boolean settingArchOpts = false;
     
     protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
-                                          throws IllegalArgumentException, MakeConfigurationException {
-        super(desc, conf);
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException,
+		MakeConfigurationException {
+
+		super(desc, conf);
 
         optAccessor = new ProjectOptionAccessor(desc, conf);
         target = new TargetDevice(conf.getDevice().getValue());

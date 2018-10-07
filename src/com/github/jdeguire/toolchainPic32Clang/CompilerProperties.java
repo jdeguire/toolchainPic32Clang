@@ -22,7 +22,13 @@ public final class CompilerProperties extends CommonProperties {
 
     public CompilerProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
-            final Properties commandLineProperties) {
+            final Properties commandLineProperties) 
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException {
+
         super(projectDescriptor, conf, commandLineProperties);
 
         addDebuggerNameOptions();

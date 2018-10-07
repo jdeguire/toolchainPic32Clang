@@ -14,8 +14,14 @@ import org.openide.util.Utilities;
 public class ClangGlobalMakeRuntimeProperties extends CommonProperties {
 
     public ClangGlobalMakeRuntimeProperties(final MakeConfigurationBook projectDescriptor,
-            final MakeConfiguration conf,
-            final Properties commandLineProperties) {
+											final MakeConfiguration conf,
+											final Properties commandLineProperties) 
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException {
+
         super(projectDescriptor, conf, commandLineProperties);
         commandLineProperties.put("USE_RESPONSE_FILES", getUseResponseFiles());
         commandLineProperties.put("USE_LTO", getUseLTO());

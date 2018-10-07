@@ -18,7 +18,13 @@ public final class ProcessorDependentProperties extends CommonProperties {
 
     public ProcessorDependentProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
-            final Properties commandLineProperties) {
+            final Properties commandLineProperties) 
+		throws com.microchip.crownking.Anomaly, 
+		org.xml.sax.SAXException,
+		java.io.IOException, 
+		javax.xml.parsers.ParserConfigurationException, 
+		IllegalArgumentException {
+
 		super(projectDescriptor, conf, commandLineProperties);
         String commandLineOption = null;
         // Find if the project has a gld
