@@ -34,7 +34,12 @@ public class TargetDevice {
 	};
 
     final private String name_;
-	private xPIC pic_;
+    final private Family family_;
+    final private SubFamily subfamily_;
+    final private boolean hasfpu_;
+    final private boolean hasMips16_;
+    final private boolean hasMicroMips_;    
+    final private String cpuName_;
 	private ArrayList<String> instructionSets_;
 
     /* Create a new TargetDevice based on the given name.  Throws an exception if the given name is
@@ -49,24 +54,32 @@ public class TargetDevice {
 		IllegalArgumentException {
 
         name_ = devname.toUpperCase();
-		pic_ = (xPIC)xPICFactory.getInstance().get(name_);
 
-		if(Family.PIC32 == pic_.getFamily()  ||  Family.ARM32BIT == pic_.getFamily()) {
-			instructionSets_ = new ArrayList<String>(pic_.getInstructionSet().getSubsetIDs());
+        xPIC pic = (xPIC)xPICFactory.getInstance().get(name_);
 
-			String setId = pic_.getInstructionSet().getID();
+        family_ = pic.getFamily();
+
+		if(Family.PIC32 == family_  ||  Family.ARM32BIT == family_) {
+            subfamily_ = pic.getSubFamily();
+            hasfpu_ = pic.hasFPU();
+            hasMips16_ = pic.has16Mips();
+            hasMicroMips_ = pic.hasMicroMips();
+            cpuName_ = pic.getArchitecture();
+ 
+   			instructionSets_ = new ArrayList<>(pic.getInstructionSet().getSubsetIDs());
+
+			String setId = pic.getInstructionSet().getID();
 			if(setId != null  &&  !setId.isEmpty())
 				instructionSets_.add(setId);
-		}
+        }
 		else {
+            xPICFactory.getInstance().release(pic);
             String what = "Device " + devname + " is not a recognized MIPS32 or ARM device.";
             throw new IllegalArgumentException(what);
-		}
-    }
+        }
 
-	protected void finalize() {
-	    xPICFactory.getInstance().release(pic_);
-	}
+   	    xPICFactory.getInstance().release(pic);
+    }
 
     /* Get the name of the device provided to the constructor of this class, but in all uppercase.
      */
@@ -77,13 +90,13 @@ public class TargetDevice {
     /* Get the device family of the target, which is used to determine its features.
      */
 	public Family getFamily() {
-		return pic_.getFamily();
+		return family_;
 	}
 
 	/* Get the subfamily of the target, which is a bit more fine-grained than the family.
 	 */
 	public SubFamily getSubFamily() {
-		return pic_.getSubFamily();
+		return subfamily_;
 	}
 
 	/* Get the CPU architecture for the device.
@@ -175,7 +188,7 @@ public class TargetDevice {
     /* Return True if the target has an FPU.
      */
     public boolean hasFpu() {
-        return pic_.hasFPU();
+        return hasfpu_;
     }
 
     /* Return True if the target supports the MIPS32 instruction set.
@@ -187,13 +200,13 @@ public class TargetDevice {
     /* Return True if the target supports the MIPS16e instruction set.
      */
     public boolean supportsMips16Isa() {
-        return (isMips32()  &&  pic_.has16Mips());
+        return (isMips32()  &&  hasMips16_);
     }
 
     /* Return True if the target supports the microMIPS instruction set.
      */
     public boolean supportsMicroMipsIsa() {
-        return (isMips32()  &&  pic_.hasMicroMips());
+        return (isMips32()  &&  hasMicroMips_);
     }
 
     /* Return True if the target supports the MIPS DSPr2 application specific extension.
@@ -240,7 +253,7 @@ public class TargetDevice {
 			TargetArch arch = getArch();
 
 			if(TargetArch.ARMV7M == arch  ||  TargetArch.ARMV7EM == arch) {
-				if(pic_.getArchitecture().equalsIgnoreCase("Cortex-M7"))
+				if(cpuName_.equalsIgnoreCase("Cortex-M7"))
 					fpuName = "vfp5-dp-d16";
 				else
 					fpuName = "vfp4-sp-d16";

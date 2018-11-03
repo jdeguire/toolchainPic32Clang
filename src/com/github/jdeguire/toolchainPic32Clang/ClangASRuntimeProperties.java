@@ -13,7 +13,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public final class ClangASRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangASRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
 
     public ClangASRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 

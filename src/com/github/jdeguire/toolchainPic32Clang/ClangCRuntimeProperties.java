@@ -14,7 +14,7 @@ import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeCon
  *
  * @author Marian Golea <marian.golea@microchip.com>
  */
-public final class ClangCRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangCRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
 
     public ClangCRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
@@ -29,7 +29,7 @@ public final class ClangCRuntimeProperties extends ClangAbstractMipsRuntimePrope
     }
 
     private String shouldSuppressAppIO() {
-        if (pic32CSelected) {
+        if(target.isArm()) {
             return Boolean.TRUE.toString();
         }
 

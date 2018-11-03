@@ -41,16 +41,13 @@ public class CommonProperties extends MPLABXSpecificProperties {
         optAccessor = new ProjectOptionAccessor(projectDescriptor, conf);
         target = new TargetDevice(conf.getDevice().getValue());
 
-        Boolean pic32CDeviceSelected = isPIC32C();
-        commandLineProperties.put("PIC32C", pic32CDeviceSelected.toString());
+        Boolean armDeviceSelected = target.isArm();
+        commandLineProperties.put("IS_ARM", armDeviceSelected.toString());
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
         commandLineProperties.put("SYS_INCLUDE_OPT", getSystemIncludeDirOpt());
+        commandLineProperties.put("SYSROOT_OPT", getSysrootOpt());
         commandLineProperties.put("TARGET_OPTS", getTargetSpecificOpts());
-    }
-
-    final boolean isPIC32C() {
-        return calc.isPIC32C(getPic());
     }
 
     final void addDebuggerNameOptions() {
@@ -62,12 +59,13 @@ public class CommonProperties extends MPLABXSpecificProperties {
             debuggerOptionsAsSymbol = "--defsym=" + debuggerName + "=1";
             debuggerOptionsAsMacro = "-D" + debuggerName + "=1";
         }
-        if (debuggerOptionsAsSymbol.length() > 0) {
+
+        // TODO:  Am I right in that we don't want this at all?
+/*        if (debuggerOptionsAsSymbol.length() > 0) {
             commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", ",");
-            boolean isPIC32C = isPIC32C();
-            String debuggerOptionString = isPIC32C ? "" : "-mdebugger";
+            String debuggerOptionString = target.isArm() ? "" : "-mdebugger";
             commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", debuggerOptionString);
-        } else {
+        } else */{
             commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", "");
             commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", "");
         }
@@ -127,6 +125,8 @@ public class CommonProperties extends MPLABXSpecificProperties {
     final String getProcessorNameForCompiler() {
         if (deviceName.toUpperCase().startsWith("PIC32")) {
             return deviceName.substring(3, deviceName.length());
+        } else if (deviceName.toUpperCase().startsWith("ATSAM")) {
+            return deviceName.substring(2, deviceName.length());
         } else {
             return deviceName;
         }
@@ -139,13 +139,17 @@ public class CommonProperties extends MPLABXSpecificProperties {
             String compatVersion = optAccessor.getProjectOption("C32Global", "fake-xc32-version", "");
 
             if(!compatVersion.isEmpty()) {
-                ret = "-D__XC -D__XC32 -D__XC32_VERSION__=" + compatVersion;
+                ret = "-D__XC -D__XC__ -D__XC32 -D__XC32__";
+                ret += " -D__XC32_VERSION=" + compatVersion;
+                ret += " -D__XC32_VERSION__=" + compatVersion;
             }
         }
 
         return ret;
     }
 
+    // TODO:  Do we actually need this if we already have sysroot?
+    // TODO:  Do we need to use the "-I" option instead?  Can this be relative to sysroot ('=')?.
     private String getSystemIncludeDirOpt() {
         String triple = target.getTargetTripleName();
 
@@ -153,15 +157,12 @@ public class CommonProperties extends MPLABXSpecificProperties {
                 triple.substring(0, triple.indexOf('-')));
     }
 
+    private String getSysrootOpt() {
+        return "--sysroot=\"" + getToolchainBasePath() + "\"";
+    }
+    
     private String getTargetSpecificOpts() {
         String triple = "-target " + target.getTargetTripleName();
-
-//        String cpu = "";
-//        if(target.isMips32()) {
-//            cpu = "-march=" + target.getCpuName();
-//        } else if(target.isArm()) {
-//            cpu = "-mcpu=" + target.getCpuName();
-//        }
 
         String cpu = "-march=" + target.getArchNameForClang();
 
@@ -183,13 +184,17 @@ public class CommonProperties extends MPLABXSpecificProperties {
     }
 
     /* Return the base install path for the current toolchain with the file separator always at the
-     * end (so "/foo/bar/" instead of "/foo/bar").
+     * end (so "/foo/bar/" instead of "/foo/bar").  This will use Unix forward slashes, even on
+     * Windows, because Clang supports them on all platforms.
      */
     public String getToolchainBasePath() {
         String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
 
-        if(File.separatorChar != toolchainPath.charAt(toolchainPath.length() - 1))
-            toolchainPath += File.separator;
+        if('/' != File.separatorChar)
+            toolchainPath = toolchainPath.replace(File.separatorChar, '/');
+
+        if('/' != toolchainPath.charAt(toolchainPath.length() - 1))
+            toolchainPath += '/';
 
         return toolchainPath;
     }

@@ -29,7 +29,7 @@ public abstract class ClangAbstractCustomizerNode extends LanguageToolchainCusto
         super(id, name, children, sig, showUserComments);
     }
 
-    protected abstract ClangAbstractMipsRuntimeProperties getPropertiesFile(final MakeConfigurationBook desc);
+    protected abstract ClangAbstractTargetRuntimeProperties getPropertiesFile(final MakeConfigurationBook desc);
 
     @Override
     public Properties getOptionLanguageContextProperties() {

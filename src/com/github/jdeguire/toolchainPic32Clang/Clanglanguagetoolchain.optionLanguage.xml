@@ -25,8 +25,9 @@
 		opt:trueemission=""
 		opt:booldefault="true">
       <opt:xhtml>
-        If True, define the __XC, __XC32, and __XC32_VERSION__ macros for compatibility with code
-        that expects those.  Clang-specific macros, like __clang__, are still defined.
+        If True, define the __XC, __XC32, and __XC32_VERSION macros for compatibility with code
+        that expects those, as well as versions with double underscores on each side.  
+        Clang-specific macros, like __clang__, are still defined.
       </opt:xhtml>
       <opt:falseModifiers>
         <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="true"/>

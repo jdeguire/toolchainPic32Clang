@@ -64,9 +64,9 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO} "/>
-            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${IS_ARM}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -flto -fwhole-program -D$(MP_PROCESSOR_OPTION) "/>
@@ -122,9 +122,9 @@
         <mp:makeRule mp:id="createLTORespFile" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO} "/>
-            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${IS_ARM}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -flto -fwhole-program -D$(MP_PROCESSOR_OPTION) "/>
@@ -195,10 +195,10 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_CC_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
-            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${IS_ARM}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -x c++ -c -D$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:prefix=" " mp:separator=" "/>
@@ -228,10 +228,10 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
-            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${PIC32C}" mp:text=" -fframe-base-loclist "/>
+            <mp:textEmitter mp:onlydebug="true" mp:ifnot="${IS_ARM}" mp:text=" -fframe-base-loclist "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:textEmitter mp:text=" -x c -c -D$(MP_PROCESSOR_OPTION) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
@@ -259,7 +259,7 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG  ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c -D$(MP_PROCESSOR_OPTION)"/>
@@ -292,7 +292,7 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c -D$(MP_PROCESSOR_OPTION)"/>
@@ -325,7 +325,7 @@
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -D$(MP_PROCESSOR_OPTION)"/>
@@ -361,7 +361,7 @@
         <mp:makeRule mp:id="createResponseFiles" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="com.github.jdeguire.toolchainPic32Clang.LinkerProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
-            <mp:textEmitter mp:text=" ${TARGET_OPTS} "/>
+            <mp:textEmitter mp:text=" ${TARGET_OPTS} ${SYSROOT_OPT} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g ${DEBUGGER_OPTION_TO_LINKER} ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -D$(MP_PROCESSOR_OPTION)"/>

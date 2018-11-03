@@ -123,6 +123,7 @@ public final class LinkerProperties extends CommonProperties {
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
+        // TODO:  Can we make this relative to sysroot by putting "=" at the start?
         String multilibOpt = "-L\"" + getToolchainBasePath() + "target/\"";
 
         if(target.isMips32())

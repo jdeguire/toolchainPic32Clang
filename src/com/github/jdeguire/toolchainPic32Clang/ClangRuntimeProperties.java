@@ -19,7 +19,7 @@ import org.openide.util.Utilities;
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com> 
  * Modified by jdeguire for toolchainPic32Clang.
  */
-public final class ClangRuntimeProperties extends ClangAbstractMipsRuntimeProperties {
+public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
     
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 

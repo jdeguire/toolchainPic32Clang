@@ -17,21 +17,15 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPrope
  * @author Marian Golea <marian.golea@microchip.com>
  * Modified by jdeguire for toolchainPic32Clang.
  */ 
-// TODO: Rename this class because it has ARM stuff, too (Mips->Target ?).
-public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchainPropertiesAccessor {
+public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolchainPropertiesAccessor {
 
-    /* TODO:  I might be able to replace this "pic32C.selected" property with the "target.isMIPS32"
-     *        and "target.isARM" properties.
-     */
-    public static final String PIC32C_SELECTED_PROPERTY = "pic32C.selected";
-    final Boolean pic32CSelected;
     final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
     final private ProjectOptionAccessor optAccessor;
-    final private TargetDevice target;
+    final protected TargetDevice target;
 
     private static boolean settingArchOpts = false;
     
-    protected ClangAbstractMipsRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
+    protected ClangAbstractTargetRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
 		org.xml.sax.SAXException,
 		java.io.IOException, 
@@ -43,8 +37,6 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
 
         optAccessor = new ProjectOptionAccessor(desc, conf);
         target = new TargetDevice(conf.getDevice().getValue());
-        pic32CSelected = isPIC32C();
-        super.setProperty(PIC32C_SELECTED_PROPERTY, pic32CSelected.toString());
 
         // It turns out that setting options might end up trying to construct a new instance of this
         // class, which will set options, which will construct YET another new instance of this class,
@@ -56,10 +48,6 @@ public abstract class ClangAbstractMipsRuntimeProperties extends CommonToolchain
             setArchSpecificBehavior();      // This one may throw because it sets options
             settingArchOpts = false;
         }
-    }
-
-    final boolean isPIC32C(){
-        return calc.isPIC32C(getPic());
     }
 
     /* Set options and a few properties depending on the architecture selected in the "Target Specific"

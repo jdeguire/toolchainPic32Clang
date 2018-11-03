@@ -18,15 +18,6 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolch
  */
 public final class CommonPropertiesCalculator extends CommonLanguageToolchainPropertiesUtils {
 
-// TODO:  We might be able to remove this because we use the "target.isARM" property now.
-    final boolean isPIC32C(final xPIC pic) {
-        if (pic == null) {
-            return false;
-        }
-        boolean isPIC32C = FamilyDefinitions.Family.ARM32BIT == pic.getFamily();
-        return isPIC32C;
-    }
-
     /* These are meant to check if a given version of an XC compiler supports certain
      * Microchip-specific features.  None of these apply to Clang, so they'll just return False.
      * They are still here just in case MPLAB X depends on them.
