@@ -26,11 +26,9 @@ public final class ProcessorDependentProperties extends CommonProperties {
 		IllegalArgumentException {
 
 		super(projectDescriptor, conf, commandLineProperties);
-        String commandLineOption = null;
         // Find if the project has a gld
         String gldName = getLinkerGldFileName();
         if (gldName != null && gldName.length() > 0) {
-            commandLineOption = ",-T";
             if (getUseResponseFiles()) {
                 // For cases where we use a response file, we cannot pass "..\t.ld", we need to pass ../t.ld.
                 // In other words, the linker likes the name of the scripts to be escaped using the
@@ -38,12 +36,22 @@ public final class ProcessorDependentProperties extends CommonProperties {
                 gldName = calc.getLinkerGldFileName(projectDescriptor, conf);
             }
         } else {
-// TODO:  We may need to manually use the default scripts found in the device libraries.
-            // No gld in the project
-            gldName = "";
-            commandLineOption = "";
+            // No gld in the project, so use the default one ('=' means "relative to sysroot").
+            gldName = "=/lib/proc/";
+            String procname = target.getDeviceName();
+
+            if(target.isMips32()) {
+                if(procname.startsWith("PIC32")) {
+                    procname = procname.substring(3);
+                }
+
+                gldName += procname + "/p" + procname + ".ld";
+            } else {
+                gldName += procname + "/" + procname + ".ld";                
+            }
         }
-        commandLineProperties.put("OPTION_TO_SPECIFY_GLD", commandLineOption);
+
+        commandLineProperties.put("OPTION_TO_SPECIFY_GLD", ",-T");
         commandLineProperties.put("GLD_NAME", gldName);
         commandLineProperties.put("PROCESSOR_NAME", getProcessorNameForCompiler());
     }

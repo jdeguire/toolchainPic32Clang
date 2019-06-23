@@ -5,8 +5,6 @@
  */
 package com.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.crownking.mplabinfo.FamilyDefinitions;
-import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolchainPropertiesUtils;
 
