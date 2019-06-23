@@ -47,6 +47,10 @@ public final class ProcessorDependentProperties extends CommonProperties {
 
                 gldName += procname + "/p" + procname + ".ld";
             } else {
+                if(procname.startsWith("SAM")) {
+                    procname = "AT" + procname;
+                }
+
                 gldName += procname + "/" + procname + ".ld";                
             }
         }
