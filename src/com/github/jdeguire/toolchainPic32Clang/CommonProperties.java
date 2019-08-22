@@ -164,7 +164,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
     private String getTargetSpecificOpts() {
         String triple = "-target " + target.getTargetTripleName();
 
-        String cpu = "-march=" + target.getArchNameForClang();
+        String cpu = "-march=" + target.getArchNameForCompiler();
 
         String fpu = "-msoft-float -mfloat-abi=soft";
         if(target.hasFpu()) {

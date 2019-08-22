@@ -140,7 +140,7 @@ public final class LinkerProperties extends CommonProperties {
     private String getMips32Multilib() {
         String libdir = "";
 
-        libdir += target.getArchNameForClang();
+        libdir += target.getArchNameForCompiler();
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
@@ -165,7 +165,7 @@ public final class LinkerProperties extends CommonProperties {
     private String getArmMultilib() {
         String libdir = "";
 
-        libdir += target.getArchNameForClang().replace('-', '_');
+        libdir += target.getArchNameForCompiler().replace('-', '_');
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
