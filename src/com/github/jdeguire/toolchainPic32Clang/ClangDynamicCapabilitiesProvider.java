@@ -2,10 +2,8 @@ package com.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.crownking.Pair;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
-import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.XMLBaseMakefileWriter;
 import com.microchip.mplab.nbide.embedded.spi.DynamicCapabilities;
 import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
-import com.microchip.mplab.nbide.toolchainCommon.provider.DefaultCompilerMacrosProvider;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectConfiguration;
 import org.openide.util.Utilities;
