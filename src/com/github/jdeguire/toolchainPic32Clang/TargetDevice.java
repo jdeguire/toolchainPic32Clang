@@ -10,6 +10,7 @@
 
 package com.github.jdeguire.toolchainPic32Clang;
 
+import com.microchip.crownking.mplabinfo.DeviceSupport.Device;
 import com.microchip.crownking.mplabinfo.FamilyDefinitions.Family;
 import com.microchip.crownking.mplabinfo.FamilyDefinitions.SubFamily;
 import com.microchip.mplab.crownkingx.xPICFactory;

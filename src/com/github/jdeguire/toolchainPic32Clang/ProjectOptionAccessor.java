@@ -18,9 +18,9 @@ import org.netbeans.api.project.Project;
  */
 public class ProjectOptionAccessor
 {
-    private MakeConfigurationBook book_;
-    private MakeConfiguration conf_;
-    private Project project_;
+    private final MakeConfigurationBook book_;
+    private final MakeConfiguration conf_;
+    private final Project project_;
     
     /* Create a new accessor object with the given configuration and book.
      */

@@ -23,7 +23,7 @@ import org.netbeans.spi.project.ProjectConfiguration;
  */
 abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider{
 
-    private CommonLanguageToolchainPropertiesUtils calculator = new CommonLanguageToolchainPropertiesUtils();
+    private final CommonLanguageToolchainPropertiesUtils calculator = new CommonLanguageToolchainPropertiesUtils();
 
     public String getDeviceNameMacro(String device) {
         String res = "";
@@ -79,23 +79,26 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
     public List<String> getDefines(Project project,
                                    ProjectConfiguration projectConf,
                                    String itemPath) {
-        List<String> res = new ArrayList<String>();
+        List<String> res = new ArrayList<>();
         MakeConfiguration makeConf = (MakeConfiguration) projectConf;
 
         //add call to hook method, for inheritors who might want to do additional computations.
         getDefinesHook(makeConf, project, res);
 
         res.add("__clang__");
+        res.add("__pic32_clang__");
         res.add("__LANGUAGE_C 1");
         res.add("__LANGUAGE_C__ 1");
         res.add("LANGUAGE_C 1");
         res.add("_LANGUAGE_C 1");
+        res.add("__PIC32 1");
         res.add("__PIC32__ 1");
 
+// TODO:  Change this to read the "-D" options from the target config file.
         try {
             TargetDevice target = new TargetDevice(makeConf.getDevice().getValue());
-
-            res.add(getDeviceNameMacro(target.getDeviceName()));
+            String devname = target.getDeviceName();
+            res.add(getDeviceNameMacro(devname));
 
             if(target.isMips32()) {
                 res.add("__MIPSEL__ 1");
@@ -112,25 +115,26 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
                 res.add("_ABIO32 1");
                 res.add("_MIPS_SIM _ABIO32");
 
-                if(SubFamily.PIC32 == target.getSubFamily()) {
-                    res.add("PIC32MX 1");
-                    res.add("__PIC32MX 1");
-                    res.add("__PIC32MX__ 1");
-                } else if(SubFamily.PIC32MM == target.getSubFamily()) {
-                    res.add("PIC32MM 1");
-                    res.add("__PIC32MM 1");
-                }  else if(SubFamily.PIC32MZ == target.getSubFamily()) {
-                    res.add("PIC32MZ 1");
-                    res.add("__PIC32MZ 1");
-                }  else if(SubFamily.PIC32WK == target.getSubFamily()) {
-                    res.add("PIC32WK 1");
-                    res.add("__PIC32WK 1");
+                String series;
+                if(devname.startsWith("M")) {
+                    series = devname.substring(0, 3);
+                } else if(devname.startsWith("USB")) {
+                    series = devname.substring(0, 5);
+                } else {
+                    series = devname.substring(0, 7);
+                }
+                res.add("__" + series + " 1");
+                res.add("__" + series + "__ 1");
+
+                if(devname.startsWith("PIC32")) {
+                    res.add("__PIC32M 1");
+                    res.add("__PIC32M__ 1");
                 }
             }
             else {
                 res.add("__arm__ 1");
                 res.add("__ARMEL__ 1");
-                res.add("PIC32C 1");
+                res.add("__PIC32C 1");
                 res.add("__PIC32C__ 1");
             }
 
@@ -146,11 +150,8 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
                     res.add("__mips_soft_float 1");
             }
 
-            if (target.getDeviceName().startsWith("MEC")) {
-                res.add("__MEC 1");
-                res.add("__MEC__ 1");
-                res.add("MEC 1");
-            }
+// TODO:  Check if we're outputting XC32 compatibility macros and include those here if so.
+// TODO:  Check if we enabled fast math and add __FAST_MATH__ if so.
         } catch (Exception e) {
             // Do nothing for now.
         }

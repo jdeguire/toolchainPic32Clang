@@ -7,6 +7,7 @@
     <mp:helpFileProvider mp:class="com.github.jdeguire.toolchainPic32Clang.ClangHelpFileProvider"/>
     <mp:licensingInfoProvider mp:class="com.microchip.mplab.nbide.toolchainPic32Clang.ClangLicensingInfoProvider"/>
 	<!-- TODO:  Do I actually need a licensing provider? -->
+	<!-- TODO:  I do need a way to provide supported devices by reading what target config files are available. -->
 
     <!-- The mp:id fields here match the XML element nodes in the MPLAB X project configuration file.
          Keep these as "C32blahblah" to stay compatible with Microchip tools. -->

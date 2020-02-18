@@ -41,7 +41,7 @@
       <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. Clang provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
     </opt:booleanOption>
     <opt:stringOption
-		opt:id="oClangld-extra-opts"
+		opt:id="oXC32ld-extra-opts"
 		opt:groupid="pre"
 		opt:name="Additional driver options"
 		opt:emissionprefix=""

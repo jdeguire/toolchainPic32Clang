@@ -150,6 +150,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
     // TODO:  Do we actually need this if we already have sysroot?
     // TODO:  Do we need to use the "-I" option instead?  Can this be relative to sysroot ('=')?.
+    // TODO:  This can be removed because this info will be in the target config.
     private String getSystemIncludeDirOpt() {
         String triple = target.getTargetTripleName();
 
@@ -161,6 +162,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return "--sysroot=\"" + getToolchainBasePath() + "\"";
     }
     
+// TODO:  These will not be needed anymore once we use the target config files.
     private String getTargetSpecificOpts() {
         String triple = "-target " + target.getTargetTripleName();
 
@@ -169,7 +171,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
         String fpu = "-msoft-float -mfloat-abi=soft";
         if(target.hasFpu()) {
             if(target.isMips32()) {
-                fpu = "-mhard-float -mfloat-abi=hard";
+                fpu = "-mhard-float -mfloat-abi=hard -mfp64";
             } else if(target.isArm()) {
                 fpu = "-mfpu=" + target.getArmFpuName() + " -mfloat-abi=hard";
             }

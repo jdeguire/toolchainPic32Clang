@@ -57,6 +57,7 @@ public final class ProcessorDependentProperties extends CommonProperties {
 
         commandLineProperties.put("OPTION_TO_SPECIFY_GLD", ",-T");
         commandLineProperties.put("GLD_NAME", gldName);
+// TODO:  Change this to get the target_config file for the processor
         commandLineProperties.put("PROCESSOR_NAME", getProcessorNameForCompiler());
     }
 }

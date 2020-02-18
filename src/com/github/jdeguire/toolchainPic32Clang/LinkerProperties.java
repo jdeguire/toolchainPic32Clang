@@ -176,7 +176,7 @@ public final class LinkerProperties extends CommonProperties {
         /* Get FPU.
          */
         if(target.hasFpu()) {
-            libdir += "/" + target.getArmFpuName();
+            libdir += "/" + target.getArmFpuName().toLowerCase();
         }
         
         return libdir;        
@@ -189,6 +189,7 @@ public final class LinkerProperties extends CommonProperties {
 
         /* Get fast math.
          */
+// TODO:  Maybe we don't want to do this for now...
         if(optAccessor.getBooleanProjectOption("C32Global", "relaxed-math", false)) {
             libdir += "/fastmath";
         }        
@@ -198,7 +199,7 @@ public final class LinkerProperties extends CommonProperties {
         String opt = optAccessor.getProjectOption("C32-LD", "optimization-level", "");
 
         if(!opt.isEmpty()) {
-            libdir += "/" + (opt.substring(1));
+            libdir += "/" + (opt.substring(1).toLowerCase());
         }
 
         return libdir;

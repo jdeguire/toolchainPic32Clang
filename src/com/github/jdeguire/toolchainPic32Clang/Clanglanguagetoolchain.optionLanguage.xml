@@ -7,6 +7,8 @@
                     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
 
   <opt:optionCategory opt:id="general" opt:name="General">
+<!-- TODO:  Add a read-only option to show Clang version. -->
+<!-- TODO:  Add an option to use a custom target config file. -->
     <opt:booleanOption
 		opt:id="save-temps"
 		opt:groupid="both"

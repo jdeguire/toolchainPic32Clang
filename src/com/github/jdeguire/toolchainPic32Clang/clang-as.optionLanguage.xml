@@ -49,7 +49,7 @@
       <!-- JLD: is not recognized by assembler 
           <opt:booleanOption opt:id="list-section-info" opt:name="List section information" opt:trueemission="i"/>
       -->
-            <opt:booleanOption opt:name="List to file"               opt:trueemission="=${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE_MINUS_EXTENSION}.lst" opt:booldefault="false" opt:id="oClangasm-list-to-file">
+            <opt:booleanOption opt:name="List to file"               opt:trueemission="=${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE_MINUS_EXTENSION}.lst" opt:booldefault="false" opt:id="oXC32asm-list-to-file">
                 <opt:xhtml>Use this option if you want the listing for a file. The list file will have the same name as the asm file plus .lst</opt:xhtml>
             </opt:booleanOption>
         </opt:complexOption>
