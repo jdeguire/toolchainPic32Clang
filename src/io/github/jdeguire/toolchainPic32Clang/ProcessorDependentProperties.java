@@ -36,28 +36,14 @@ public final class ProcessorDependentProperties extends CommonProperties {
                 gldName = calc.getLinkerGldFileName(projectDescriptor, conf);
             }
         } else {
-            // No gld in the project, so use the default one ('=' means "relative to sysroot").
-            gldName = "=/lib/proc/";
-            String procname = target.getDeviceName();
-
-            if(target.isMips32()) {
-                if(procname.startsWith("PIC32")) {
-                    procname = procname.substring(3);
-                }
-
-                gldName += procname + "/p" + procname + ".ld";
-            } else {
-                if(procname.startsWith("SAM")) {
-                    procname = "AT" + procname;
-                }
-
-                gldName += procname + "/" + procname + ".ld";                
-            }
+            // Linker scripts should be searched in the library paths.  The target config file adds
+            // the default linker script path as a library path, so we should just need the linker
+            // script name here.
+            gldName = target.getDeviceName().toLowerCase() + ".ld";
         }
 
-        commandLineProperties.put("OPTION_TO_SPECIFY_GLD", ",-T");
+        commandLineProperties.put("OPTION_TO_SPECIFY_GLD", ",-T ");
         commandLineProperties.put("GLD_NAME", gldName);
-// TODO:  Change this to get the target_config file for the processor
         commandLineProperties.put("PROCESSOR_NAME", getProcessorNameForCompiler());
     }
 }

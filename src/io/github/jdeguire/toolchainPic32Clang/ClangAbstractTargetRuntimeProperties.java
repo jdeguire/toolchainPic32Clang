@@ -54,6 +54,7 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
      * section of the General Options page.  Mainly this figures out if the selected arch is MIPS32
      * or ARM and then sets up MIPS16e and microMIPS availability (or ARM/Thumb for ARM devices).
      */
+// TODO: We might be able to clean this function up since some info comes from the target config files.
     private void setArchSpecificBehavior() throws IllegalArgumentException, MakeConfigurationException {
         boolean grayMips16 = false;
         boolean grayMicromips = false;
@@ -64,7 +65,7 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
         boolean valueMips16 = false;
         boolean valueMicromips = false;
         boolean valueThumb = false;
-        
+
         if(target.supportsMips32Isa()) {
             if(target.supportsMips16Isa()) {
                 grayMicromips = true;
@@ -108,6 +109,8 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
         setProperty("micromips.gray", Boolean.toString(grayMicromips));
         setProperty("thumb.gray", Boolean.toString(grayThumb));
 
+        // TODO:  Micromips-only devices will have the option in the target config, so do not duplicate it here
+        // TODO:  Thumb-only devices will use Thumb already based on the "-march=" option, so do not duplicate it here.
         if(setMips16) {
             optAccessor.setBooleanProjectOption("C32-AS", "generate-16-bit-code", valueMips16);
             optAccessor.setBooleanProjectOption("C32", "generate-16-bit-code", valueMips16);

@@ -45,9 +45,8 @@ public class CommonProperties extends MPLABXSpecificProperties {
         commandLineProperties.put("IS_ARM", armDeviceSelected.toString());
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
-        commandLineProperties.put("SYS_INCLUDE_OPT", getSystemIncludeDirOpt());
         commandLineProperties.put("SYSROOT_OPT", getSysrootOpt());
-        commandLineProperties.put("TARGET_OPTS", getTargetSpecificOpts());
+        commandLineProperties.put("TARGET_CONFIG_OPT", "--config " + getTargetConfigPath());
     }
 
     final void addDebuggerNameOptions() {
@@ -123,13 +122,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
      * @return value of processor to be fed to assembler. Override as needed
      */
     final String getProcessorNameForCompiler() {
-        if (deviceName.toUpperCase().startsWith("PIC32")) {
-            return deviceName.substring(3, deviceName.length());
-        } else if (deviceName.toUpperCase().startsWith("ATSAM")) {
-            return deviceName.substring(2, deviceName.length());
-        } else {
-            return deviceName;
-        }
+        return target.getDeviceName();
     }
 
     private String getXC32CompatibilityMacros() {
@@ -148,41 +141,19 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return ret;
     }
 
-    // TODO:  Do we actually need this if we already have sysroot?
-    // TODO:  Do we need to use the "-I" option instead?  Can this be relative to sysroot ('=')?.
-    // TODO:  This can be removed because this info will be in the target config.
-    private String getSystemIncludeDirOpt() {
-        String triple = target.getTargetTripleName();
-
-        return ("-isystem \"" + getToolchainBasePath() + "target/include/\"" + 
-                triple.substring(0, triple.indexOf('-')));
-    }
-
     private String getSysrootOpt() {
         return "--sysroot=\"" + getToolchainBasePath() + "\"";
     }
     
-// TODO:  These will not be needed anymore once we use the target config files.
-    private String getTargetSpecificOpts() {
-        String triple = "-target " + target.getTargetTripleName();
+    private String getTargetConfigPath() {
+        String userConfig = optAccessor.getProjectOption("C32Global", "user-target-config", "");
 
-        String cpu = "-march=" + target.getArchNameForCompiler();
-
-        String fpu = "-msoft-float -mfloat-abi=soft";
-        if(target.hasFpu()) {
-            if(target.isMips32()) {
-                fpu = "-mhard-float -mfloat-abi=hard -mfp64";
-            } else if(target.isArm()) {
-                fpu = "-mfpu=" + target.getArmFpuName() + " -mfloat-abi=hard";
-            }
+        if(!userConfig.isEmpty()) {
+            return userConfig;
+        } else {
+            // This should be relative to SYSROOT because of the '=' at the start.
+            return "=/target/config/" + target.getDeviceName().toLowerCase() + ".cfg";
         }
-
-        String dsp = "";
-        if(target.supportsDspR2Ase()) {
-            dsp = "-mdspr2";
-        }
-
-        return triple + " " + cpu + " " + fpu + " " + dsp;
     }
 
     /* Return the base install path for the current toolchain with the file separator always at the

@@ -35,5 +35,4 @@ public final class CommonPropertiesCalculator extends CommonLanguageToolchainPro
     final boolean supportsLegacyLibc(final MakeConfiguration conf) {
         return false;
     }
-
 }

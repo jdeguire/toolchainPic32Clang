@@ -13,7 +13,7 @@ public class ClangLanguageToolchain {
 
 	// TODO:  We might be able to remove ones that do not apply to Clang; namely, the ones
 	//        referenced in CommonPropertiesCalculator.
-    public static final String CPP_SUPPORT_FIRST_VERSION = "1.00";
+    public static final String CPP_SUPPORT_FIRST_VERSION = "0.01";
 //    public static final String LIBC_SUPPORT_FIRST_VERSION = "1.41";
 //    public static final String CHIPKIT_SUPPORT_FIRST_VERSION = "1.34";
 //    public static final String MEMORY_SUMMARY_SUPPORT_FIRST_VERSION = "1.40";

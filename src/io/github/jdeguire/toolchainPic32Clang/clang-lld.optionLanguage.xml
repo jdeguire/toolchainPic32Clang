@@ -109,8 +109,7 @@
 		opt:isdirectory="true"
 		opt:isbrowsable="true">
       <opt:browseinfo>
-        Relative paths are from
-        <br/>MPLAB X project directory.
+        Relative paths are from MPLAB X project directory.
       </opt:browseinfo>
       <opt:xhtml>
         Relative paths are from MPLAB X project directory.

@@ -7,8 +7,29 @@
                     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
 
   <opt:optionCategory opt:id="general" opt:name="General">
-<!-- TODO:  Add a read-only option to show Clang version. -->
-<!-- TODO:  Add an option to use a custom target config file. -->
+    <opt:stringOption
+        opt:id="clang-version"
+        opt:groupid="ignore-me"
+        opt:name="Clang Version"
+        opt:textdefault="${clangVersion}"
+        opt:grayif="true">
+    </opt:stringOption>
+    <!-- This next option is read in CommonProperties::getTargetConfigPath(), so it is ignored. -->
+    <opt:stringOption
+        opt:id="user-target-config"
+        opt:groupid="ignore-me"
+        opt:name="Use Custom Target Config"
+        opt:textdefault=""
+        opt:isfile="true"
+		opt:isbrowsable="true">
+      <opt:xhtml>
+        Use a custom configuration file to tell Clang about your device instead of using the default.
+        Such a file contains device-specific options--such as whether the device is a MIPS or Arm
+        device--and predefined macros that may be useful in your code.  If this option is empty, the
+        default configuration file will be used.  To create your own, start with one of the default
+        config files found under the "target/config" directory where the toolchain is located.
+      </opt:xhtml>
+    </opt:stringOption>
     <opt:booleanOption
 		opt:id="save-temps"
 		opt:groupid="both"
@@ -100,8 +121,7 @@
 		opt:isdirectory="true"
 		opt:isbrowsable="true">
       <opt:browseinfo>
-        Relative paths are from
-        <br/>MPLAB X project directory.
+        Relative paths are from MPLAB X project directory.
       </opt:browseinfo>
       <opt:xhtml>Add 'dir' to the list of shared include directories for compilers and assembler.
       <br/>

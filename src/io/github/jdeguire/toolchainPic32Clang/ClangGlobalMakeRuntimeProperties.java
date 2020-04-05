@@ -1,10 +1,8 @@
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import java.util.Properties;
-import org.netbeans.api.project.Project;
 import org.openide.util.Utilities;
 
 /**

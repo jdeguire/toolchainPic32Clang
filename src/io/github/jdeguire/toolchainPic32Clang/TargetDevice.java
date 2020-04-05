@@ -10,12 +10,13 @@
 
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.crownking.mplabinfo.DeviceSupport.Device;
 import com.microchip.crownking.mplabinfo.FamilyDefinitions.Family;
 import com.microchip.crownking.mplabinfo.FamilyDefinitions.SubFamily;
 import com.microchip.mplab.crownkingx.xPICFactory;
 import com.microchip.mplab.crownkingx.xPIC;
 import java.util.ArrayList;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -34,13 +35,8 @@ public class TargetDevice {
 		ARMV8M_MAIN
 	};
 
+    final private xPIC pic_;
     final private String name_;
-    final private Family family_;
-    final private SubFamily subfamily_;
-    final private boolean hasfpu_;
-    final private boolean hasMips16_;
-    final private boolean hasMicroMips_;    
-    final private String cpuName_;
 	private ArrayList<String> instructionSets_;
 
     /* Create a new TargetDevice based on the given name.  Throws an exception if the given name is
@@ -54,53 +50,108 @@ public class TargetDevice {
 		javax.xml.parsers.ParserConfigurationException, 
 		IllegalArgumentException {
 
-        name_ = devname.toUpperCase();
+        pic_ = (xPIC)xPICFactory.getInstance().get(devname);
+        name_ = normalizeDeviceName(devname);
 
-        xPIC pic = (xPIC)xPICFactory.getInstance().get(name_);
+        if(Family.PIC32 == pic_.getFamily()  ||  Family.ARM32BIT == pic_.getFamily()) {
+   			instructionSets_ = new ArrayList<>(pic_.getInstructionSet().getSubsetIDs());
 
-        family_ = pic.getFamily();
-
-		if(Family.PIC32 == family_  ||  Family.ARM32BIT == family_) {
-            subfamily_ = pic.getSubFamily();
-            hasfpu_ = pic.hasFPU();
-            hasMips16_ = pic.has16Mips();
-            hasMicroMips_ = pic.hasMicroMips();
-            cpuName_ = pic.getArchitecture();
- 
-   			instructionSets_ = new ArrayList<>(pic.getInstructionSet().getSubsetIDs());
-
-			String setId = pic.getInstructionSet().getID();
+			String setId = pic_.getInstructionSet().getID();
 			if(setId != null  &&  !setId.isEmpty())
 				instructionSets_.add(setId);
         }
 		else {
-            xPICFactory.getInstance().release(pic);
-            String what = "Device " + devname + " is not a recognized MIPS32 or ARM device.";
+            String what = "Device " + devname + " is not a recognized MIPS32 or Arm device.";
             throw new IllegalArgumentException(what);
         }
-
-   	    xPICFactory.getInstance().release(pic);
     }
 
-    /* Get the name of the device provided to the constructor of this class, but in all uppercase.
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+            xPICFactory.getInstance().release(pic_);
+        } finally {
+            super.finalize();
+        }
+    }
+
+    /* Get the xPIC object used by this class to access the MPLAB X device database.
+     */
+    public xPIC getPic() {
+        return pic_;
+    }
+
+    /* Get the name of the device this class represents.  It will be in uppercase and normalized
+     * such that PIC32 devices will start with "PIC32" and SAM devices will start with "ATSAM".
      */
     public String getDeviceName() {
         return name_;
     }
 
+    /* Return the name of the device modified such that it can be used for C macros.  How the name 
+     * is modified depends on the device, but an example is that "PIC32" devices will have the 
+     * "PIC" portion removed and "ATSAM" devices will have the "AT" removed.
+     */
+    public String getDeviceNameForMacro() {
+        String name = getDeviceName();
+
+        if (name.startsWith("PIC32")) {
+            return name.substring(3);                 // "32MX795F512L"
+        } else if(name.startsWith("ATSAM")) {
+            return name.substring(2);                 // "SAME70Q21"
+        } else {
+            return name;
+        }
+    }
+
+    /* Return a string that can be used as a device series, such as "PIC32MX", "SAMD", and so on.
+     * For MIPS devices, this uses the device name to determine the series and will handle non-PIC32
+     * devices as well.  For Arm devices, this is equivalent to calling getAtdfFamily().
+     */
+    public String getDeviceSeriesName() {
+        if(isMips32()) {
+            String devname = getDeviceName();
+
+            if(devname.startsWith("M")) {
+                return devname.substring(0, 3);
+            } else if(devname.startsWith("USB")) {
+                return devname.substring(0, 5);
+            } else {
+                return devname.substring(0, 7);
+            }
+        } else {
+            return getAtdfFamily();
+        }
+    }
+
     /* Get the device family of the target, which is used to determine its features.
      */
 	public Family getFamily() {
-		return family_;
+		return pic_.getFamily();
 	}
 
 	/* Get the subfamily of the target, which is a bit more fine-grained than the family.
 	 */
 	public SubFamily getSubFamily() {
-		return subfamily_;
+		return pic_.getSubFamily();
 	}
 
-	/* Get the CPU architecture for the device.
+    /* Return the name of the ATDF device family for this device, such as "SAME" or "PIC32CX", that 
+     * applies to Arm devices.  This will return an empty string if a family is not provided.  MIPS
+     * device will generally not have an ATDF family, at least not at the time of this writing 
+     * (2 Feb 2020).
+     */
+    public String getAtdfFamily() {
+        String atdfFamily = pic_.getATDFFamily();
+
+        if(null == atdfFamily) {
+            atdfFamily = "";
+        }
+
+        return atdfFamily;
+    }
+
+    /* Get the CPU architecture for the device.
 	 */
 	public TargetArch getArch() {
 		TargetArch arch;
@@ -131,7 +182,7 @@ public class TargetDevice {
 					case "armv7m":                               // Cortex M3
 					case "armv7em":                              // Cortex M4, M7
                         // NOTE:  Microchip's EDC files do not actually distinguish between ARMv7-M
-                        //        and ARMV7-EM, so we'll do it here.
+                        //        and ARMV7E-M, so we'll do it here.
                         if(getCpuName().equals("cortex-m3"))
     						arch = TargetArch.ARMV7M;
                         else
@@ -185,7 +236,7 @@ public class TargetDevice {
         if(isMips32())
             return getArchNameForCompiler();
         else
-            return cpuName_.toLowerCase();
+            return pic_.getArchitecture().toLowerCase();
     }
 
     /* Return True if this is a MIPS32 device.
@@ -203,7 +254,65 @@ public class TargetDevice {
     /* Return True if the target has an FPU.
      */
     public boolean hasFpu() {
-        return hasfpu_;
+        boolean hasfpu = false;
+
+        if(isMips32()) {
+            hasfpu = pic_.hasFPU();
+        } else {
+            // The .PIC files don't encode this the same way for Arm devices, so we have to dig for
+            // it ourselves.
+
+            // We don't need the "edc:" prefix here since we're using the MPLAB X API.
+            Node peripheralListNode = pic_.first("PeripheralList");
+
+            if(null != peripheralListNode  &&  peripheralListNode.hasChildNodes()) {
+                NodeList children = peripheralListNode.getChildNodes();
+
+                for(int i = 0; i < children.getLength(); ++i) {
+                    Node child = children.item(i);
+
+                    // We do need the "edc:" prefix here because these are not a part of the
+                    // MPLAB X API.
+                    if(!child.getNodeName().equals("edc:Peripheral")  ||  !child.hasAttributes()) {
+                        continue;
+                    }
+
+                    Node attributeNode = child.getAttributes().getNamedItem("edc:cname");
+
+                    if(null == attributeNode ||  !attributeNode.getNodeValue().equals("FPU")) {
+                        continue;
+                    }
+
+                    hasfpu = true;
+                }
+            }
+        }
+
+        return hasfpu;
+    }
+
+    /* Return True if the target has a 64-bit FPU.
+     */
+    public boolean hasFpu64() {
+        // So far, only the Cortex-M4 devices have a single-precision FPU.
+        return hasFpu()  &&  !getCpuName().equals("cortex-m4");
+    }
+
+    /* Return True if the device has an L1 cache.  This is actually just a guess for now based on
+     * the device's family or architecture.
+     */
+    public boolean hasL1Cache() {
+        boolean result = false;
+        
+        if(getSubFamily() == SubFamily.PIC32MZ) {
+            result = true;
+        } else if(getCpuName().equals("cortex-m7")) {
+            result = true;
+        } else if(getCpuName().startsWith("cortex-a")) {
+            result = true;
+        }
+
+        return result;
     }
 
     /* Return True if the target supports the MIPS32 instruction set.
@@ -215,13 +324,13 @@ public class TargetDevice {
     /* Return True if the target supports the MIPS16e instruction set.
      */
     public boolean supportsMips16Isa() {
-        return (isMips32()  &&  hasMips16_);
+        return (isMips32()  &&  pic_.has16Mips());
     }
 
     /* Return True if the target supports the microMIPS instruction set.
      */
     public boolean supportsMicroMipsIsa() {
-        return (isMips32()  &&  hasMicroMips_);
+        return (isMips32()  &&  pic_.hasMicroMips());
     }
 
     /* Return True if the target supports the MIPS DSPr2 application specific extension.
@@ -239,6 +348,14 @@ public class TargetDevice {
 		}
 
 		return hasDsp;
+    }
+
+    /* Return True if the target supports the MIPS MCU application specific extension.
+     */
+    public boolean supportsMcuAse() {
+        // There's no way to tell from the MPLAB X API, but looking at datasheets for different PIC32
+        // series suggests that devices that support microMIPS also support the MCU ASE.
+        return supportsMicroMipsIsa();
     }
 
     /* Return True if the target supports the ARM instruction set.
@@ -259,7 +376,7 @@ public class TargetDevice {
      * supported that determine whether it is single-precision only or also supports double-precision
      * as well as how many FPU registers are available and whether NEON SIMD extensions are supported.
      *
-     * MIPS devices have only only FPU, so this will return an empty string for MIPS.
+     * MIPS devices have only one FPU, so this will return an empty string for MIPS.
      */
     public String getArmFpuName() {
 		String fpuName = "";
@@ -276,17 +393,38 @@ public class TargetDevice {
                 case ARMV7A:
                     // There does not yet seem to be a way to check for NEON other than name.
                     String name = getDeviceName();
-                    if(name.startsWith("SAMA5D3")  ||  name.startsWith("ATSAMA5D3"))
+                    if(name.startsWith("ATSAMA5D3"))
                         fpuName = "vfp4-dp-d16";
                     else
                         fpuName = "neon-vfpv4";
                     break;
+                case ARMV8A:
+                    fpuName = "fp-armv8";
+                    break;
                 default:
-                    fpuName = "vfp4-dp-d16";
+                    fpuName = "vfp4-sp-d16";
                     break;
             }
 		}
 
         return fpuName;
+    }
+    
+    /* Ensure the device name is in a predictable format for use by users of this class.  We don't 
+     * control what device names we get from the MPLAB X Device objects, so do this to ensure that 
+     * we stay consistent even if they change.
+     */
+    private String normalizeDeviceName(String devname) {
+        devname = devname.toUpperCase();
+
+        if(devname.startsWith("SAM")) {
+            devname = "AT" + devname;
+        } else if(devname.startsWith("32")) {
+            devname = "PIC" + devname;
+        } else if(devname.startsWith("P32")) {
+            devname = "PIC" + devname.substring(1);
+        }
+
+        return devname;        
     }
 }

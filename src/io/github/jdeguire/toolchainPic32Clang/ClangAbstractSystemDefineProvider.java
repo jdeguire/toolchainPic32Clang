@@ -143,6 +143,7 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
             if(target.hasFpu()) {
                 if(target.isMips32())
                     res.add("__mips_hard_float 1");
+// TODO:  Check if we're on Arm and have an FPU; set __ARM_FP to 4 (FPU32) or 14 (FPU64).
             } else {
                 res.add("__SOFT_FLOAT 1");
 

@@ -24,20 +24,20 @@ import org.w3c.dom.Node;
  */
 public class ClangFolderResidenceTester extends FolderResidenceTester.Default {
 
-    private LanguageToolchainMeta toolchainMeta;
+    private final LanguageToolchainMeta toolchainMeta;
 
     public ClangFolderResidenceTester() {
-        toolchainMeta = LanguageToolchainMetaManager.getToolchain(
-                "Clang"); // NOI18N
+        toolchainMeta = LanguageToolchainMetaManager.getToolchain("Clang"); // NOI18N
     }
 
     @Override
     public boolean isMyFolder(String dir) {
         boolean hasAllButCPP =
-                hasAllExecutableFiles(toolchainMeta, dir, Collections.singleton("Clang-g++"));
+                hasAllExecutableFiles(toolchainMeta, dir, Collections.singleton("clang++"));
         if (!hasAllButCPP) {
             return false;
         }
+// TODO:  Do we just need to call hasAllExecutableFiles() once since we know we should have C++?
 // TODO:  Actually fix this or just remove this file since we may not need it anymore.
 //        final boolean requiregcc = ClangLanguageToolchain.xcHasCPPSupport(dir);
         final boolean requiregcc = true;

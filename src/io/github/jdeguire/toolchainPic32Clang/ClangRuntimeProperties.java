@@ -9,6 +9,7 @@ import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
+import com.microchip.mplab.nbide.toolchainCommon.provider.CommonVersionProvider;
 import org.openide.util.Utilities;
 
 /** 
@@ -21,6 +22,17 @@ import org.openide.util.Utilities;
  */
 public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
     
+    // The MPLAB X API already has the CommonVersionProvider class to read the version number from
+    // the toolchain itself, so let's leverage that instead of doing it ourselves.  The class is 
+    // abstract, so we have to make this little class to instantiate it.
+    private class ClangRealVersionProvider extends CommonVersionProvider {
+        public ClangRealVersionProvider() {
+            super("clang", "version\\s*([\\d\\.]+)", 1, false);
+        }
+    }
+
+    private final ClangRealVersionProvider versionProvider;
+
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
 		org.xml.sax.SAXException,
@@ -30,8 +42,12 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
 		MakeConfigurationException {
 
         super(desc, conf);
+
+        versionProvider = new ClangRealVersionProvider();
+
         supressResponseFileOption();
         setImola2Properties(desc);
+        setClangVersionProperty();
     }
 
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
@@ -68,5 +84,11 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
             value = "false";
         }
         setProperty("opt-Clang-linker-response-files.suppress", value);
+    }
+
+
+    private void setClangVersionProperty() {
+        String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
+        setProperty("clangVersion", versionProvider.getVersion(toolchainPath));
     }
 }
