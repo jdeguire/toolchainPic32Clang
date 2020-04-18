@@ -11,7 +11,8 @@
         opt:id="clang-version"
         opt:groupid="ignore-me"
         opt:name="Clang Version"
-        opt:textdefault="${clangVersion}"
+        opt:textdefault=""
+        opt:textpreferred=""
         opt:grayif="true">
     </opt:stringOption>
     <!-- This next option is read in CommonProperties::getTargetConfigPath(), so it is ignored. -->

@@ -16,6 +16,6 @@ import com.microchip.mplab.nbide.toolchainCommon.predicate.IPredicate.ToolchainD
 public final class ClangLicensingInfoProvider extends LicenseInfoRetriever {
 
     public ClangLicensingInfoProvider(final String pathToBin, final String toolchainID, final String version) {
-        super(pathToBin, "Clang", version, new CompilerIsEligibleForRoamingPredicate(new ToolchainData("Clang", pathToBin, "1.10")));
+        super(pathToBin, "Clang", version, new CompilerIsEligibleForRoamingPredicate(new ToolchainData("Clang", pathToBin, "0.1")));
     }
 }

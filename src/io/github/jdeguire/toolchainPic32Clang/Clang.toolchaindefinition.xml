@@ -24,13 +24,13 @@ pattern=".*[\\/]pic32[\\/]bin" or_exist_folder="pic32/bin"
     <makefile_writer class="com.microchip.mplab.nbide.toolchains.c32.C32MakefileWriter" />
     <drive_letter_prefix stringvalue="/"/>
     <c>
-        <compiler name="Clang-gcc"/>
+        <compiler name="clang"/>
         <system_include_paths parser="GNU"/>
         <system_macros parser="GNU"/>
         <recognizer pattern=".*[\\/]((pic32)|(MPLAB C32))[\\/]bin" />
     </c>
     <assembler>
-        <compiler name="Clang-as"/>
+        <compiler name="clang"/>
         <recognizer pattern=".*[\\/]((pic32)|(MPLAB C32))[\\/]bin" />
     </assembler>
     <linker>

@@ -9,7 +9,12 @@ import com.microchip.mplab.crownkingx.xPIC;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
-import com.microchip.mplab.nbide.toolchainCommon.provider.CommonVersionProvider;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.IOUtils;
 import org.openide.util.Utilities;
 
 /** 
@@ -21,17 +26,9 @@ import org.openide.util.Utilities;
  * Modified by jdeguire for toolchainPic32Clang.
  */
 public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
-    
-    // The MPLAB X API already has the CommonVersionProvider class to read the version number from
-    // the toolchain itself, so let's leverage that instead of doing it ourselves.  The class is 
-    // abstract, so we have to make this little class to instantiate it.
-    private class ClangRealVersionProvider extends CommonVersionProvider {
-        public ClangRealVersionProvider() {
-            super("clang", "version\\s*([\\d\\.]+)", 1, false);
-        }
-    }
 
-    private final ClangRealVersionProvider versionProvider;
+    private static String cachedClangVersion = "";
+    private static String cachedClangPath = "";
 
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
@@ -43,11 +40,9 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
 
         super(desc, conf);
 
-        versionProvider = new ClangRealVersionProvider();
-
         supressResponseFileOption();
         setImola2Properties(desc);
-        setClangVersionProperty();
+        setClangVersionOption();
     }
 
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
@@ -86,9 +81,61 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
         setProperty("opt-Clang-linker-response-files.suppress", value);
     }
 
+    private void setClangVersionOption() {
+        File clangExec = new File(conf.getLanguageToolchain().getDir().getValue());
 
-    private void setClangVersionProperty() {
-        String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
-        setProperty("clangVersion", versionProvider.getVersion(toolchainPath));
+        // Check if the toolchain path changed and update our cached value if needed.
+        if(!cachedClangPath.equals(clangExec.getPath())) {
+            cachedClangPath = clangExec.getPath();
+
+            if(Utilities.isWindows()) {
+                clangExec = new File(clangExec, "clang.exe");
+            } else {
+                clangExec = new File(clangExec, "clang");
+            }
+
+            try {
+                Process clangProc = new ProcessBuilder(clangExec.getPath(), "--version").start();
+
+                if(clangProc.waitFor(3, TimeUnit.SECONDS)) {
+                    InputStream inStream = clangProc.getInputStream();
+                    String inString = IOUtils.toString(inStream, StandardCharsets.UTF_8.name());
+
+                    int start = inString.indexOf("version");
+                    if(start >= 0) {
+                        start += "version".length();
+
+                        while(Character.isWhitespace(inString.charAt(start))) {
+                            ++start;
+                        }
+
+                        int end = start+1;
+                        while(!Character.isWhitespace(inString.charAt(end))) {
+                            ++end;
+                        }
+
+                        cachedClangVersion = inString.substring(start, end);
+                    }
+                }
+            } catch(IOException ex) {
+                // do nothing for now.
+            } catch(InterruptedException ex) {
+                // Stack Overflow says to do this.
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // Check if we need to update the version shown in the project properties.  Doing this check
+        // lets us ensure that we can update the option value even when our cached value has not 
+        // changed.  This would presumably occur when switching projects.
+        try {
+            String currentVer = optAccessor.getProjectOption("C32Global", "clang-version", "");
+
+            if(!currentVer.equals(cachedClangVersion)) {
+                optAccessor.setProjectOption("C32Global", "clang-version", cachedClangVersion);
+            }
+        } catch(MakeConfigurationException | IllegalArgumentException ex) {
+            // do nothing for now.
+        }
     }
 }

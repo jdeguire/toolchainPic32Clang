@@ -20,7 +20,7 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPrope
 public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolchainPropertiesAccessor {
 
     final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
-    final private ProjectOptionAccessor optAccessor;
+    final protected ProjectOptionAccessor optAccessor;
     final protected TargetDevice target;
 
     private static boolean settingArchOpts = false;

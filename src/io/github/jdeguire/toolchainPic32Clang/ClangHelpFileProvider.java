@@ -55,6 +55,7 @@ import com.microchip.mplab.nbide.embedded.spi.HelpFileProvider;
  *
  * @author venkat
  */
+// TODO:  Can we do something with this, like point it to Clang's documentation?
 public final class ClangHelpFileProvider implements HelpFileProvider {
 
     @Override

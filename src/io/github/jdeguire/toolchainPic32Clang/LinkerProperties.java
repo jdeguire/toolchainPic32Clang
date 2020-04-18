@@ -4,17 +4,12 @@
  */
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.crownking.Pair;
 import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.mdbcore.common.streamingdata.StreamingDataEnums;
 import com.microchip.mplab.mdbcore.common.streamingdata.interfaces.TraceSetupInformationInterface;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.toolchainCommon.LTUtils;
-import com.microchip.mplab.nbide.toolchainCommon.MemRegionType;
 import com.microchip.mplab.nbide.toolchainCommon.ReservedMemoryRangesCalculator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -123,8 +118,7 @@ public final class LinkerProperties extends CommonProperties {
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
-        // TODO:  Can we make this relative to sysroot by putting "=" at the start?
-        String multilibOpt = "-L\"" + getToolchainBasePath() + "target/\"";
+        String multilibOpt = "-L\"=/target/";
 
         if(target.isMips32())
             multilibOpt += getMips32Multilib();
@@ -134,7 +128,7 @@ public final class LinkerProperties extends CommonProperties {
             return "";
 
         multilibOpt += getCommonMultilibs();
-        return multilibOpt;
+        return multilibOpt + "\"";
     }
 
     private String getMips32Multilib() {

@@ -1,6 +1,6 @@
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.mplab.nbide.toolchainCommon.provider.CommonVersionProvider;
+import com.microchip.mplab.nbide.embedded.spi.VersionProvider;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,16 +8,27 @@ import java.io.IOException;
 
 /**
  * Version provider for Clang toolchain.
- * @author Marian Golea <marian.golea@microchip.com>
+ * @author Jesse DeGuire
+ * Normally I'd have the original author's name here from the XC32 plugin upon which this plugin
+ * was based, but this class is very different from the XC32 version, so I'll take all the blame.
  */
-public class ClangVersionProvider extends CommonVersionProvider
+public class ClangVersionProvider implements VersionProvider
 {
+    private String cachedVersion;
+    private String cachedPath;
+
     public ClangVersionProvider() {
-// TODO:  This needs to read a PKGCONFIG file instead of asking Clang directly.
-// TODO:  This code needs to be used to query the Clang version to show the user in the options pages.
-        super("clang", "version\\s*([\\d\\.]+)", 1, false);
+        cachedVersion = "";
+        cachedPath = "";
     }
 
+    /* Read the version number from a file in the toolchain root called "pic32clang_version".  Do
+     * this instead of letting MPLAB X get the version because this will let us provide MPLAB X 
+     * with our own version independent of Clang without having to modify Clang.
+     *
+     * The actual Clang version is shown under the global project properties and uses code in
+     * ClangRuntimeProperties to do it.
+     */
     @Override
     public String getVersion(String fullPathOrJustDirectory) {
         File file = new File(fullPathOrJustDirectory);
@@ -32,21 +43,23 @@ public class ClangVersionProvider extends CommonVersionProvider
             file = file.getParentFile();
         }
 
-        String verPath = file.getAbsolutePath();
-        if(!verPath.endsWith(File.separator)) {
-            verPath += File.separator;
-        }
-        verPath += "pic32clang_version";
+        // Check if we need to update our cache because we got a new directory.
+        if(!cachedPath.equals(file.getPath())) {
+            file = new File(file, "pic32clang_version");
 
-        try(FileReader reader = new FileReader(verPath)) {
-            char[] buf = new char[32];
-            reader.read(buf);
+            try(FileReader reader = new FileReader(file)) {
+                char[] buf = new char[32];
+                reader.read(buf);
 
-            return new String(buf);
-        } catch(FileNotFoundException ex) {
-            return "0.00";
-        } catch (IOException ex) {
-            return "0.00";
+                cachedPath = file.getPath();
+                cachedVersion = new String(buf).trim();
+            } catch(FileNotFoundException ex) {
+                cachedVersion = "0.00";
+            } catch (IOException ex) {
+                cachedVersion =  "0.00";
+            }
         }
+
+        return cachedVersion;
     }
 }

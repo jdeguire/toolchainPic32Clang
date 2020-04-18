@@ -5,10 +5,8 @@
  */
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.crownking.Pair;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.OptionConfiguration;
 import com.microchip.mplab.nbide.toolchainCommon.properties.MPLABXSpecificProperties;
 import java.io.File;
 import java.util.List;
@@ -46,7 +44,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
         commandLineProperties.put("SYSROOT_OPT", getSysrootOpt());
-        commandLineProperties.put("TARGET_CONFIG_OPT", "--config " + getTargetConfigPath());
+        commandLineProperties.put("TARGET_CONFIG_OPT", "--config \"" + getTargetConfigPath() + "\"");
     }
 
     final void addDebuggerNameOptions() {
@@ -92,27 +90,33 @@ public class CommonProperties extends MPLABXSpecificProperties {
         if (!Utilities.isWindows()) {
             return res;
         }
-        // Check the option value
-        OptionConfiguration confObject = desc.getSynthesizedOptionConfiguration(conf.getName(), "C32-LD", null);
-        if (confObject != null) {
-            try {
-                ClangRuntimeProperties props = new ClangRuntimeProperties(desc, conf);
-                List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
-                if (emissionPairs != null) {
-                    for (Pair<String, String> p : emissionPairs) {
-                        if (p.first.equals("additional-options-use-response-files") && p.second.equals("true")) {
-                            res = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            catch(Exception e) {
-                res = false;
-            }
-        }
 
-        return res;
+// TODO:  Commented out code
+        // Check the option value
+//        OptionConfiguration confObject = desc.getSynthesizedOptionConfiguration(conf.getName(), "C32-LD", null);
+//        if (confObject != null) {
+//            try {
+//                ClangRuntimeProperties props = new ClangRuntimeProperties(desc, conf);
+//                List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
+//                if (emissionPairs != null) {
+//                    for (Pair<String, String> p : emissionPairs) {
+//                        if (p.first.equals("additional-options-use-response-files") && p.second.equals("true")) {
+//                            res = true;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//            catch(Exception e) {
+//                res = false;
+//            }
+//        }
+//
+//        return res;
+
+        return optAccessor.getBooleanProjectOption("C32-LD",
+                                                   "additional-options-use-response-files",
+                                                   false);
     }
 
     /**
@@ -142,7 +146,7 @@ public class CommonProperties extends MPLABXSpecificProperties {
     }
 
     private String getSysrootOpt() {
-        return "--sysroot=\"" + getToolchainBasePath() + "\"";
+        return "--sysroot=\"" + getToolchainRootPath() + "\"";
     }
     
     private String getTargetConfigPath() {
@@ -157,18 +161,34 @@ public class CommonProperties extends MPLABXSpecificProperties {
     }
 
     /* Return the base install path for the current toolchain with the file separator always at the
-     * end (so "/foo/bar/" instead of "/foo/bar").  This will use Unix forward slashes, even on
-     * Windows, because Clang supports them on all platforms.
+     * end (so "/foo/bar/" instead of "/foo/bar").  The path returned is what would appear in the
+     * MPLAB X Build Tool options; that is, it will be the where the executables are located and so
+     * will end in "bin/".  This will use Unix forward slashes, even on Windows, because Clang 
+     * supports them on all platforms.
      */
-    public String getToolchainBasePath() {
-        String toolchainPath = conf.getLanguageToolchain().getDir().getValue();
+    public String getToolchainExecPath() {
+        String execPath = conf.getLanguageToolchain().getDir().getValue();
 
         if('/' != File.separatorChar)
-            toolchainPath = toolchainPath.replace(File.separatorChar, '/');
+            execPath = execPath.replace(File.separatorChar, '/');
 
-        if('/' != toolchainPath.charAt(toolchainPath.length() - 1))
-            toolchainPath += '/';
+        if('/' != execPath.charAt(execPath.length() - 1))
+            execPath += '/';
 
-        return toolchainPath;
+        return execPath;
+    }
+
+    /* Like above, but will return the top-level path of the Clang toolchain; that is, the parent
+     * of the path returned by getToolchainExecPath().  This path will end in '/'.
+     */
+    public String getToolchainRootPath() {
+        String rootPath = getToolchainExecPath();
+
+        int i = rootPath.length() - 2;      // Last entry is '/', so skip it.
+        while(i >= 0  &&  '/' != rootPath.charAt(i)) {
+            --i;
+        }
+
+        return rootPath.substring(0, i+1);
     }
 }

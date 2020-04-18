@@ -35,4 +35,12 @@ public final class CommonPropertiesCalculator extends CommonLanguageToolchainPro
     final boolean supportsLegacyLibc(final MakeConfiguration conf) {
         return false;
     }
+
+    final boolean supportMDFPEmission(final MakeConfiguration conf) {
+        return false;
+    }
+    
+    public final boolean supportMDFPEmission(final String version) {
+        return false;
+    }    
 }
