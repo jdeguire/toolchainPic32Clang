@@ -8,7 +8,6 @@ package io.github.jdeguire.toolchainPic32Clang;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.toolchainCommon.properties.MPLABXSpecificProperties;
-import java.io.File;
 import java.util.List;
 import java.util.Properties;
 import org.openide.util.Utilities;

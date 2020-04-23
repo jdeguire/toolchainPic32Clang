@@ -1,9 +1,12 @@
 package io.github.jdeguire.toolchainPic32Clang;
 
+// TODO:  This logger might be handy for logging exceptions I can't throw.  Hold onto it for now.
+//import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.spi.IncludeProvider;
 import java.util.ArrayList;
 import java.util.List;
+//import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectConfiguration;
 
@@ -14,6 +17,9 @@ import org.netbeans.spi.project.ProjectConfiguration;
  * was based, but this class is very different from the XC32 version, so I'll take all the blame.
  */
 public class ClangSystemIncludeProvider implements IncludeProvider {
+
+//    TODO:  This logger might come in handy for logging exceptions I can't throw.  Hmmmm.
+//    private static final Logger logger = MPLABLogger.mplog;
 
     /* Read system directories from the target config file and return them in a list.  MPLAB X is
      * supposed to invoke the compiler to figure this out, but it may not be including the target

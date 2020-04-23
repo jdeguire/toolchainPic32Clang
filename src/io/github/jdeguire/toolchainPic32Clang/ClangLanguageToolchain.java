@@ -34,6 +34,7 @@ import org.netbeans.api.project.Project;
 public class ClangLanguageToolchain {
 	// TODO:  We might be able to remove ones that do not apply to Clang; namely, the ones
 	//        referenced in CommonPropertiesCalculator.
+    // TODO:  Add a const for the pic32clang_version file location.
     public static final String CPP_SUPPORT_FIRST_VERSION = "0.01";
 //    public static final String MDFP_SUPPORTED_VERSION = "2.20";
 //    public static final String LIBC_SUPPORT_FIRST_VERSION = "1.41";
