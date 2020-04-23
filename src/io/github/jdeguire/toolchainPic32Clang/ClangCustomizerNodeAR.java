@@ -26,6 +26,7 @@ public final class ClangCustomizerNodeAR extends CommonAbstractCustomizerNode {
         try {
             return new ClangRuntimeProperties(desc, conf);
         } catch(Exception ex) {
+            // Cannot throw because the superclass method does not declare itself as throwing.
             return new CommonToolchainPropertiesAccessor(desc, conf);
         }
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<mp:languageToolchain xsi:schemaLocation="http://crownking/mplab mplab/languageToolchain.xsd" mp:id="Clang" mp:name="Clang" mp:hostplatforms="windows,linux,unix,mac,none" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLanguageToolchain" opt:fromversion="1.00" xmlns:opt="http://crownking/opt" xmlns:mp="http://crownking/mplab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<mp:languageToolchain xsi:schemaLocation="http://crownking/mplab mplab/languageToolchain.xsd" mp:id="Clang" mp:name="Clang" mp:hostplatforms="windows,linux,unix,mac,none" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLanguageToolchain" opt:fromversion="0.01" xmlns:opt="http://crownking/opt" xmlns:mp="http://crownking/mplab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
     <mp:deviceServiceProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangDeviceServiceProvider"/>
@@ -421,15 +421,14 @@
     <mp:logicalFolder mp:id="HeaderFiles"/>
     <mp:logicalFolder mp:id="LinkerScript"/>
 
-    <!-- TODO: Make up some nonsense directories or something. -->
-    <mp:defaultLocation mp:hostplatform="linux" mp:dir="/opt/microchip/Clang/v*/bin"/>
-    <mp:defaultLocation mp:hostplatform="mac" mp:dir="/Applications/microchip/Clang/v*/bin"/>
-    <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*Clang*/bin"/>
-    <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/Microchip/*Clang*/v*/bin"/>
+    <mp:defaultLocation mp:hostplatform="linux" mp:dir="/opt/pic32Clang/v*/bin"/>
+    <mp:defaultLocation mp:hostplatform="mac" mp:dir="/Applications/pic32Clang/v*/bin"/>
+    <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/pic32Clang/v*/bin"/>
 
-    <mp:ccCompiler mp:file="clang++" mp:name="MPLAB C++ Compiler for 32-bit Devices">
+    <mp:ccCompiler mp:file="clang++" mp:name="LLVM/Clang C++ Compiler">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemDefineProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPSystemDefineProvider"/>
+        <mp:systemIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:userIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPUserIncludeProvider"/>
         <mp:userIncludeModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPUserIncludeModifier"/>
         <mp:userDefineProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPUserDefineProvider"/>
@@ -437,9 +436,10 @@
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPAdditionalOptionsModifier"/>
     </mp:ccCompiler>
-    <mp:cCompiler mp:file="clang" mp:name="MPLAB C Compiler for 32-bit Devices">
+    <mp:cCompiler mp:file="clang" mp:name="LLVM/Clang C Compiler">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemDefineProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCSystemDefineProvider"/>
+        <mp:systemIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:userIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeProvider"/>
         <mp:userIncludeModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCUserIncludeModifier"/>
         <mp:userDefineProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCUserDefineProvider"/>
@@ -447,8 +447,9 @@
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsModifier"/>
     </mp:cCompiler>
-    <mp:assembler mp:file="clang" mp:name="MPLAB Assembler for 32-bit Devices">
+    <mp:assembler mp:file="clang" mp:name="LLVM/Clang Assembler">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
+        <mp:systemIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangASAdditionalOptionsModifier"/>
     </mp:assembler>
@@ -456,64 +457,15 @@
                 "lld is a generic driver.
                  Invoke ld.lld (Unix), ld (macOS) or lld-link (Windows) instead."
                 Will we need to handle this here somehow?  Can we just call clang or clang++? -->
-    <mp:linker mp:file="lld" mp:name="MPLAB Linker for 32-bit Devices">
+    <mp:linker mp:file="lld" mp:name="LLVM Linker">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsModifier"/>
     </mp:linker>
-    <mp:archiver mp:file="llvm-ar" mp:name="MPLAB Archiver for 32-bit Devices">
+    <mp:archiver mp:file="llvm-ar" mp:name="LLVM Archiver">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsModifier"/>
     </mp:archiver>
 
-<!--
-    NOTE:  The below is no longer needed as of MPLAB X v5.35 because a Java class can be provided
-           that checks if a particular device is supported by the toolchain.  MPLAB X will ask
-           when the user selects a device when making a new project or when changing the device in
-           an already-existing project.
-
-           The Java class implements the DeviceServiceProvider inteface and is indicated using the
-           <mp:deviceServiceProvider> XML node.  This was done above using the
-           ClangDeviceServiceProvider class.
-
-    ******************************************************************************
-    ******************* mp:deviceSupport element help ****************************
-    ******************************************************************************
-    The mp:deviceSupport element describes which devices are supported by this
-    tool. There are two ways to describe this tools's support. If the tool is
-    known to Microchip and supported directly by Microchip, the information
-    about device support is found in a different file (mplab.deviceSupport).
-    Otherwise, the information is listed right here in this document.
-
-    if the mp:lookInMplab attribute is true, then the mplab.deviceSupport file
-    is used to find the list of devices and their support status. mplab.deviceSupport
-    is mantained by Microchip. If mp:lookInplab is true, then the mp:deviceSupport
-    element must also have an mp:mplabName attribute which describes the name of
-    the tool as stored in mplab.deviceSupport. For example, if mp:mplabName is
-    "mc", then mplab.deviceSupport must have an attribute with this name
-    to tell us the tool status. Example from mplab.deviceSupport:
-         <mp:device mp:name="PIC18C242">
-          <mp:support mp:masm="yes" mp:mc="yes" mp:pm2="yes" mp:pm3="yes" mp:psp="yes" mp:sim="yes"/>
-         </mp:device>
-
-
-    If mp:lookInMplab was not defined (or false), then the list of supported devices is
-    expected to be here. One element per device. Example:
-    <mp:deviceSupport>
-    <mp:device mp:name="PIC18F4550"/>
-    <mp:device mp:name="PIC18F2550"/>
-             |
-             |
-             |
-    </mp:deviceSupport>
-
-      ******************************************************************************
-      ******************************************************************************
-      ******************************************************************************
-    -->
-    <!--<mp:deviceSupport mp:lookInMplab="true" mp:mplabName="mc"/>-->
-
-    <!-- There used to be a large <mp:deviceSupport> tree here like the above comment describes,
-         but it has since been removed. -->
 </mp:languageToolchain>

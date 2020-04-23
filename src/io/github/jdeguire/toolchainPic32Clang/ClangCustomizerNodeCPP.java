@@ -26,6 +26,7 @@ public final class ClangCustomizerNodeCPP extends CommonAbstractCustomizerNode {
         try {
             return new ClangCPPRuntimeProperties(desc, conf);
         } catch(Exception ex) {
+            // Cannot throw because the superclass method does not declare itself as throwing.
             return new CommonToolchainPropertiesAccessor(desc, conf);
         }
     }

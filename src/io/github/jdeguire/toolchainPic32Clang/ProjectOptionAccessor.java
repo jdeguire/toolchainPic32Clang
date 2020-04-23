@@ -10,7 +10,6 @@ package io.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.EmbeddedProjectSupport;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
-import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationException;
 import org.netbeans.api.project.Project;
 
@@ -18,16 +17,14 @@ import org.netbeans.api.project.Project;
  */
 public class ProjectOptionAccessor
 {
-    private final MakeConfigurationBook book_;
     private final MakeConfiguration conf_;
     private final Project project_;
     
     /* Create a new accessor object with the given configuration and book.
      */
-    ProjectOptionAccessor(MakeConfigurationBook book, MakeConfiguration conf) {
-        book_ = book;
+    ProjectOptionAccessor(Project proj, MakeConfiguration conf) {
         conf_ = conf;
-        project_ = book_.getProject();
+        project_ = proj;
     }
 
     /* Get the current value of the given option as a string.  This will work for any option type

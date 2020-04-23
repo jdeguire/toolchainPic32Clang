@@ -81,7 +81,8 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
         setProperty("opt-Clang-linker-response-files.suppress", value);
     }
 
-    private void setClangVersionOption() {
+    private void setClangVersionOption()
+                    throws IOException, IllegalArgumentException, MakeConfigurationException {
         File clangExec = new File(conf.getLanguageToolchain().getDir().getValue());
 
         // Check if the toolchain path changed and update our cached value if needed.
@@ -117,8 +118,6 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
                         cachedClangVersion = inString.substring(start, end);
                     }
                 }
-            } catch(IOException ex) {
-                // do nothing for now.
             } catch(InterruptedException ex) {
                 // Stack Overflow says to do this.
                 Thread.currentThread().interrupt();
@@ -128,14 +127,10 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
         // Check if we need to update the version shown in the project properties.  Doing this check
         // lets us ensure that we can update the option value even when our cached value has not 
         // changed.  This would presumably occur when switching projects.
-        try {
-            String currentVer = optAccessor.getProjectOption("C32Global", "clang-version", "");
+        String currentVer = optAccessor.getProjectOption("C32Global", "clang-version", "");
 
-            if(!currentVer.equals(cachedClangVersion)) {
-                optAccessor.setProjectOption("C32Global", "clang-version", cachedClangVersion);
-            }
-        } catch(MakeConfigurationException | IllegalArgumentException ex) {
-            // do nothing for now.
+        if(!currentVer.equals(cachedClangVersion)) {
+            optAccessor.setProjectOption("C32Global", "clang-version", cachedClangVersion);
         }
     }
 }

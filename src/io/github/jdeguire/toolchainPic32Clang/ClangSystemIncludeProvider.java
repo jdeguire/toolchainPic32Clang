@@ -1,95 +1,57 @@
 package io.github.jdeguire.toolchainPic32Clang;
 
-// TODO:  This file was removed in SDK 5.00 for toolchainXC32.  Can we remove it, too?
-
-import com.microchip.mplab.logger.MPLABLogger;
+import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.spi.IncludeProvider;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import org.netbeans.api.project.Project;
 import org.netbeans.spi.project.ProjectConfiguration;
 
 /**
- *
- * @author jose
+ * System include directory provider for Clang toolchain.
+ * @author Jesse DeGuire
+ * Normally I'd have the original author's name here from the XC32 plugin upon which this plugin
+ * was based, but this class is very different from the XC32 version, so I'll take all the blame.
  */
 public class ClangSystemIncludeProvider implements IncludeProvider {
 
-    private static final Logger logger = MPLABLogger.mplog;
-
-    public ClangSystemIncludeProvider() {
-    }
-
+    /* Read system directories from the target config file and return them in a list.  MPLAB X is
+     * supposed to invoke the compiler to figure this out, but it may not be including the target
+     * config files when it does so, so we'll do this manually.
+     *
+     * Each supported device has a target config file that tells Clang things like CPU architecture,
+     * macros, and directories.  The user can also specify a custom file through the project options.
+     *
+     * The 'itemPath' parameter appears to be null.
+     */
     @Override
     public List<String> getIncludes(Project project, ProjectConfiguration conf, String itemPath) {
-        
-        //TODO Marian: temporarily commented out implementaiton since I added dynamic invocation of include paths for C.
-        //TODO Marian: will remove this class once the new xc16/32 option to get both assembly and C paths is added.
-        
-        List<String> res = new ArrayList<String>();
-//        MakeConfiguration makeConf = (MakeConfiguration) conf;
-//        LanguageToolchain cs = makeConf.getLanguageToolchain().findToolchain();
-//        if (cs == null) {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool chain");
-//            return res;
-//        }
-//        LanguageTool t = cs.getTool(LanguageTool.CCompiler);
-//        if (t == null) {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language");
-//            return res;
-//        }
-//        String exe = t.getPath();
-//        if (exe == null) {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get path to executable");
-//            return res;
-//        }
-//        String path = getDirName(exe);
-//        if (path == null) {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not path");
-//            return res;
-//        }
-//
-//        LanguageTool lt = cs.getTool(LanguageTool.CCompiler);
-//        if (lt == null) {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool");
-//            return res;
-//        }
-//        // Was String version = lt.getVersion(); which calls the compiler
-//        String version = LTUtils.getVersion(makeConf); // not sure why we need to do this since version is not used.
-//        if (version != null && version.length() > 0) {
-//            String gccVersion = "4.5.1";
-//            if (LTUtils.toolchainVersionGreaterOrEqualTo("1.20", makeConf)){
-//                gccVersion = "4.5.2";
-//            }
-//
-//            res.add(path + "/../lib/gcc/pic32mx/" + gccVersion + "/include");
-//            res.add(path + "/../lib/gcc/pic32mx/" + gccVersion + "/include-fixed");
-//            if (CompilerProperties.buildWithGPP(project, makeConf)) {
-//                res.add(path + "/../pic32mx/include/Cpp/c");
-//                res.add(path + "/../pic32mx/include/Cpp");
-//            }
-//            res.add(path + "/../pic32mx/include");
-//        } else {
-//            logger.log(Level.SEVERE, "ClangSystemIncludeProvider::getIncludes, Could not get language tool version");
-//            return res;
-//        }
-        return res;
-    }
+        List<String> res = new ArrayList<>();
+        MakeConfiguration makeConf = (MakeConfiguration) conf;
 
-    /**
-     * Same as the C library dirname function: given a path, return its
-     * directory name. Unlike dirname, however, return null if the file is in
-     * the current directory rather than ".".
-     */
-    public static final String getDirName(String path) {
-        int sep = path.lastIndexOf('/');
-        if (sep == -1) {
-            sep = path.lastIndexOf('\\');
+        try {
+            TargetDevice target = new TargetDevice(makeConf.getDevice().getValue());
+            ProjectOptionAccessor optAccessor = new ProjectOptionAccessor(project, makeConf);
+            String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, optAccessor);
+            List<String> cfgContents = ClangLanguageToolchain.getTargetConfigContents(makeConf, project, cfgPath);
+
+            for(String line : cfgContents) {
+                if(line.startsWith("-isystem")) {
+                    // Remove "-isystem" and quotes since we don't need them here.
+                    line = line.substring(8);
+                    line = line.replace('\"', ' ');
+                    line = line.trim();
+
+                    // We need to convert to an absolute path here so MPLAB X can find it.
+                    line = ClangLanguageToolchain.convertRelativeToAbsolutePath(makeConf, project, line);
+                    res.add(line);
+                }
+            }
+        } catch (Exception e) {
+            // Do nothing for now because the interface this method implements does not throw,
+            // meaning we are not allowed to, either.
         }
-        if (sep != -1) {
-            return path.substring(0, sep);
-        }
-        return null;
+
+        return res;
     }
 }

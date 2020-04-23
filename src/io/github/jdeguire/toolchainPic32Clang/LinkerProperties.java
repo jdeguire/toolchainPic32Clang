@@ -43,6 +43,7 @@ public final class LinkerProperties extends CommonProperties {
         commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt());
     }
 
+    // TODO:  Can we use this or do we remove it?
     final String getTraceOptions() {
         if (assembly == null) {
             // log error?
@@ -60,6 +61,7 @@ public final class LinkerProperties extends CommonProperties {
         return "";
     }
 
+    // TODO:  Can we use this or do we remove it?
     final String getFunctionLevelProfilingOptions() {
         if (assembly == null) {
             MPLABLogger.mplog.log(Level.SEVERE, "ClangLinkerProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
@@ -81,6 +83,7 @@ public final class LinkerProperties extends CommonProperties {
         return "".substring(0);
     }
 
+    // TODO:  Can we use this or do we remove it?
     public String getFunctionLevelProfilingOptions(final TraceSetupInformationInterface tsi, final String projBaseDir) {
         return "-lcppcfl ".substring(0);
     }
@@ -118,13 +121,17 @@ public final class LinkerProperties extends CommonProperties {
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
-        String multilibOpt = "-L\"=/target/";
+        String multilibOpt = "-L\"=/";
 
-        if(target.isMips32())
+        if(target.isMips32()) {
             multilibOpt += getMips32Multilib();
-        else if(target.isArm())
-            multilibOpt += getArmMultilib();
-        else
+        } else if(target.isArm()) {
+            if(target.supportsArmIsa()) {
+                multilibOpt += getCortexAMultilib();
+            } else {
+                multilibOpt += getCortexMMultilib();
+            }
+        } else
             return "";
 
         multilibOpt += getCommonMultilibs();
@@ -132,18 +139,19 @@ public final class LinkerProperties extends CommonProperties {
     }
 
     private String getMips32Multilib() {
-        String libdir = "";
-
-        libdir += target.getArchNameForCompiler();
+        String libdir = ClangLanguageToolchain.MIPS_LIB_DIR + "/";
+        libdir += target.getCpuName();
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
             libdir += "/mips16e";
         }
-        else if(optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
-            libdir += "/micromips";
+        else if(target.supportsMicroMipsIsa()  &&  target.supportsMips32Isa()) {
+            if(optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
+                libdir += "/micromips";
+            }
         }
-        // else will be MIPS32
+        // else will be MIPS32 or microMIPS for devices that support only the latter.
 
         if(target.supportsDspR2Ase()) {
             libdir += "/dspr2";
@@ -156,16 +164,11 @@ public final class LinkerProperties extends CommonProperties {
         return libdir;
     }
 
-    private String getArmMultilib() {
-        String libdir = "";
+    private String getCortexMMultilib() {
+        String libdir = ClangLanguageToolchain.CORTEX_M_LIB_DIR + "/";
+        libdir += target.getCpuName().replace('-', '_');
 
-        libdir += target.getArchNameForCompiler().replace('-', '_');
-
-        // ISA is user-selectable via an option, so check that option.
-        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
-            libdir += "/thumb";
-        }
-        // Else will be ARM
+        // ISA is always Thumb on Cortex-M, so that's always the default.
 
         /* Get FPU.
          */
@@ -173,20 +176,32 @@ public final class LinkerProperties extends CommonProperties {
             libdir += "/" + target.getArmFpuName().toLowerCase();
         }
         
-        return libdir;        
+        return libdir;
     }
+
+    private String getCortexAMultilib() {
+        String libdir = ClangLanguageToolchain.CORTEX_A_LIB_DIR + "/";
+        libdir += target.getCpuName().replace('-', '_');
+
+        // ISA is user-selectable via an option, so check that option.
+        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
+            libdir += "/thumb";
+        }
+
+        /* Get FPU.
+         */
+        if(target.hasFpu()) {
+            libdir += "/" + target.getArmFpuName().toLowerCase();
+        }
+        
+        return libdir;
+    }
+
 
     /* Output the multilib dirctories for options common to all architectures we support.
      */
     private String getCommonMultilibs() {
         String libdir = "";
-
-        /* Get fast math.
-         */
-// TODO:  Maybe we don't want to do this for now...
-        if(optAccessor.getBooleanProjectOption("C32Global", "relaxed-math", false)) {
-            libdir += "/fastmath";
-        }        
 
         /* Get optimization level.
          */

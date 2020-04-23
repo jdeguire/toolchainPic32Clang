@@ -36,15 +36,15 @@ public class CommonProperties extends MPLABXSpecificProperties {
 
         super(projectDescriptor, conf, commandLineProperties);
 
-        optAccessor = new ProjectOptionAccessor(projectDescriptor, conf);
+        optAccessor = new ProjectOptionAccessor(projectDescriptor.getProject(), conf);
         target = new TargetDevice(conf.getDevice().getValue());
 
         Boolean armDeviceSelected = target.isArm();
         commandLineProperties.put("IS_ARM", armDeviceSelected.toString());
 
-        commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacros());
-        commandLineProperties.put("SYSROOT_OPT", getSysrootOpt());
-        commandLineProperties.put("TARGET_CONFIG_OPT", "--config \"" + getTargetConfigPath() + "\"");
+        commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacroOptions());
+        commandLineProperties.put("SYSROOT_OPT", getSysrootOption());
+        commandLineProperties.put("TARGET_CONFIG_OPT", "--config \"" + getTargetConfigPathForOption() + "\"");
     }
 
     final void addDebuggerNameOptions() {
@@ -129,35 +129,24 @@ public class CommonProperties extends MPLABXSpecificProperties {
         return target.getDeviceName();
     }
 
-    private String getXC32CompatibilityMacros() {
+    private String getXC32CompatibilityMacroOptions() {
         String ret = "";
+        List<String> macros = ClangLanguageToolchain.getXC32CompatibilityMacros(optAccessor);
 
-        if(optAccessor.getBooleanProjectOption("C32Global", "fake-xc32", false)) {
-            String compatVersion = optAccessor.getProjectOption("C32Global", "fake-xc32-version", "");
-
-            if(!compatVersion.isEmpty()) {
-                ret = "-D__XC -D__XC__ -D__XC32 -D__XC32__";
-                ret += " -D__XC32_VERSION=" + compatVersion;
-                ret += " -D__XC32_VERSION__=" + compatVersion;
-            }
+        for(String macro : macros) {
+            ret += "-D" + macro + " ";
         }
 
         return ret;
     }
 
-    private String getSysrootOpt() {
+    private String getSysrootOption() {
         return "--sysroot=\"" + getToolchainRootPath() + "\"";
     }
     
-    private String getTargetConfigPath() {
-        String userConfig = optAccessor.getProjectOption("C32Global", "user-target-config", "");
-
-        if(!userConfig.isEmpty()) {
-            return userConfig;
-        } else {
-            // This should be relative to SYSROOT because of the '=' at the start.
-            return "=/target/config/" + target.getDeviceName().toLowerCase() + ".cfg";
-        }
+    private String getTargetConfigPathForOption() {
+        // This returns a relative path, which is okay here.
+        return ClangLanguageToolchain.getTargetConfigPath(target, optAccessor);
     }
 
     /* Return the base install path for the current toolchain with the file separator always at the
@@ -167,28 +156,13 @@ public class CommonProperties extends MPLABXSpecificProperties {
      * supports them on all platforms.
      */
     public String getToolchainExecPath() {
-        String execPath = conf.getLanguageToolchain().getDir().getValue();
-
-        if('/' != File.separatorChar)
-            execPath = execPath.replace(File.separatorChar, '/');
-
-        if('/' != execPath.charAt(execPath.length() - 1))
-            execPath += '/';
-
-        return execPath;
+        return ClangLanguageToolchain.getToolchainExecPath(conf);
     }
 
     /* Like above, but will return the top-level path of the Clang toolchain; that is, the parent
      * of the path returned by getToolchainExecPath().  This path will end in '/'.
      */
     public String getToolchainRootPath() {
-        String rootPath = getToolchainExecPath();
-
-        int i = rootPath.length() - 2;      // Last entry is '/', so skip it.
-        while(i >= 0  &&  '/' != rootPath.charAt(i)) {
-            --i;
-        }
-
-        return rootPath.substring(0, i+1);
+        return ClangLanguageToolchain.getToolchainRootPath(conf);
     }
 }

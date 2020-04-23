@@ -48,7 +48,7 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
         return toolSupport;
     }
 
-    /* This class probably gets called a bunch of time, so just in case we'll keep a cache of
+    /* This class probably gets called a bunch of times, so just in case we'll keep a cache of
      * supported devices that we can just look at when MPLAB X asks if we support a particular
      * device.  This essentially just makes a list of all of the target config files bundled with
      * the toolchain.
@@ -68,7 +68,7 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
             file = file.getParentFile();
         }
 
-        file = new File(file, "target/config");
+        file = new File(file, ClangLanguageToolchain.TARGET_CFG_PATH);
 
         if(file.exists()) {
             String exts[] = {"cfg", "CFG"};

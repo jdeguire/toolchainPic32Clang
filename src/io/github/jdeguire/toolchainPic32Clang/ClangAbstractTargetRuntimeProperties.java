@@ -35,7 +35,7 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
 
 		super(desc, conf);
 
-        optAccessor = new ProjectOptionAccessor(desc, conf);
+        optAccessor = new ProjectOptionAccessor(desc.getProject(), conf);
         target = new TargetDevice(conf.getDevice().getValue());
 
         // It turns out that setting options might end up trying to construct a new instance of this

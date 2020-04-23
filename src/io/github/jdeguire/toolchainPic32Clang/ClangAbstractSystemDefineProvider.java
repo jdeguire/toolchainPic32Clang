@@ -6,9 +6,10 @@
 package io.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
+import com.microchip.mplab.nbide.embedded.spi.DefineProvider;
 import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolchainPropertiesUtils;
-import com.microchip.mplab.nbide.toolchainCommon.provider.CCISystemDefineProvider;
 import com.microchip.crownking.mplabinfo.FamilyDefinitions.SubFamily;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.netbeans.api.project.Project;
@@ -20,50 +21,70 @@ import org.netbeans.spi.project.ProjectConfiguration;
  * Marian: added getDefinesHook.
  * @author jose
  * @author Marian Golea <marian.golea@microchip.com>
+ * 
+ * Modified by jdeguire for toolchainPic32Clang.
  */
-abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider{
+abstract class ClangAbstractSystemDefineProvider implements DefineProvider {
 
-    private final CommonLanguageToolchainPropertiesUtils calculator = new CommonLanguageToolchainPropertiesUtils();
+    /* Search for the first occurrence of 'find' in the given string and replace it with 'repl'.
+     * Oddly enough, there's no String method to do this in Java 7.  The ones present either use
+     * a regex or replace all characters.  This returns the original string if the desired character
+     * was not found.
+     */
+    private String replaceFirstChar(String str, char find, char repl) {
+        int pos = str.indexOf(find);
 
-    public String getDeviceNameMacro(String device) {
-        String res = "";
-
-        if (device.startsWith("PIC32")) {
-            res = "__" + device.substring(3) + "__";       // "__32MX795F512L__"
-        } else if(device.startsWith("ATSAM")) {
-            res = "__" + device.substring(2) + "__";       // "__SAME70Q21__"
-        } else if (!device.isEmpty()) {
-            res = "__" + device + "__";
+        if(pos < 0) {
+            // Not found.
+            return str;
+        } else if(0 == pos) {
+            // Start of string.
+            return repl + str.substring(1);
+        } else if((str.length()-1) == pos) {
+            // End of string.
+            return str.substring(0, pos) + repl;
+        } else {
+            // Middle of string.
+            return str.substring(0, pos) + repl + str.substring(pos+1);
         }
-        return res;
     }
 
-    private void addDeviceSpecificMacros(List<String> list, TargetDevice target) {
-        if(target.isMips32()) {
-            String name = target.getDeviceName();
-            
-            if(SubFamily.PIC32 == target.getSubFamily()) {
-                list.add("__PIC32_MEMORY_SIZE " + name.substring(11,14));
-                list.add("__PIC32_MEMORY_SIZE__ " + name.substring(11,14));
-                list.add("__PIC32_FEATURE_SET " + name.substring(7,10));
-                list.add("__PIC32_FEATURE_SET__ " + name.substring(7,10));
-                list.add("__PIC32_PIN_SET \'" + name.charAt(name.length()-1) + "\'");
-                list.add("__PIC32_PIN_SET__ \'" + name.charAt(name.length()-1) + "\'");
-            } if(SubFamily.PIC32MZ == target.getSubFamily()  ||  SubFamily.PIC32MM == target.getSubFamily()) {
-                list.add("__PIC32_FLASH_SIZE " + name.substring(7,10));
-                list.add("__PIC32_FLASH_SIZE__ " + name.substring(7,10));
-                list.add("__PIC32_FEATURE_SET " + name.substring(11,13));
-                list.add("__PIC32_FEATURE_SET__ " + name.substring(11,13));
-                list.add("__PIC32_FEATURE_SET0 \'" + name.charAt(11) + "\'");
-                list.add("__PIC32_FEATURE_SET0__ \'" + name.charAt(11) + "\'");
-                list.add("__PIC32_FEATURE_SET1 \'" + name.charAt(12) + "\'");
-                list.add("__PIC32_FEATURE_SET1__ \'" + name.charAt(12) + "\'");
-                list.add("__PIC32_PRODUCT_GROUP \'" + name.charAt(13) + "\'");
-                list.add("__PIC32_PRODUCT_GROUP__ \'" + name.charAt(13) + "\'");
-                list.add("__PIC32_PIN_COUNT " + name.substring(name.length()-3));
-                list.add("__PIC32_PIN_COUNT__ " + name.substring(name.length()-3));
+    /* Read the target config file and add macros defined in there to our list of predefined macros.
+     * Each device supported by this toolchain will have a file with compiler options, such as 
+     * macros and CPU architecture, in it to be passed to Clang.  The user can also provide their
+     * own config file, so we need the ProjectOptionAccessor to check for it.
+    */
+    private void addTargetSpecificMacros(List<String> list,
+                                         TargetDevice target,
+                                         MakeConfiguration makeConf,
+                                         Project proj) 
+                                         throws IOException {
+        ProjectOptionAccessor optAccessor = new ProjectOptionAccessor(proj, makeConf);
+        String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, optAccessor);
+        List<String> cfgContents = ClangLanguageToolchain.getTargetConfigContents(makeConf, proj, cfgPath);
+
+        // Find lines that contain Clang options to define a macro.  Clang wants an '=' between a 
+        // macro name and value, but MPLAB X wants a space, so we have to replace those.
+        for(String line : cfgContents) {
+            if(line.startsWith("-D")  &&  !Character.isWhitespace(2)) {
+                list.add(replaceFirstChar(line.substring(2), '=', ' '));
+            } else if(line.startsWith("--define-macro")) {
+                if('=' == line.charAt(14)  ||  ' ' == line.charAt(14)) {
+                    list.add(replaceFirstChar(line.substring(15), '=', ' '));
+                }
             }
-            // It looks like the PIC32MK and PIC32WK do not have these macros (as of XC32 v2.10).
+        }
+    }
+
+    /* If the option was selected by the user, add macros that are provided by the plugin to Clang
+     * to keep some compatibility with code expecting XC32.
+     */
+    private void addXC32CompatibilityMacros(List<String> list,
+                                            ProjectOptionAccessor optAccessor) {
+        List<String> macros = ClangLanguageToolchain.getXC32CompatibilityMacros(optAccessor);
+
+        for(String macro : macros) {
+            list.add(replaceFirstChar(macro.substring(2), '=', ' '));
         }
     }
 
@@ -75,6 +96,17 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
      */
     abstract void getDefinesHook(final MakeConfiguration makeConf, final Project project, final List<String> res);
 
+    /* Provide MPLAB X with a list of predefined macros.  Some are actually built-in based on the
+     * target device's CPU architecture, some are always present in Clang, and other needs to be 
+     * read from user options or from the target config file.  MPLAB X is supposed to invoke the 
+     * compiler to figure this out, but it may not be including the target config files when it 
+     * does so, so we'll do this manually.
+     *
+     * Each supported device has a target config file that tells Clang things like CPU architecture,
+     * macros, and directories.  The user can also specify a custom file through the project options.
+     *
+     * The 'itemPath' parameter seems to be the name of the source file being currently parsed.
+     */
     @Override
     public List<String> getDefines(Project project,
                                    ProjectConfiguration projectConf,
@@ -86,19 +118,14 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
         getDefinesHook(makeConf, project, res);
 
         res.add("__clang__");
-        res.add("__pic32_clang__");
         res.add("__LANGUAGE_C 1");
         res.add("__LANGUAGE_C__ 1");
         res.add("LANGUAGE_C 1");
         res.add("_LANGUAGE_C 1");
-        res.add("__PIC32 1");
-        res.add("__PIC32__ 1");
 
-// TODO:  Change this to read the "-D" options from the target config file.
         try {
             TargetDevice target = new TargetDevice(makeConf.getDevice().getValue());
-            String devname = target.getDeviceName();
-            res.add(getDeviceNameMacro(devname));
+            ProjectOptionAccessor optAccessor = new ProjectOptionAccessor(project, makeConf);
 
             if(target.isMips32()) {
                 res.add("__MIPSEL__ 1");
@@ -114,36 +141,24 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
                 res.add("__mips 32");
                 res.add("_ABIO32 1");
                 res.add("_MIPS_SIM _ABIO32");
-
-                String series;
-                if(devname.startsWith("M")) {
-                    series = devname.substring(0, 3);
-                } else if(devname.startsWith("USB")) {
-                    series = devname.substring(0, 5);
-                } else {
-                    series = devname.substring(0, 7);
-                }
-                res.add("__" + series + " 1");
-                res.add("__" + series + "__ 1");
-
-                if(devname.startsWith("PIC32")) {
-                    res.add("__PIC32M 1");
-                    res.add("__PIC32M__ 1");
-                }
-            }
-            else {
+            } else {
                 res.add("__arm__ 1");
                 res.add("__ARMEL__ 1");
-                res.add("__PIC32C 1");
-                res.add("__PIC32C__ 1");
             }
 
-            addDeviceSpecificMacros(res, target);
+            addTargetSpecificMacros(res, target, makeConf, project);
+            addXC32CompatibilityMacros(res, optAccessor);
 
             if(target.hasFpu()) {
-                if(target.isMips32())
+                if(target.isMips32()) {
                     res.add("__mips_hard_float 1");
-// TODO:  Check if we're on Arm and have an FPU; set __ARM_FP to 4 (FPU32) or 14 (FPU64).
+                } else {
+                    if(target.hasFpu64()) {
+                        res.add("__ARM_FP 12");
+                    } else {
+                        res.add("__ARM_FP 4");
+                    }
+                }
             } else {
                 res.add("__SOFT_FLOAT 1");
 
@@ -151,11 +166,16 @@ abstract class ClangAbstractSystemDefineProvider extends CCISystemDefineProvider
                     res.add("__mips_soft_float 1");
             }
 
-// TODO:  Check if we're outputting XC32 compatibility macros and include those here if so.
-// TODO:  Check if we enabled fast math and add __FAST_MATH__ if so.
+            // Check if we enabled fast math and add __FAST_MATH__ if so.
+            if(optAccessor.getBooleanProjectOption("C32Global", "relaxed-math", false)) {
+                res.add("__FAST_MATH__");
+            }
+
         } catch (Exception e) {
-            // Do nothing for now.
+            // Do nothing for now because the interface this method implements does not throw,
+            // meaning we are not allowed to, either.
         }
+
         return res;
     }
 

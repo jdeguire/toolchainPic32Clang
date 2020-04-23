@@ -58,6 +58,8 @@ public class ClangVersionProvider implements VersionProvider
             } catch (IOException ex) {
                 cachedVersion =  "0.00";
             }
+            // Cannot throw because the superclass method does not declare itself as throwing, so
+            // the above will have to do for now.
         }
 
         return cachedVersion;
