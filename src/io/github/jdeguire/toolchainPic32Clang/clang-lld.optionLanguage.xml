@@ -40,6 +40,7 @@
 		opt:suppressif="${opt-Clang-linker-response-files.suppress}">
       <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. Clang provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
     </opt:booleanOption>
+    <!-- Keep "XC32" in the name of this next option for compatibility in case something like the Harmony Configurator expects it. -->
     <opt:stringOption
 		opt:id="oXC32ld-extra-opts"
 		opt:groupid="pre"
@@ -51,6 +52,7 @@
       <br/>The string you introduce here will be emitted as is in the driver invocation command.
       </opt:xhtml>
     </opt:stringOption>
+    <!-- We have not be able to use these next two options and might have to get rid of them. -->
     <opt:booleanOption
 		opt:groupid="post"
 		opt:id="code-dinit"
@@ -127,12 +129,13 @@
 		opt:booldefault="false"
 		opt:trueemission="-nostdlib++"
 		opt:falseemission="-stdlib=libc++"/>
+<!-- TODO:  We might need to manually add/remove the startup code, so this might change. -->
     <opt:booleanOption
 		opt:id="no-startup-files"
 		opt:groupid="pre"
 		opt:name="Do not link crt0 startup code"
 		opt:trueemission="-nostartfiles"/>
-    <!-- TODO:  We may not be able to remove startup code -->
+<!-- TODO:  We may not be able to remove startup code, but Harmony 3 might use this. -->
     <opt:booleanOption
 		opt:id="no-device-startup-code"
 		opt:groupid="pre"
@@ -140,30 +143,40 @@
 		opt:trueemission="-mno-device-startup-code"
 		opt:unsuppressif="${target.isARM}">
     </opt:booleanOption>
+    <!-- Next 4 options used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
+    <opt:booleanOption
+		opt:id="use-fast-math-libs"
+		opt:groupid="ignore-me"
+		opt:name="Use fast math libraries"
+		opt:booldefault="false">
+      <opt:xhtml>
+        Use libraries that were built with the "-ffast-math" option.  These will have extra optimizations
+        that sacrifice floating-point precision for speed, such as making the following assumptions:
+        <br/> - floating-point math follows regular algebraic rules such as	the associative and 
+        distributive properties, 
+        <br/> - operands to floating-point operations are not NaN or Inf, 
+        <br/> - and that +0 and -0 are interchangeable.  
+      </opt:xhtml>
+    </opt:booleanOption>
     <opt:booleanOption
 		opt:id="generate-16-bit-code"
-		opt:groupid="pre"
+		opt:groupid="ignore-me"
 		opt:name="Link MIPS16 libraries"
-		opt:trueemission=""
-		opt:grayif="${mips16.gray}"
-		opt:suppressif="${target.isARM}"/>
+		opt:suppressif="${mips16.suppress}"/>
     <opt:booleanOption
 		opt:id="generate-micro-compressed-code"
-		opt:groupid="pre"
+		opt:groupid="ignore-me"
 		opt:name="Link micro MIPS compressed startup code and libraries"
-		opt:trueemission=""
-		opt:grayif="${micromips.gray}"
-		opt:suppressif="${target.isARM}">
+		opt:suppressif="${micromips.suppress}">
       <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="generate-thumb-code"
-		opt:groupid="pre"
+		opt:groupid="ignore-me"
 		opt:name="Link Thumb startup code and libraries"
 		opt:default="false"
-		opt:trueemission=""
-		opt:grayif="${thumb.gray}"
-		opt:suppressif="${target.isMIPS32}"/>
+		opt:suppressif="${thumb.suppress}"/>
+<!-- TODO:  We may not be able to do this because Musl bundles the math library into the C library. -->
     <opt:booleanOption
 		opt:id="exclude-floating-point-library"
 		opt:groupid="post"
@@ -171,6 +184,7 @@
 		opt:booldefault="false"
 		opt:trueemission=""
 		opt:falseemission="-lm"/>
+<!-- TODO:  We may not need this anymore. -->
     <opt:booleanOption
 		opt:id="include-cxx-filesystem"
 		opt:groupid="post"
@@ -190,6 +204,7 @@
   </opt:optionCategory>
 
   <!-- Do fill option a la picc18 so we gain the GUI -->
+  <!-- TODO:  Can we even use these? -->
   <opt:optionCategory opt:id="fill-flash-options" opt:name="Fill Flash Memory" opt:hideif="${target.isARM}">
     <opt:complexOption
 		opt:groupid="ld-extra"
@@ -313,6 +328,7 @@
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="diagnostics" opt:name="Diagnostics">
+    <!-- TODO:  Check if this is the correct way to output a map file. -->
     <opt:stringOption
 		opt:id="map-file"
 		opt:groupid="post"
@@ -322,22 +338,25 @@
 		opt:isbrowsable="true"
 		opt:slashnormalization="unix"
 		opt:textpreferred="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+    <!-- This is used by LinkerProperties to determine if llvm-size needs to be called. -->
     <opt:booleanOption
 		opt:id="report-memory-usage"
-		opt:groupid="post"
+		opt:groupid="ignore-me"
 		opt:name="Display memory usage"
-		opt:trueemission="--report-mem"
 		opt:default="true"/>
+    <!-- TODO:  Can we use this next option? -->
     <opt:booleanOption
 		opt:id="generate-cross-reference-file"
 		opt:groupid="post"
 		opt:name="Generate cross-reference file"
 		opt:trueemission="--cref"/>
+    <!-- TODO:  Can we use this next option? -->
     <opt:booleanOption
 		opt:id="warn-section-align"
 		opt:groupid="post"
 		opt:name="Warn on section realignment"
 		opt:trueemission="--warn-section-align"/>
+    <!-- TODO:  Can we use this next option? -->
     <opt:stringListOption
 		opt:id="trace-symbols"
 		opt:groupid="post"

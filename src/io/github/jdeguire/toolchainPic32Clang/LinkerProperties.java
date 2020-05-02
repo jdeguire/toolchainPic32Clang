@@ -9,7 +9,6 @@ import com.microchip.mplab.mdbcore.common.streamingdata.StreamingDataEnums;
 import com.microchip.mplab.mdbcore.common.streamingdata.interfaces.TraceSetupInformationInterface;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
-import com.microchip.mplab.nbide.toolchainCommon.ReservedMemoryRangesCalculator;
 import java.util.Properties;
 import java.util.logging.Level;
 
@@ -19,8 +18,6 @@ import java.util.logging.Level;
  * Modified by jdeguire for toolchainPic32Clang.
  */
 public final class LinkerProperties extends CommonProperties {
-
-    private final ReservedMemoryRangesCalculator memCalc;
 
     public LinkerProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
@@ -32,15 +29,15 @@ public final class LinkerProperties extends CommonProperties {
 		IllegalArgumentException {
 
         super(projectDescriptor, conf, commandLineProperties);
-		memCalc = new ReservedMemoryRangesCalculator(conf, assembly, getPic());
 
         addDebuggerNameOptions();
         commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
         commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
         commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
 
-        commandLineProperties.put("THINLTO_THREADS_OPT", getThinLtoThreadsOpt());
-        commandLineProperties.put("MULTILIB_DIR_OPT", getMultilibDirectoryOpt());
+        commandLineProperties.put("show_mem_usage", shouldShowMemUsage());
+        commandLineProperties.put("thinlto_threads_opt", getThinLtoThreadsOpt());
+        commandLineProperties.put("multilib_dir_opt", getMultilibDirectoryOpt());
     }
 
     // TODO:  Can we use this or do we remove it?
@@ -86,6 +83,14 @@ public final class LinkerProperties extends CommonProperties {
     // TODO:  Can we use this or do we remove it?
     public String getFunctionLevelProfilingOptions(final TraceSetupInformationInterface tsi, final String projBaseDir) {
         return "-lcppcfl ".substring(0);
+    }
+
+    private Boolean shouldShowMemUsage() {
+        if(optAccessor.getBooleanProjectOption("C32-LD", "report-memory-usage", false)) {
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
     }
 
     /* Get the option value for the number of threads to use for Clang's ThinLTO mode and build the
@@ -139,12 +144,13 @@ public final class LinkerProperties extends CommonProperties {
     }
 
     private String getMips32Multilib() {
-        String libdir = ClangLanguageToolchain.MIPS_LIB_DIR + "/";
+        String libdir = ClangLanguageToolchain.MIPS32_LIB_DIR + "/";
         libdir += target.getCpuName();
 
         // ISA is user-selectable via an option, so check that option.
-        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
-            libdir += "/mips16e";
+        if(target.supportsMips16Isa()  &&  
+           optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
+            libdir += "/mips16";
         }
         else if(target.supportsMicroMipsIsa()  &&  target.supportsMips32Isa()) {
             if(optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
@@ -203,6 +209,12 @@ public final class LinkerProperties extends CommonProperties {
     private String getCommonMultilibs() {
         String libdir = "";
 
+        /* Get fast-math usage.
+         */
+        if(optAccessor.getBooleanProjectOption("C32-LD", "use-fast-math-libs", false)) {
+            libdir += "/fast-math";
+        }
+
         /* Get optimization level.
          */
         String opt = optAccessor.getProjectOption("C32-LD", "optimization-level", "");
@@ -212,5 +224,5 @@ public final class LinkerProperties extends CommonProperties {
         }
 
         return libdir;
-    }    
+    }
 }

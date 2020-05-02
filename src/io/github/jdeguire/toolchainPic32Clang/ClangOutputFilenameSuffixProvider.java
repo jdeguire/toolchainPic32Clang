@@ -1,5 +1,3 @@
-
-
 /*
  * Microchip Software Notice
  *

@@ -97,7 +97,7 @@
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="relaxed-math"
-		opt:groupid="both"
+		opt:groupid="compile"
 		opt:name="Relaxed floating-point math"
 		opt:trueemission="-ffast-math"
 		opt:booldefault="false">
@@ -129,6 +129,7 @@
       <br/>Relative paths are from MPLAB X project directory.
       </opt:xhtml>
     </opt:stringListOption>
+<!-- TODO: We will probably have to remove these TCM options. -->
     <opt:stringOption
 		opt:groupid="both"
 		opt:id="mdtcm"

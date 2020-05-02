@@ -36,10 +36,23 @@ public final class ProcessorDependentProperties extends CommonProperties {
                 gldName = calc.getLinkerGldFileName(projectDescriptor, conf);
             }
         } else {
-            // Linker scripts should be searched in the library paths.  The target config file adds
-            // the default linker script path as a library path, so we should just need the linker
-            // script name here.
-            gldName = target.getDeviceName().toLowerCase() + ".ld";
+            // Target config files should already add the location of the default linker script as a
+            // library path, but we should at least make the given path relative to SYSROOT just in
+            // case the user happens to add his/her own path that would match with just a filename.
+            String libDir;
+
+            if(target.isArm()) {
+                if(target.supportsArmIsa()) {
+                    libDir = ClangLanguageToolchain.CORTEX_A_LIB_DIR;
+                } else {
+                    libDir = ClangLanguageToolchain.CORTEX_M_LIB_DIR;
+                }
+            } else {
+                libDir = ClangLanguageToolchain.MIPS32_LIB_DIR;
+            }
+
+                
+            gldName = "=/" + libDir + "/" + target.getDeviceName().toLowerCase() + ".ld";
         }
 
         commandLineProperties.put("OPTION_TO_SPECIFY_GLD", ",-T ");

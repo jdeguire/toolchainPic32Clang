@@ -50,6 +50,7 @@
 		opt:trueemission="-g"
 		opt:falseemission=""
 		opt:booldefault="true"/>
+    <!-- TODO:  We may not be able to support AppIO. -->
     <opt:booleanOption
 		opt:id="enable-app-io"
 		opt:name="Enable App IO"
@@ -63,19 +64,6 @@
 		opt:id="place-data-into-section"
 		opt:name="Place data into its own section"
 		opt:trueemission="-fdata-sections"/>
-    <opt:enumOption
-		opt:id="toplevel-reordering"
-		opt:name="Enable toplevel reordering"
-		opt:emitswhendefault="false">
-      <opt:xhtml>
-          Allow reordering of top-level functions, variables, and asm statements. They may not be 
-          output in the same order that they appear in the input file. When this option is disabled 
-          (-fno-toplevel-reorder), unreferenced static variables will not be removed.
-      </opt:xhtml>
-      <opt:selection opt:text="" opt:name="Default for optimization level"/>
-      <opt:selection opt:text="-fno-toplevel-reorder" opt:name="Disable"/>
-      <opt:selection opt:text="-ftoplevel-reorder" opt:name="Enable"/>
-    </opt:enumOption>
     <opt:booleanOption
 		opt:id="use-indirect-calls"
 		opt:name="Use indirect calls"
@@ -85,28 +73,25 @@
 		opt:name="Generate MIPS16 16-bit code"
 		opt:trueemission="-mips16"
 		opt:default="false"
-		opt:grayif="${mips16.gray}"
-		opt:suppressif="${target.isARM}"/>
+		opt:suppressif="${mips16.suppress}"/>
     <opt:booleanOption
 		opt:id="generate-micro-compressed-code"
 		opt:name="Generate microMIPS compressed code"
 		opt:default="false"
 		opt:trueemission="-mmicromips"
-		opt:grayif="${micromips.gray}"
-		opt:suppressif="${target.isARM}"/>
+		opt:suppressif="${micromips.suppress}"/>
     <opt:booleanOption
 		opt:id="generate-thumb-code"
 		opt:name="Generate Thumb code"
 		opt:default="false"
 		opt:trueemission="-mthumb"
-		opt:grayif="${thumb.gray}"
-		opt:suppressif="${target.isMIPS32}"/>
+		opt:suppressif="${thumb.suppress}"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
     <opt:enumOption 
 		opt:id="optimization-level"
-                opt:name="Optimization level"
+        opt:name="Optimization level"
 		opt:textdefault=""
 		opt:emissionprefix=""
 		opt:emitswhendefault="false">
@@ -168,7 +153,7 @@
 		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
 		opt:id="extra-include-directories"
-                opt:groupid="include-dirs"
+        opt:groupid="include-dirs"
 		opt:name="Include directories"
 		opt:emissionprefix="-I"
 		opt:emissionseparator=" -I"
@@ -219,7 +204,6 @@
   <opt:submatchPattern opt:idref="extra-include-directories" opt:expr="-I(.+)"/>
 
   <opt:submatchPattern opt:idref="optimization-level" opt:expr="(-O[123s])"/>
-  <opt:submatchPattern opt:idref="toplevel-reordering" opt:expr="(-f(no-)*(toplevel-reorder))"/>
   <opt:enablePattern opt:idref="addresss-attribute-use" opt:expr="-Waddress-attribute-use"/>
   <opt:enablePattern opt:idref="enable-unroll-loops" opt:expr="-funroll-loops"/>
   <opt:enablePattern opt:idref="enable-omit-frame-pointer" opt:expr="-fomit-frame-pointer"/>

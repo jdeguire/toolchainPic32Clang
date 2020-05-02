@@ -68,7 +68,7 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
             file = file.getParentFile();
         }
 
-        file = new File(file, ClangLanguageToolchain.TARGET_CFG_PATH);
+        file = new File(file, ClangLanguageToolchain.TARGET_CFG_DIR);
 
         if(file.exists()) {
             String exts[] = {"cfg", "CFG"};

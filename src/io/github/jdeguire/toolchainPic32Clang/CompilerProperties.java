@@ -103,11 +103,11 @@ public final class CompilerProperties extends CommonProperties {
 
     final String getFunctionLevelProfilingOptions() {
         if (assembly == null) {
-            MPLABLogger.mplog.log(Level.SEVERE, "ClangSelectedProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
+            MPLABLogger.mplog.log(Level.SEVERE, "CompilerProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
         } else {
             TraceSetupInformationInterface tsi = assembly.getLookup().lookup(TraceSetupInformationInterface.class);
             if (tsi == null) {
-                MPLABLogger.mplog.log(Level.SEVERE, "ClangSelectedProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
+                MPLABLogger.mplog.log(Level.SEVERE, "CompilerProperties::getFunctionLevelProfilingOptions, could not get the TraceSetupInformationInterface.");
             } else {
                 // PRJ 2014.11.07 Added check for iFlowtrace resource.
                 if (tsi.isTraceEnabled() && (tsi.getTraceResource() != StreamingDataEnums.eSDResource.SD_RESOURCE_IFLOWTRACE)

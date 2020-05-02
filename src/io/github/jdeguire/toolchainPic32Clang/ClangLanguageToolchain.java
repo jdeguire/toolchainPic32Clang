@@ -20,11 +20,13 @@ import org.netbeans.api.project.Project;
  * Modified by jdeguire for toolchainPic32Clang.
  * 
  * This seemed to originally be a dumping ground for some static variables, so I'm also making it a
- * dumping ground for useful static methods!
+ * dumping ground for useful static methods!  There are some things that are required by multiple
+ * classes and we don't have control over the order in which stuff is called (that's up to MPLAB X),
+ * so we'll have to deal with some globals to handle that.
  * 
  * This class is referenced by the <mp:languageToolchain> node, which is the main top-level node
  * in Clang.languageToolchain.xml that describes pretty much everything.  The schema guide in the
- * MPLAB X SDK docs say thae following:
+ * MPLAB X SDK docs say the following:
  * 
  * "The mp:class attribute is the fully qualified name of a class within the plugin JAR that will be
  * used as a reference for opening streams to resources in the same JAR."
@@ -34,7 +36,6 @@ import org.netbeans.api.project.Project;
 public class ClangLanguageToolchain {
 	// TODO:  We might be able to remove ones that do not apply to Clang; namely, the ones
 	//        referenced in CommonPropertiesCalculator.
-    // TODO:  Add a const for the pic32clang_version file location.
     public static final String CPP_SUPPORT_FIRST_VERSION = "0.01";
 //    public static final String MDFP_SUPPORTED_VERSION = "2.20";
 //    public static final String LIBC_SUPPORT_FIRST_VERSION = "1.41";
@@ -43,10 +44,11 @@ public class ClangLanguageToolchain {
 //    public static final String SKIP_LICENSE_CHECK_SUPPORT_FIRST_VERSION = "1.43";
 //    public static final String BUILD_COMPARISON_SUPPORT_FIRST_VERSION = "1.42";
 //    public static final String MEM_RESERVATION_SUPPORT_FIRST_VERSION = "1.30";
-    public static final String TARGET_CFG_PATH = "target/config";
-    public static final String MIPS_LIB_DIR = "target/mips32/lib";
+    public static final String TARGET_CFG_DIR = "target/config";
+    public static final String MIPS32_LIB_DIR = "target/mips32/lib";
     public static final String CORTEX_M_LIB_DIR = "target/cortex-m/lib";
     public static final String CORTEX_A_LIB_DIR = "target/cortex-a/lib";
+    public static final String VERSION_FILE_PATH = "pic32clang_version";
 
     private static final ArrayList<String> cachedTargetConfigContents = new ArrayList<String>();
     private static String cachedTargetConfigPath = "";
@@ -116,7 +118,7 @@ public class ClangLanguageToolchain {
     }
 
     /* Get the path to the target config file that will be used for the given target.  The user can
-     * provide their own config via a project option, so we need to check for that and use that if
+     * provide his or her own config via a project option, so we need to check for and use that if
      * the user specified one.
      */
     public static String getTargetConfigPath(TargetDevice target, ProjectOptionAccessor optAccessor) {
@@ -126,7 +128,7 @@ public class ClangLanguageToolchain {
             return userConfig;
         } else {
             // This should be relative to SYSROOT because of the '=' at the start.
-            String target_cfg = ClangLanguageToolchain.TARGET_CFG_PATH;
+            String target_cfg = ClangLanguageToolchain.TARGET_CFG_DIR;
             return "=/" + target_cfg + "/" + target.getDeviceName().toLowerCase() + ".cfg";
         }
     }

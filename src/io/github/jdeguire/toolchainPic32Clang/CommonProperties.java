@@ -38,12 +38,9 @@ public class CommonProperties extends MPLABXSpecificProperties {
         optAccessor = new ProjectOptionAccessor(projectDescriptor.getProject(), conf);
         target = new TargetDevice(conf.getDevice().getValue());
 
-        Boolean armDeviceSelected = target.isArm();
-        commandLineProperties.put("IS_ARM", armDeviceSelected.toString());
-
-        commandLineProperties.put("XC32_COMPAT_MACROS", getXC32CompatibilityMacroOptions());
-        commandLineProperties.put("SYSROOT_OPT", getSysrootOption());
-        commandLineProperties.put("TARGET_CONFIG_OPT", "--config \"" + getTargetConfigPathForOption() + "\"");
+        commandLineProperties.put("xc32_compat_macros", getXC32CompatibilityMacroOptions());
+        commandLineProperties.put("sysroot_opt", getSysrootOption());
+        commandLineProperties.put("target_config_opt", "--config \"" + getTargetConfigPathForOption() + "\"");
     }
 
     final void addDebuggerNameOptions() {
@@ -56,14 +53,10 @@ public class CommonProperties extends MPLABXSpecificProperties {
             debuggerOptionsAsMacro = "-D" + debuggerName + "=1";
         }
 
-        // TODO:  Am I right in that we don't want this at all?
-/*        if (debuggerOptionsAsSymbol.length() > 0) {
+        if (debuggerOptionsAsSymbol.length() > 0) {
             commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", ",");
-            String debuggerOptionString = target.isArm() ? "" : "-mdebugger";
-            commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", debuggerOptionString);
-        } else */{
+        } else {
             commandLineProperties.put("COMMA_BEFORE_DEBUGGER_NAME", "");
-            commandLineProperties.put("DEBUGGER_OPTION_TO_LINKER", "");
         }
 
         commandLineProperties.put("DEBUGGER_NAME_AS_SYMBOL", debuggerOptionsAsSymbol);
@@ -85,37 +78,13 @@ public class CommonProperties extends MPLABXSpecificProperties {
     }
 
     final boolean getUseResponseFiles() {
-        boolean res = false;
         if (!Utilities.isWindows()) {
-            return res;
+            return false;
+        } else {
+            return optAccessor.getBooleanProjectOption("C32-LD",
+                                                       "additional-options-use-response-files",
+                                                       false);
         }
-
-// TODO:  Commented out code
-        // Check the option value
-//        OptionConfiguration confObject = desc.getSynthesizedOptionConfiguration(conf.getName(), "C32-LD", null);
-//        if (confObject != null) {
-//            try {
-//                ClangRuntimeProperties props = new ClangRuntimeProperties(desc, conf);
-//                List<Pair<String, String>> emissionPairs = confObject.getEmissionPairs(props, null);
-//                if (emissionPairs != null) {
-//                    for (Pair<String, String> p : emissionPairs) {
-//                        if (p.first.equals("additional-options-use-response-files") && p.second.equals("true")) {
-//                            res = true;
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//            catch(Exception e) {
-//                res = false;
-//            }
-//        }
-//
-//        return res;
-
-        return optAccessor.getBooleanProjectOption("C32-LD",
-                                                   "additional-options-use-response-files",
-                                                   false);
     }
 
     /**

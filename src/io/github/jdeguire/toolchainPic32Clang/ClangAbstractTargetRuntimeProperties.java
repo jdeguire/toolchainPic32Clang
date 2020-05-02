@@ -23,8 +23,6 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
     final protected ProjectOptionAccessor optAccessor;
     final protected TargetDevice target;
 
-    private static boolean settingArchOpts = false;
-    
     protected ClangAbstractTargetRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
 		org.xml.sax.SAXException,
@@ -38,98 +36,50 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
         optAccessor = new ProjectOptionAccessor(desc.getProject(), conf);
         target = new TargetDevice(conf.getDevice().getValue());
 
-        // It turns out that setting options might end up trying to construct a new instance of this
-        // class, which will set options, which will construct YET another new instance of this class,
-        // which will set options, and so on.  Doing this breaks the recursion chain in a cheesy
-        // manner because whatever.
-        if(!settingArchOpts)
-        {
-            settingArchOpts = true;
-            setArchSpecificBehavior();      // This one may throw because it sets options
-            settingArchOpts = false;
-        }
+        setArchSpecificBehavior();
     }
 
-    /* Set options and a few properties depending on the architecture selected in the "Target Specific"
-     * section of the General Options page.  Mainly this figures out if the selected arch is MIPS32
-     * or ARM and then sets up MIPS16e and microMIPS availability (or ARM/Thumb for ARM devices).
+    /* Suppress options that are used to set the target's instruction set so that only the options
+     * supported by the target device are allowed to be selected.  For example, the PIC32MM series
+     * only supports microMIPS, so all of these options would be suppressed (the target config file
+     * that comes with the toolchain will already have the -mmicromips option set).  The Cortex-A
+     * devices support both Arm and Thumb, so the "Use Thumb?" option would be enabled and the others
+     * disabled.
      */
-// TODO: We might be able to clean this function up since some info comes from the target config files.
-    private void setArchSpecificBehavior() throws IllegalArgumentException, MakeConfigurationException {
-        boolean grayMips16 = false;
-        boolean grayMicromips = false;
-        boolean grayThumb = false;
-        boolean setMips16 = false;
-        boolean setMicromips = false;
-        boolean setThumb = false;
-        boolean valueMips16 = false;
-        boolean valueMicromips = false;
-        boolean valueThumb = false;
+    private void setArchSpecificBehavior() {
+        boolean suppressMips16 = false;
+        boolean suppressMicromips = false;
+        boolean suppressThumb = false;
 
         if(target.supportsMips32Isa()) {
-            if(target.supportsMips16Isa()) {
-                grayMicromips = true;
-                setMicromips = true;
-                valueMicromips = false;
-            }
-            else if(target.supportsMicroMipsIsa()) {
-                grayMips16 = true;
-                setMips16 = true;
-                valueMips16 = false;
-            }
-            else {
-                grayMips16 = true;
-                setMips16 = true;
-                valueMips16 = false;
-                grayMicromips = true;
-                setMicromips = true;
-                valueMicromips = false;
-            }
-        }
-        else if(target.supportsMicroMipsIsa()) {
-            // Here microMIPS must be forced on because only it is supported.
-            grayMips16 = true;
-            grayMicromips = true;
-            setMips16 = true;
-            setMicromips = true;
-            valueMips16 = false;
-            valueMicromips = true;
-        }
+            suppressThumb = true;
 
-        if(!target.supportsArmIsa()  &&  target.supportsThumbIsa()) {
-            grayThumb = true;
-            setThumb = true;
-            valueThumb = true;
+            if(!target.supportsMips16Isa()) {
+                suppressMips16 = true;
+            }
+            if(!target.supportsMicroMipsIsa()) {
+                suppressMicromips = true;
+            }
+        } else if(target.supportsMicroMipsIsa()) {
+            // PIC32MM, so microMIPS will be the default and only option.
+            suppressThumb = true;
+            suppressMips16 = true;
+            suppressMicromips = true;
+        } else {
+            // Else assume Arm and suppress MIPS-specific options.
+            suppressMips16 = true;
+            suppressMicromips = true;
+            
+            if(!target.supportsArmIsa()) {
+                // Cortex-M, so Thumb will be the default and only option.
+                suppressThumb = true;
+            }
         }
 
         setProperty("target.isARM", Boolean.toString(target.isArm()));
         setProperty("target.isMIPS32", Boolean.toString(target.isMips32()));
-
-        setProperty("mips16.gray", Boolean.toString(grayMips16));
-        setProperty("micromips.gray", Boolean.toString(grayMicromips));
-        setProperty("thumb.gray", Boolean.toString(grayThumb));
-
-        // TODO:  Micromips-only devices will have the option in the target config, so do not duplicate it here
-        // TODO:  Thumb-only devices will use Thumb already based on the "-march=" option, so do not duplicate it here.
-        if(setMips16) {
-            optAccessor.setBooleanProjectOption("C32-AS", "generate-16-bit-code", valueMips16);
-            optAccessor.setBooleanProjectOption("C32", "generate-16-bit-code", valueMips16);
-            optAccessor.setBooleanProjectOption("C32CPP", "generate-16-bit-code", valueMips16);
-            optAccessor.setBooleanProjectOption("C32-LD", "generate-16-bit-code", valueMips16);
-        }
-
-        if(setMicromips) {
-            optAccessor.setBooleanProjectOption("C32-AS", "generate-micro-compressed-code", valueMicromips);
-            optAccessor.setBooleanProjectOption("C32", "generate-micro-compressed-code", valueMicromips);
-            optAccessor.setBooleanProjectOption("C32CPP", "generate-micro-compressed-code", valueMicromips);
-            optAccessor.setBooleanProjectOption("C32-LD", "generate-micro-compressed-code", valueMicromips);
-        }
-
-        if(setThumb) {
-            optAccessor.setBooleanProjectOption("C32-AS", "generate-thumb-code", valueThumb);
-            optAccessor.setBooleanProjectOption("C32", "generate-thumb-code", valueThumb);
-            optAccessor.setBooleanProjectOption("C32CPP", "generate-thumb-code", valueThumb);
-            optAccessor.setBooleanProjectOption("C32-LD", "generate-thumb-code", valueThumb);            
-        }
+        setProperty("mips16.suppress", Boolean.toString(suppressMips16));
+        setProperty("micromips.suppress", Boolean.toString(suppressMicromips));
+        setProperty("thumb.suppress", Boolean.toString(suppressThumb));
     }
 }
