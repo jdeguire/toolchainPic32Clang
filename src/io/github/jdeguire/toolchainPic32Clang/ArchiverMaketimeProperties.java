@@ -14,11 +14,11 @@ import java.util.Properties;
  * build sequence.
  * 
  * @author Marian Golea <marian.golea@microchip.com> 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
-public final class ArchiverProperties extends CommonProperties {
+public final class ArchiverMaketimeProperties extends CommonMaketimeProperties {
 
-    public ArchiverProperties(final MakeConfigurationBook projectDescriptor,
+    public ArchiverMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties)
 		throws com.microchip.crownking.Anomaly, 

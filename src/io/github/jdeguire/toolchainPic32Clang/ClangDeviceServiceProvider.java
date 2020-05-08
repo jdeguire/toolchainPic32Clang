@@ -19,14 +19,11 @@ import org.apache.commons.io.FileUtils;
  */
 public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
 
-    private final HashSet<String> deviceCache;
-    private String cachedPath;
-    private String cachedVersion;
+    private static final HashSet<String> deviceCache = new HashSet<>(64);
+    private static String cachedPath = "";
+    private static String cachedVersion = "";
 
     public ClangDeviceServiceProvider() {
-        deviceCache = new HashSet<>(64);
-        cachedPath = "";
-        cachedVersion = "";
     }
 
     @Override

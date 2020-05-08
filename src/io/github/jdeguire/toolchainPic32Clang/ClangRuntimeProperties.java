@@ -23,12 +23,13 @@ import org.openide.util.Utilities;
  * </pre> 
  * 
  * @author Constantin Dumitrascu <constantin.dumitrascu@microchip.com> 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
 public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProperties {
 
     private static String cachedClangVersion = "";
     private static String cachedClangPath = "";
+    private static boolean updatingVersion = false;
 
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
 		throws com.microchip.crownking.Anomaly, 
@@ -42,7 +43,15 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
 
         supressResponseFileOption();
         setImola2Properties(desc);
-        setClangVersionOption();
+
+        // Setting an option ends up making a new instance of this class while the option is being
+        // set, so here's a cheesy guard against that.  Otherwise, will get infinite recursion and
+        // and a stack overflow exception.
+        if(!updatingVersion) {
+            updatingVersion = true;
+            setClangVersionOption();
+            updatingVersion = false;
+        }
     }
 
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
@@ -75,10 +84,10 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
     
     private void supressResponseFileOption() {
         String value = "true";
-        if (Utilities.isWindows()) {
+        if(Utilities.isWindows()) {
             value = "false";
         }
-        setProperty("opt-Clang-linker-response-files.suppress", value);
+        setProperty("response-files.suppress", value);
     }
 
     private void setClangVersionOption()

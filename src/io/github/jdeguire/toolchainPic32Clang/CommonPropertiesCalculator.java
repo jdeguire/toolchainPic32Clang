@@ -11,8 +11,7 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolch
 /**
  *
  * @author Marian Golea <marian.golea@microchip.com>
- * Modified by jdeguire for toolchainPic32Clang.
- *
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
 //TODO:  This is not referenced in Clang.languageToolchain.xml.  Is it safe to remove?
 public final class CommonPropertiesCalculator extends CommonLanguageToolchainPropertiesUtils {

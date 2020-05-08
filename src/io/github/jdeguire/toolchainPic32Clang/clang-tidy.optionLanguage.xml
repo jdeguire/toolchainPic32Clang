@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+<opt:optionLanguage
+    xmlns:opt="http://crownking/opt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
+    opt:id="clang-tidy"
+    opt:name="Clang Tidy Static Analyzer">
+
+    <opt:optionCategory opt:id="general" opt:name="General">
+        <!-- This option is read in ClangGlobalMaketimeProperties, so ignore it here. -->
+        <opt:booleanOption
+            opt:id="run-clang-tidy"
+            opt:groupid="ignore-me"
+            opt:name="Run Clang Tidy instead of a normal build"
+            opt:booldefault="false">
+            <opt:xhtml>
+                Run Clang Tidy, Clang's built-in static analyzer, instead of the compiler when you
+                perform a build.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="tidy-quiet"
+            opt:groupid="tidy.general"
+            opt:name="Enable quiet mode"
+            opt:booldefault="true"
+            opt:trueemission="--quiet">
+            <opt:xhtml>
+                Run Clang Tidy in quiet mode, which suppresses printing extra statistics about
+                ignored warnings, among other things.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:enumOption
+            opt:id="tidy-check-headers"
+            opt:groupid="tidy.general"
+            opt:name="Should included headers be checked?"
+            opt:textdefault=""
+            opt:emitswhendefault="false"
+            opt:emissionprefix="">
+            <opt:selection opt:text="" opt:name="No; source only"/>
+            <opt:selection opt:text="-header-filter=.*" opt:name="Yes; local headers"/>
+            <opt:selection opt:text="-header-filter=.* -system-headers" opt:name="Yes; local and system headers"/>
+            <opt:xhtml>
+                Clang Tidy can extend its checks to local headers (ones included in double quotes) 
+                or to local and system headers (such as standard library headers included with angle
+                brackets).  Select what to check using this option.
+            </opt:xhtml>
+        </opt:enumOption>
+        <opt:booleanOption
+            opt:id="tidy-fix-confirm"
+            opt:groupid="ignore-me"
+            opt:name="Unlock the automatic fix-it option"
+            opt:booldefault="false">
+            <opt:falseModifiers>
+                <opt:optionSuppressor opt:idref="tidy-fix" opt:bool="true"/>
+            </opt:falseModifiers>
+            <opt:trueModifiers>
+                <opt:optionSuppressor opt:idref="tidy-fix" opt:bool="false"/>
+            </opt:trueModifiers>
+            <opt:xhtml>
+                Clang Tidy can automatically apply fixes to some (but not all) issues it finds.
+                Because doing so will modify your files, you must confirm that you really want Clang
+                Tidy to fix your code by selecting this option before the fix-it option is enabled.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:enumOption
+            opt:id="tidy-fix"
+            opt:groupid="tidy.general"
+            opt:name="Apply fixes to issues found by checks?"
+            opt:textdefault=""
+            opt:emitswhendefault="false"
+            opt:emissionprefix="">
+            <opt:selection opt:text="" opt:name="No"/>
+            <opt:selection opt:text="--fix" opt:name="Yes; do not fix errors"/>
+            <opt:selection opt:text="--fix-errors" opt:name="Yes; also fix errors"/>
+            <opt:xhtml>
+                Clang Tidy can try to apply fixes for some (but not all) of the issues it finds.
+                This will modify your code, so you should make a backup before enabling this.
+            </opt:xhtml>
+        </opt:enumOption>
+    </opt:optionCategory>
+
+    <opt:optionCategory opt:id="checks" opt:name="Checks">
+        <opt:booleanOption
+            opt:id="use-clang-tidy-defaults"
+            opt:groupid="tidy.checks"
+            opt:name="Use default checks"
+            opt:booldefault="true"
+            opt:truemission=""
+            opt:falseemission="-*">
+            <opt:xhtml>
+                If True, Clang Tidy will use a default set of checks in addition to whatever checks
+                you enable here.  Otherwise, you will need to specify all of the checks to perform.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-bugprone"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for potentially buggy constructs"
+            opt:booldefault="false"
+            opt:truemission="bugprone-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the bugprone-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-cert-secure"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for CERT Secure Coding Guidelines"
+            opt:booldefault="false"
+            opt:truemission="cert-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the cert-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-clang-analyzer"
+            opt:groupid="tidy.checks"
+            opt:name="Enable Clang Static Analyzer checks"
+            opt:booldefault="false"
+            opt:truemission="clang-analyzer-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the clang-analyzer-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-cppcoreguidelines"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for the C++ Core Guidelines"
+            opt:booldefault="false"
+            opt:truemission="cppcoreguidelines-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the cppcoreguidelines-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-hicpp"
+            opt:groupid="tidy.checks"
+            opt:name="Enable Perforce High Integrity C++ checks"
+            opt:booldefault="false"
+            opt:truemission="hicpp-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the hicpp-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-misc"
+            opt:groupid="tidy.checks"
+            opt:name="Enable miscellaneous checks"
+            opt:booldefault="false"
+            opt:truemission="misc-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the misc-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-modernize"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for ways to modernize your code"
+            opt:booldefault="false"
+            opt:truemission="modernize-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the modernize-* series of checks.  Clang uses modernize to mean code that can
+                take advantage of C++11 features.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-performance"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for performance issues"
+            opt:booldefault="false"
+            opt:truemission="performance-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the performance-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-portability"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for portability issues"
+            opt:booldefault="false"
+            opt:truemission="portability-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the portability-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:booleanOption
+            opt:id="use-clang-tidy-readability"
+            opt:groupid="tidy.checks"
+            opt:name="Enable checks for readability issues"
+            opt:booldefault="false"
+            opt:truemission="readability-*"
+            opt:falseemission="">
+            <opt:xhtml>
+                Add the readability-* series of checks.
+            </opt:xhtml>
+        </opt:booleanOption>
+        <opt:stringListOption
+            opt:id="tidy-extra-opts"
+            opt:groupid="tidy.checks"
+            opt:name="Extra Clang Tidy Checks"
+            opt:emissionprefix=""
+            opt:emissionseparator=",">
+            <opt:xhtml>
+                Provide extra checks you do or do not want here.  Add a group of checks using the 
+                '*' character, such as "clang-analyzer-cplusplus*".  Prefix an option with '-' to
+                disable that option.  These are given to Clang Tidy after all of the other check options.
+            </opt:xhtml>
+        </opt:stringListOption>
+    </opt:optionCategory>
+
+
+    <opt:enablePattern opt:idref="tidy-quiet" opt:expr="--quiet"/>
+
+</opt:optionLanguage>

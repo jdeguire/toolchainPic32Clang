@@ -3,8 +3,8 @@
     xmlns:opt="http://crownking/opt"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
-    opt:id="Clang-g++"
-    opt:name="MPLAB C++ Compiler for 32-bit Devices">
+    opt:id="clang++"
+    opt:name="Clang C++ Compiler">
 
   <opt:optionCategory opt:id="cpp" opt:name="C++ specific">
     <opt:booleanOption 
@@ -32,12 +32,13 @@
     	opt:booldefault="true"
     	opt:id="eh-specs"/>
     <opt:booleanOption
-        opt:name="Enable C++ Modules TS (Experimental)"
-        opt:trueemission="-fmodules-ts"
+        opt:name="Enable C++20 Modules"
+        opt:trueemission="-fmodules"
         opt:booldefault="false"
         opt:id="cxx_modules">
         <opt:xhtml>
-            Enable experimental (as of Clang 8) support for using modules in C++ code.  
+            Enable using C++20 modules in C++ code.  This feature is not yet complete and so you will
+            probably need to provide other options in the Additional Options field.  
             See the Clang documentation on modules for more information and other options that may 
             be needed to get modules working.
         </opt:xhtml>
@@ -73,14 +74,15 @@
     	opt:textdefault=""
     	opt:unsuppressif="${target.isARM}"
     	opt:showif="${target.isARM}">
-      <opt:selection opt:text="" opt:name="Compiler Default"/>
-      <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
-      <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
-      <opt:xhtml> Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are 
-          not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and 
-          all ARMv6-M architectures, and enabled for all other architectures.  If unaligned access is 
-          not enabled then words in packed data structures are accessed a byte at a time.
-      </opt:xhtml>
+        <opt:selection opt:text="" opt:name="Compiler Default"/>
+        <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
+        <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
+        <opt:xhtml> 
+            Enables (or disables) reading and writing of 16- and 32- bit values from addresses that are 
+            not 16- or 32- bit aligned. By default, unaligned access is disabled for all pre-ARMv6 and 
+            all ARMv6-M architectures, and enabled for all other architectures.  If unaligned access is 
+            not enabled then words in packed data structures are accessed a byte at a time.
+        </opt:xhtml>
     </opt:enumOption>
     <opt:booleanOption 
     	opt:id="enable-symbols"
@@ -134,24 +136,25 @@
         opt:textdefault=""
     	opt:emissionprefix=""
     	opt:emitswhendefault="false">
-        <opt:xhtml>Higher levels of optimization take longer and use more memory, especially for larger functions.
-        <br/>- 0 - Do not optimize.  This compiles the fastest and generates the most debuggable code.
-        <br/>- g - Currently the same as O1, but may be used to optimize for debuggability in the future (like GCC).
-        <br/>- 1 - Perform basic optimizations, reducing both code size and execution time.
-        <br/>- 2 - Perform nearly all supported optimizations that do not involve a space-speed trade-off.
-        <br/>- 3 - Like 02, but enables optimizations that may generate larger code.
-        <br/>- fast - Like 03, but allows optimizations that may not strictly comply with language standards.
-        <br/>- s - Like 02, but enables optimizations to reduce code size.
-        <br/>- z - Like 0s, but tries to reduce size even further.
+        <opt:selection opt:text="" opt:name="0"/>
+        <opt:selection opt:text="-Og" opt:name="g"/>
+        <opt:selection opt:text="-O1" opt:name="1"/>
+        <opt:selection opt:text="-O2" opt:name="2"/>
+        <opt:selection opt:text="-O3" opt:name="3"/>
+        <opt:selection opt:text="-Ofast" opt:name="fast"/>
+        <opt:selection opt:text="-Os" opt:name="s"/>
+        <opt:selection opt:text="-Oz" opt:name="z"/>
+        <opt:xhtml>
+            Higher levels of optimization take longer and use more memory, especially for larger functions.
+            <br/>- 0 - Do not optimize.  This compiles the fastest and generates the most debuggable code.
+            <br/>- g - Currently the same as O1, but may be used to optimize for debuggability in the future (like GCC).
+            <br/>- 1 - Perform basic optimizations, reducing both code size and execution time.
+            <br/>- 2 - Perform nearly all supported optimizations that do not involve a space-speed trade-off.
+            <br/>- 3 - Like 02, but enables optimizations that may generate larger code.
+            <br/>- fast - Like 03, but allows optimizations that may not strictly comply with language standards.
+            <br/>- s - Like 02, but enables optimizations to reduce code size.
+            <br/>- z - Like 0s, but tries to reduce size even further.
         </opt:xhtml>
-      <opt:selection opt:text="" opt:name="0"/>
-      <opt:selection opt:text="-Og" opt:name="g"/>
-      <opt:selection opt:text="-O1" opt:name="1"/>
-      <opt:selection opt:text="-O2" opt:name="2"/>
-      <opt:selection opt:text="-O3" opt:name="3"/>
-      <opt:selection opt:text="-Ofast" opt:name="fast"/>
-      <opt:selection opt:text="-Os" opt:name="s"/>
-      <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
     <opt:booleanOption
     	opt:id="enable-unroll-loops"
@@ -161,26 +164,6 @@
     	opt:id="enable-omit-frame-pointer"
     	opt:name="Omit frame pointer"
     	opt:trueemission="-fomit-frame-pointer"/>
-    <opt:enumOption
-    	opt:id="pre-instruction-scheduling"
-    	opt:name="Pre-optimization instruction scheduling"
-    	opt:textdefault="default"
-    	opt:emissionprefix="-f"
-    	opt:emitswhendefault="false">
-      <opt:selection opt:text="default" opt:name="Default for optimization level"/>
-      <opt:selection opt:text="no-schedule-insns" opt:name="Disable"/>
-      <opt:selection opt:text="schedule-insns" opt:name="Enable"/>
-    </opt:enumOption>
-    <opt:enumOption
-    	opt:id="post-instruction-scheduling"
-    	opt:name="Post-optimization instruction scheduling"
-    	opt:textdefault="default"
-    	opt:emissionprefix="-f"
-    	opt:emitswhendefault="false">
-      <opt:selection opt:text="default" opt:name="Default for optimization level"/>
-      <opt:selection opt:text="no-schedule-insns2" opt:name="Disable"/>
-      <opt:selection opt:text="schedule-insns2" opt:name="Enable"/>
-    </opt:enumOption>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="errors-and-warnings" opt:name="Preprocessing and messages">
@@ -199,18 +182,25 @@
     	opt:slashnormalization="unix"
     	opt:isdirectory="true"
     	opt:isbrowsable="true">
-      <opt:browseinfo>
-        Relative paths are from <br/>MPLAB X project directory.
-      </opt:browseinfo>
-      <opt:xhtml>
-        <br/>Relative paths are from MPLAB X project directory.
-        <br/>If you want a single place to have include paths for compilers and assembler, use the include paths in the global options node.
-      </opt:xhtml>
+        <opt:browseinfo>
+            Relative paths are from <br/>MPLAB X project directory.
+        </opt:browseinfo>
+        <opt:xhtml>
+            <br/>Relative paths are from MPLAB X project directory.
+            <br/>If you want a single place to have include paths for compilers and assembler, use
+            the include paths in the global options node.
+        </opt:xhtml>
     </opt:stringListOption>
     <opt:booleanOption
     	opt:id="c-includes-in-cpp"
     	opt:name="Also use C include directories"
-    	opt:trueemission=""/>
+    	opt:trueemission="">
+        <opt:xhtml>
+            If enabled, add the directories listed in the "Include Directories" option in the C
+            option section in addition to the directories in the C++ option section.  The C 
+            directories will be placed on the compiler command line directly before the C++ ones.
+        </opt:xhtml>
+    </opt:booleanOption>
     <opt:booleanOption
     	opt:id="make-warnings-into-errors"
     	opt:name="Make warnings into errors"
@@ -219,12 +209,6 @@
         opt:id="additional-warnings"
     	opt:name="Additional warnings"
     	opt:trueemission="-Wall"/>
-    <opt:booleanOption
-    	opt:id="addresss-attribute-use"
-    	opt:name="Enable address-attribute warning"
-    	opt:trueemission="-Waddress-attribute-use">
-      <opt:xhtml>Emit a warning for all uses of the address() attribute. This option is for engineering-support use only.</opt:xhtml>
-    </opt:booleanOption>
     <opt:booleanOption
     	opt:id="strict-ansi"
     	opt:name=""
@@ -248,17 +232,12 @@
   <opt:enablePattern opt:idref="generate-16-bit-code" opt:expr="-mips16"/>
   <opt:enablePattern opt:idref="generate-micro-compressed-code" opt:expr="-mmicromips"/>
   <opt:enablePattern opt:idref="generate-thumb-code" opt:expr="-mthumb"/>
-  <opt:enablePattern opt:idref="exclude-floating-point" opt:expr="-mno-float"/>
   <opt:submatchPattern opt:idref="preprocessor-macros" opt:expr="-D(.+)"/>
   <opt:submatchPattern opt:idref="extra-include-directories" opt:expr="-I(.+)"/>
 
   <opt:submatchPattern opt:idref="optimization-level" opt:expr="(-O[123s])"/>
   <opt:enablePattern opt:idref="enable-unroll-loops" opt:expr="-funroll-loops"/>
   <opt:enablePattern opt:idref="enable-omit-frame-pointer" opt:expr="-fomit-frame-pointer"/>
-  <opt:submatchPattern opt:idref="pre-instruction-scheduling" opt:expr="-f(no-schedule-insns)"/>
-  <opt:submatchPattern opt:idref="pre-instruction-scheduling" opt:expr="-f(schedule-insns)"/>
-  <opt:submatchPattern opt:idref="post-instruction-scheduling" opt:expr="-f(no-schedule-insns2)"/>
-  <opt:submatchPattern opt:idref="post-instruction-scheduling" opt:expr="-f(schedule-insns2)"/>
   <opt:submatchPattern opt:idref="unaligned-access" opt:expr="-munaligned-access"/>
   <opt:submatchPattern opt:idref="unaligned-access" opt:expr="-mno-unaligned-access"/>
 

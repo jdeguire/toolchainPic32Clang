@@ -12,11 +12,11 @@ import java.util.Properties;
 /**
  * 
  * @author jose 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */ 
-public final class ProcessorDependentProperties extends CommonProperties {
+public final class ProcessorDependentMaketimeProperties extends CommonMaketimeProperties {
 
-    public ProcessorDependentProperties(final MakeConfigurationBook projectDescriptor,
+    public ProcessorDependentMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties) 
 		throws com.microchip.crownking.Anomaly, 

@@ -7,8 +7,6 @@ package io.github.jdeguire.toolchainPic32Clang;
 
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.spi.DefineProvider;
-import com.microchip.mplab.nbide.toolchainCommon.properties.CommonLanguageToolchainPropertiesUtils;
-import com.microchip.crownking.mplabinfo.FamilyDefinitions.SubFamily;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +20,7 @@ import org.netbeans.spi.project.ProjectConfiguration;
  * @author jose
  * @author Marian Golea <marian.golea@microchip.com>
  * 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
 abstract class ClangAbstractSystemDefineProvider implements DefineProvider {
 

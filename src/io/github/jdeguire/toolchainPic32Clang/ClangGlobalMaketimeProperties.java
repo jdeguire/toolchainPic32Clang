@@ -7,11 +7,11 @@ import org.openide.util.Utilities;
 
 /**
  * @author jose
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
 */
-public class ClangGlobalMakeRuntimeProperties extends CommonProperties {
+public class ClangGlobalMaketimeProperties extends CommonMaketimeProperties {
 
-    public ClangGlobalMakeRuntimeProperties(final MakeConfigurationBook projectDescriptor,
+    public ClangGlobalMaketimeProperties(final MakeConfigurationBook projectDescriptor,
 											final MakeConfiguration conf,
 											final Properties commandLineProperties) 
 		throws com.microchip.crownking.Anomaly, 
@@ -24,6 +24,7 @@ public class ClangGlobalMakeRuntimeProperties extends CommonProperties {
         commandLineProperties.put("USE_RESPONSE_FILES", getUseResponseFiles());
         commandLineProperties.put("USE_LTO", getUseLTO());
         commandLineProperties.put("CHOP_AR_LINE", getChoppedArchiverLine());
+        commandLineProperties.put("run_clang_tidy", getRunClangTidy());
     }
 
     public final String getChoppedArchiverLine() {
@@ -34,16 +35,24 @@ public class ClangGlobalMakeRuntimeProperties extends CommonProperties {
         return optAccessor.getProjectOption("C32-AR", "additional-options-chop-files", "false");
     }
 
-    public final String getUseLTO() {
-        String ret = "false";
+    public final Boolean getUseLTO() {
+        Boolean ret = Boolean.FALSE;
 
         if(optAccessor.getBooleanProjectOption("C32Global", "wpo-lto", false)) {
-            // ThinLTO is handled like a normal build, so we want this False if it is enabled.
+            // ThinLTO is handled like a normal build, so we want to return False if ThinLTO is enabled.
             if(!optAccessor.getBooleanProjectOption("C32Global", "lto.enable-thin", false)) {
-                ret = "true";
+                ret = Boolean.TRUE;
             }
         }
 
         return ret;
+    }
+
+    public final Boolean getRunClangTidy() {
+        if(optAccessor.getBooleanProjectOption("Tidy", "run-clang-tidy", false)) {
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
     }
 }

@@ -10,7 +10,7 @@ import com.microchip.mplab.nbide.toolchainCommon.predicate.IPredicate.ToolchainD
 
 /** 
  * @author Constantin Dumitrascu 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */ 
 // TOOD:  Can we just remove this?
 public final class ClangLicensingInfoProvider extends LicenseInfoRetriever {

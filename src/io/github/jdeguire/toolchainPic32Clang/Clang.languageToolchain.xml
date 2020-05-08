@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<mp:languageToolchain xsi:schemaLocation="http://crownking/mplab mplab/languageToolchain.xsd" mp:id="Clang" mp:name="Clang" mp:hostplatforms="windows,linux,unix,mac,none" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLanguageToolchain" opt:fromversion="0.01" xmlns:opt="http://crownking/opt" xmlns:mp="http://crownking/mplab" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<mp:languageToolchain 
+    xsi:schemaLocation="http://crownking/mplab mplab/languageToolchain.xsd"
+    mp:id="Clang"
+    mp:name="Clang"
+    mp:hostplatforms="windows,linux,unix,mac,none"
+    mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLanguageToolchain"
+    opt:fromversion="0.01"
+    xmlns:opt="http://crownking/opt"
+    xmlns:mp="http://crownking/mplab"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
     <mp:deviceServiceProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangDeviceServiceProvider"/>
@@ -15,6 +24,7 @@
     <mp:configurationObject mp:id="C32-LD" opt:src="clang-lld.optionLanguage.xml" mp:idref="lld" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
     <mp:configurationObject mp:id="C32CPP" opt:src="clang-cpp.optionLanguage.xml" mp:idref="clang++" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangCPPRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AR" opt:src="clang-ar.optionLanguage.xml" mp:idref="llvm-ar" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
+    <mp:configurationObject mp:id="Tidy" opt:src="clang-tidy.optionLanguage.xml" mp:idref="clang-tidy" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangTidyRuntimeProperties"/>
 
     <mp:customizerNode mp:idref="C32Global" mp:name="Clang (Global Options)" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode">
         <mp:customizerNode mp:idref="C32-AS" mp:name="Assembler" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAS"/>
@@ -22,9 +32,10 @@
         <mp:customizerNode mp:idref="C32CPP" mp:name="C++" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeCPP"/>
         <mp:customizerNode mp:idref="C32-LD" mp:name="Linker" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode"/>
         <mp:customizerNode mp:idref="C32-AR" mp:name="Archiver" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAR"/>
+        <mp:customizerNode mp:idref="Tidy" mp:name="Tidy" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode"/>
     </mp:customizerNode>
 
-    <mp:makefileWriter mp:checkos="true" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangGlobalMakeRuntimeProperties">
+    <mp:makefileWriter mp:checkos="true" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangGlobalMaketimeProperties">
         <mp:inputToOutputExtensionMap mp:src="c" mp:dst="o"/>
         <mp:inputToOutputExtensionMap mp:src="C" mp:dst="o"/>
         <mp:inputToOutputExtensionMap mp:src="cpp" mp:dst="o"/>
@@ -32,16 +43,19 @@
         <mp:inputToOutputExtensionMap mp:src="S" mp:dst="o"/>
         <mp:build mp:buildtype="standalone" mp:debuggableextension="elf">
             <mp:outputFilenameSuffixProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangOutputFilenameSuffixProvider"/>
-            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="createLTORespFile"/>
-            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doRespFileLTO"/>
-            <mp:buildStep mp:if="!${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doLTO"/>
-            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="assemble"/>
-            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="assembleWithPreprocess"/>
-            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="compile"/>
-            <mp:buildStep mp:ifnot="${USE_LTO}" mp:idref="compileCPP"/>
-            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="createResponseFiles"/>
-            <mp:buildStep mp:if="${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="linkWithResponseFile"/>
-            <mp:buildStep mp:ifnot="${USE_RESPONSE_FILES} || ${USE_LTO}" mp:idref="link"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; ${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="createLTORespFile"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; ${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doRespFileLTO"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_RESPONSE_FILES} &amp;&amp; ${USE_LTO}" mp:idref="doLTO"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_LTO}" mp:idref="assemble"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_LTO}" mp:idref="assembleWithPreprocess"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_LTO}" mp:idref="compile"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_LTO}" mp:idref="compileCPP"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; ${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="createResponseFiles"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; ${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="linkWithResponseFile"/>
+            <mp:buildStep mp:if="!${run_clang_tidy} &amp;&amp; !${USE_RESPONSE_FILES} &amp;&amp; !${USE_LTO}" mp:idref="link"/>
+            <mp:buildStep mp:if="${run_clang_tidy}" mp:idref="tidyC"/>
+            <mp:buildStep mp:if="${run_clang_tidy}" mp:idref="tidyCPP"/>
+            <mp:buildStep mp:if="${run_clang_tidy}" mp:idref="tidyDummy"/>
         </mp:build>
         <mp:build mp:buildtype="archive" mp:outputextension="a">
             <mp:buildStep mp:idref="assemble"/>
@@ -51,13 +65,13 @@
             <mp:buildStep mp:ifnot="${CHOP_AR_LINE}" mp:idref="archive"/>
             <mp:buildStep mp:if="${CHOP_AR_LINE}" mp:idref="archiveChopped"/>
         </mp:build>
-        <mp:makeCode mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ProcessorDependentProperties">
+        <mp:makeCode mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ProcessorDependentMaketimeProperties">
             <!-- We don't actually need these in our Makefile, but we'll keep them in case MPLAB X uses them for something. -->
             <mp:textEmitter mp:text="MP_PROCESSOR_OPTION=__${PROCESSOR_NAME}__${NEWLINE_NO_TAB}"/>
             <mp:textEmitter mp:text="MP_LINKER_FILE_OPTION=${OPTION_TO_SPECIFY_GLD}${GLD_NAME}${NEWLINE_NO_TAB}"/>
         </mp:makeCode>
 
-        <mp:makeRule mp:id="doLTO" mp:prerequisites="${CURRENT_SOURCE_FILES}" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="doLTO" mp:prerequisites="${CURRENT_SOURCE_FILES}" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
             <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
@@ -68,7 +82,7 @@
             <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
-            <mp:textEmitter mp:text=" -flto -fwhole-program "/>
+            <mp:textEmitter mp:text=" -flto "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
@@ -93,8 +107,7 @@
             <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
-            <!-- TODO:  Do we need to do something about this gdwarf-2 option?  (perhaps make it gdwarf-4 or something? -->
-            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
             <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" " mp:prefix=" "/>
@@ -114,19 +127,19 @@
             <mp:textEmitter mp:text="${NEWLINE}"/>
             <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
             <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
-            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}"/>
-            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex"/>
+            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
 
-        <mp:makeRule mp:id="createLTORespFile" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="createLTORespFile" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) $(MP_EXTRA_AS_PRE) $(MP_EXTRA_LD_PRE) "/>
             <mp:textEmitter mp:text=" ${sysroot_opt} ${target_config_opt} "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
-            <mp:textEmitter mp:text=" -flto -fwhole-program "/>
+            <mp:textEmitter mp:text=" -flto "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" "/>
@@ -151,8 +164,7 @@
             <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
-            <!-- TODO:  Do we need to do something about this gdwarf-2 option?  (perhaps make it gdwarf-4 or something? -->
-            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
             <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
@@ -173,7 +185,7 @@
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
 
-        <mp:makeRule mp:id="doRespFileLTO" mp:prerequisites="${CURRENT_SOURCE_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="doRespFileLTO" mp:prerequisites="${CURRENT_SOURCE_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
             <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
@@ -182,11 +194,12 @@
             <mp:textEmitter mp:text=" @nbproject/$(CND_CONF).$(IMAGE_TYPE) ${NEWLINE}"/>
             <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
             <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
-            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}"/>
-            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex"/>
+            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
 
-        <mp:makeRule mp:id="compileCPP" mp:prerequisites=".*\.cpp$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCCompilerMacrosProvider">
+        <mp:makeRule mp:id="compileCPP" mp:prerequisites=".*\.cpp$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCCompilerMacrosProvider">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
@@ -210,6 +223,7 @@
             <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} " mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} " mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="compile" mp:separator=" "/>
             <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
@@ -218,7 +232,7 @@
             <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="compile" mp:prerequisites=".*\.[cC]$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCompilerMacrosProvider">
+        <mp:makeRule mp:id="compile" mp:prerequisites=".*\.[cC]$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCompilerMacrosProvider">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
@@ -250,7 +264,7 @@
             <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="assemble" mp:prerequisites=".*\.s$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerProperties">
+        <mp:makeRule mp:id="assemble" mp:prerequisites=".*\.s$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/>
@@ -271,16 +285,16 @@
             <mp:textEmitter mp:text=" -Wa,--defsym=__MPLAB_BUILD=1"/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
-            <!-- TODO:  Do we need to do something about this gdwarf-2 option?  (perhaps make it gdwarf-4 or something? -->
-            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL},--gdwarf-2"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
             <mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="assembleWithPreprocess" mp:prerequisites=".*\.S$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerProperties">
+        <mp:makeRule mp:id="assembleWithPreprocess" mp:prerequisites=".*\.S$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
@@ -309,8 +323,7 @@
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_POST)"/>
             <mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.asm.d&quot;"/>
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
-            <!-- TODO:  Do we need to do something about this gdwarf-2 option?  (perhaps make it gdwarf-4 or something? -->
-            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--gdwarf-2,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
+            <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
@@ -318,7 +331,7 @@
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="link" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties" mp:prerequisites="${CURRENT_OBJECT_FILES}">
+        <mp:makeRule mp:id="link" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties" mp:prerequisites="${CURRENT_OBJECT_FILES}">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
@@ -352,11 +365,11 @@
             <mp:textEmitter mp:text="${multilib_dir_opt}"/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
-            <!-- TODO:  Need to see if Clang or LLVM has something like objcopy. -->
-            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}"/>
-            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex"/>
+            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="createResponseFiles" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="createResponseFiles" mp:target="nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:redirectStart/>
             <mp:textEmitter mp:text="$(MP_EXTRA_LD_PRE) "/>
             <mp:textEmitter mp:text=" ${sysroot_opt} ${target_config_opt} "/>
@@ -391,13 +404,14 @@
             <mp:redirectStop/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="linkWithResponseFile" mp:prerequisites="${CURRENT_OBJECT_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerProperties">
+        <mp:makeRule mp:id="linkWithResponseFile" mp:prerequisites="${CURRENT_OBJECT_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
             <mp:textEmitter mp:text=" @nbproject/$(CND_CONF).$(IMAGE_TYPE) ${NEWLINE}"/>
-            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}"/>
-            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex"/>
+            <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
         <mp:makeRule mp:id="archive" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ArchiverProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
@@ -409,8 +423,9 @@
             <mp:textEmitter mp:text="${QUOTED_IF_SPACED_OTHER_OBJECT_FILES}  " mp:separator=" "/>
             <mp:textEmitter mp:onlyproduction="true" mp:text="${QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="${DEBUG_QUOTED_IF_SPACED_LIBRARY_FILES} " mp:separator=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
-        <mp:makeRule mp:id="archiveChopped" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ArchiverProperties">
+        <mp:makeRule mp:id="archiveChopped" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ArchiverMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <!-- We'll be using the q option which quick appends. We do not want to append to and old archive. So erase it first -->
             <mp:textEmitter mp:text="@${RM} ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
@@ -422,6 +437,66 @@
             <mp:redirectStop/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
+
+        <mp:makeRule mp:id="tidyC" mp:prerequisites=".*\.[cC]$" mp:markasphony="true" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties">
+            <mp:textEmitter mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}clang-tidy"/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="tidy.checks" mp:separator="," mp:prefix=" -checks="/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="tidy.general" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" ${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} "/>
+            <mp:textEmitter mp:text=" -- "/>
+            <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
+            <mp:textEmitter mp:text=" ${sysroot_opt} ${target_config_opt} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -x c -c "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="include-dirs" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="ungrouped" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" ${xc32_compat_macros} "/>
+            <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="compile" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="tidyCPP" mp:prerequisites=".*\.cpp$" mp:markasphony="true" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties">
+            <mp:textEmitter mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}clang-tidy"/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="tidy.checks" mp:separator="," mp:prefix=" -checks="/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="tidy.general" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="Tidy" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:text=" ${CURRENT_QUOTED_IF_SPACED_SOURCE_FILE} "/>
+            <mp:textEmitter mp:text=" -- "/>
+            <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
+            <mp:textEmitter mp:text=" ${sysroot_opt} ${target_config_opt} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
+            <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
+            <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" -x c++ -c "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:if="${c_includes_in_cpp}" mp:idref="C32" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="include-dirs" mp:prefix=" " mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="ungrouped" mp:prefix=" " mp:separator=" "/>
+            <mp:textEmitter mp:text=" ${xc32_compat_macros} "/>
+            <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
+            <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="compile" mp:separator=" "/>
+            <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
+            <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+        <mp:makeRule mp:id="tidyDummy" mp:target="${FINAL_IMAGE_NAME}" mp:markasphony="true" mp:final="false">
+            <mp:textEmitter mp:text="${NEWLINE}"/>
+        </mp:makeRule>
+
     </mp:makefileWriter>
 
     <mp:logicalFolder mp:id="SourceFiles"/>
@@ -432,6 +507,7 @@
     <mp:defaultLocation mp:hostplatform="mac" mp:dir="/Applications/pic32Clang/v*/bin"/>
     <mp:defaultLocation mp:hostplatform="windows" mp:dir="C:/Program Files*/pic32Clang/v*/bin"/>
 
+    <!-- TODO:  The version provider is also provided at the top of this file.  Does that mean we don't need it in these nodes? -->
     <mp:ccCompiler mp:file="clang++" mp:name="LLVM/Clang C++ Compiler">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemDefineProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCPPSystemDefineProvider"/>
@@ -454,6 +530,7 @@
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCAdditionalOptionsModifier"/>
     </mp:cCompiler>
+    <!-- TODO:  Should this be llvm-as? -->
     <mp:assembler mp:file="clang" mp:name="LLVM/Clang Assembler">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:systemIncludeProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangSystemIncludeProvider"/>
@@ -463,7 +540,8 @@
     <!-- TODO:  lld outputs 
                 "lld is a generic driver.
                  Invoke ld.lld (Unix), ld (macOS) or lld-link (Windows) instead."
-                Will we need to handle this here somehow?  Can we just call clang or clang++? -->
+                Will we need to handle this here somehow?  Can we just call clang or clang++? 
+                Actually, we might be able to just use ld.lld. -->
     <mp:linker mp:file="lld" mp:name="LLVM Linker">
         <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangLDAdditionalOptionsProvider"/>
@@ -474,5 +552,14 @@
         <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsProvider"/>
         <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangARAdditionalOptionsModifier"/>
     </mp:archiver>
+<!--
+    <mp:languageTool mp:file="clang-tidy" mp:name="Clang Tidy">
+        <mp:versionProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangVersionProvider"/>
+        <mp:additionalOptionsProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangTidyAdditionalOptionsProvider"/>
+        <mp:additionalOptionsModifier mp:class="io.github.jdeguire.toolchainPic32Clang.ClangTidyAdditionalOptionsModifier"/>
+    </mp:languageTool>
+-->
+    <mp:languageTool mp:file="clang" mp:name="LLVM/Clang C Compiler">
+    </mp:languageTool>
 
 </mp:languageToolchain>

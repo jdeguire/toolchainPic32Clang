@@ -15,11 +15,11 @@ import java.util.logging.Level;
 /**
  *
  * @author jose
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
-public final class LinkerProperties extends CommonProperties {
+public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
 
-    public LinkerProperties(final MakeConfigurationBook projectDescriptor,
+    public LinkerMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties) 
 		throws com.microchip.crownking.Anomaly, 

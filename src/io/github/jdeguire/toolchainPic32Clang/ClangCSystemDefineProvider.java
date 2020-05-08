@@ -8,7 +8,7 @@ import org.netbeans.api.project.Project;
  * System define provider for C files.
  * @author Marian Golea <marian.golea@microchip.com>
  *
- * Modified by jdeguire for toolchainPIC32Clang.
+ * Modified by Jesse DeGuire for toolchainPIC32Clang.
  */
 public final class ClangCSystemDefineProvider extends ClangAbstractSystemDefineProvider {
 

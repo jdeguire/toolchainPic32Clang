@@ -17,7 +17,7 @@ import org.netbeans.api.project.Project;
 
 /**
  * @author jose 
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  * 
  * This seemed to originally be a dumping ground for some static variables, so I'm also making it a
  * dumping ground for useful static methods!  There are some things that are required by multiple

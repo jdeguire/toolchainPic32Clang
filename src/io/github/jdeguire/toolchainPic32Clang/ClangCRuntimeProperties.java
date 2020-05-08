@@ -28,6 +28,8 @@ public final class ClangCRuntimeProperties extends ClangAbstractTargetRuntimePro
         setProperty("appio.suppress", shouldSuppressAppIO());
     }
 
+    // TODO:  Can I even use this with Clang?  If not, then I can probably remove this class entirely
+    //        and just use ClangRuntimeProperties in the main XML file for the C options.
     private String shouldSuppressAppIO() {
         if(target.isArm()) {
             return Boolean.TRUE.toString();

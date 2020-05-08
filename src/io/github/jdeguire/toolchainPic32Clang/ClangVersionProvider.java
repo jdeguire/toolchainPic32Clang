@@ -14,12 +14,10 @@ import java.io.IOException;
  */
 public class ClangVersionProvider implements VersionProvider
 {
-    private String cachedVersion;
-    private String cachedPath;
+    private static String cachedVersion = "";
+    private static String cachedPath = "";
 
     public ClangVersionProvider() {
-        cachedVersion = "";
-        cachedPath = "";
     }
 
     /* Read the version number from a file in the toolchain root called "pic32clang_version".  Do
@@ -51,7 +49,7 @@ public class ClangVersionProvider implements VersionProvider
                 char[] buf = new char[32];
                 reader.read(buf);
 
-                cachedPath = file.getPath();
+                cachedPath = file.getParentFile().getPath();
                 cachedVersion = new String(buf).trim();
             } catch(FileNotFoundException ex) {
                 cachedVersion = "0.00";

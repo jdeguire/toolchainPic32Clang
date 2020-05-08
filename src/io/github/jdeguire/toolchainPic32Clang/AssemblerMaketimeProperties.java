@@ -11,11 +11,11 @@ import java.util.Properties;
 /**
  *
  * @author jose
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
-public final class AssemblerProperties extends CommonProperties {
+public final class AssemblerMaketimeProperties extends CommonMaketimeProperties {
 
-    public AssemblerProperties(final MakeConfigurationBook projectDescriptor,
+    public AssemblerMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties)
 		throws com.microchip.crownking.Anomaly, 

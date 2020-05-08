@@ -16,11 +16,11 @@ import java.util.logging.Level;
 /**
  *
  * @author jose Modified: 2011.03.29 PRJ Add instrumented trace support.
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
-public final class CompilerProperties extends CommonProperties {
+public final class CompilerMaketimeProperties extends CommonMaketimeProperties {
 
-    public CompilerProperties(final MakeConfigurationBook projectDescriptor,
+    public CompilerMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties) 
 		throws com.microchip.crownking.Anomaly, 
@@ -39,6 +39,8 @@ public final class CompilerProperties extends CommonProperties {
         commandLineProperties.put("c_includes_in_cpp", shouldUseCIncludesInCPP());
     }
 
+    // TODO:  We might not be able to use these instrumented trace options, so they might need removing.
+    // TODO:  Maybe in the future we can somehow use Clang's built-in instrumented trace.
     final String getTraceMediumMacro(boolean isDisabled, int traceMedium, int tracePort, int traceSPI) {
         if (isDisabled) {
             return "off";
@@ -82,6 +84,7 @@ public final class CompilerProperties extends CommonProperties {
         return "";
     }
 
+    // TODO:  We might not be able to use these instrumented trace options, so they might need removing.
     final String getTraceOptions() {
         if (assembly == null) {
             // log error?
@@ -101,6 +104,7 @@ public final class CompilerProperties extends CommonProperties {
         return "";
     }
 
+    // TODO:  We might not be able to use these instrumented trace options, so they might need removing.
     final String getFunctionLevelProfilingOptions() {
         if (assembly == null) {
             MPLABLogger.mplog.log(Level.SEVERE, "CompilerProperties::getFunctionLevelProfilingOptions, could not get the Assembly.");
@@ -122,6 +126,7 @@ public final class CompilerProperties extends CommonProperties {
         return "".substring(0);
     }
 
+    // TODO:  We might not be able to use these instrumented trace options, so they might need removing.
     public String getFunctionLevelProfilingOptions(final TraceSetupInformationInterface tsi, final String projBaseDir) {
         return "-mit=profile".substring(0);
     }

@@ -16,15 +16,15 @@ import org.openide.util.Utilities;
  * Common runtime properties usable during makefile generation process.
  *
  * @author Marian Golea <marian.golea@microchip.com>
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
-public class CommonProperties extends MPLABXSpecificProperties {
+public class CommonMaketimeProperties extends MPLABXSpecificProperties {
 
     final CommonPropertiesCalculator calc = new CommonPropertiesCalculator();
     final protected ProjectOptionAccessor optAccessor;
     final protected TargetDevice target;
 
-    public CommonProperties(final MakeConfigurationBook projectDescriptor,
+    public CommonMaketimeProperties(final MakeConfigurationBook projectDescriptor,
 							final MakeConfiguration conf,
 							final Properties commandLineProperties) 
 		throws com.microchip.crownking.Anomaly, 

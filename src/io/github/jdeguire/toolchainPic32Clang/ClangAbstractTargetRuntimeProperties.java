@@ -15,7 +15,7 @@ import com.microchip.mplab.nbide.toolchainCommon.properties.CommonToolchainPrope
  * This functionality is applicable to both GCC and GPP compilers. 
  * 
  * @author Marian Golea <marian.golea@microchip.com>
- * Modified by jdeguire for toolchainPic32Clang.
+ * Modified by Jesse DeGuire for toolchainPic32Clang.
  */ 
 public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolchainPropertiesAccessor {
 

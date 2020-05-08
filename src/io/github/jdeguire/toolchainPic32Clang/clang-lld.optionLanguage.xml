@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
-<!-- NOTE:  We'll keep orginal opt:id name here for compatibility with Microchip tools.  -->
-<!-- TODO:  Do these opd:id names even matter? -->
 <opt:optionLanguage
 	xmlns:opt="http://crownking/opt"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
-	opt:id="xc32-ld"
+	opt:id="lld"
 	opt:name="LLVM Linker">
   
   <opt:optionCategory opt:id="general" opt:name="General">
@@ -29,16 +27,21 @@
 		opt:groupid="post"
 		opt:name="Remove unused sections"
 		opt:trueemission="--gc-sections"/>
-    <!-- we do not use the additional-options-use-response-files boolean option to emit anything directly. We check its value in the makefile writer rules and emit what is needed
-         for both the linker and assembler based on it being "true"-->
+    <!-- We do not use the additional-options-use-response-files boolean option to emit anything directly. 
+         We check its value in the makefile writer rules and emit what is needed for both the linker
+         and assembler based on it being "true"-->
     <opt:booleanOption
 		opt:id="additional-options-use-response-files"
 		opt:groupid="ignore-me"
 		opt:name="Use response file to link"
 		opt:default="false"
 		opt:trueemission="true"
-		opt:suppressif="${opt-Clang-linker-response-files.suppress}">
-      <opt:xhtml>In Windows, you have a max command line length of 8191 chars. When linking long programs, the link line might go over this limit. Clang provides response file capabilities. Check this option to create a makefile that uses a response file for the link step.</opt:xhtml>
+		opt:suppressif="${response-files.suppress}">
+      <opt:xhtml>
+          In Windows, you have a max command line length of 8191 chars. When linking long programs, 
+          the link line might go over this limit. Clang provides response file capabilities. Check 
+          this option to create a makefile that uses a response file for the link step.
+      </opt:xhtml>
     </opt:booleanOption>
     <!-- Keep "XC32" in the name of this next option for compatibility in case something like the Harmony Configurator expects it. -->
     <opt:stringOption
@@ -48,11 +51,12 @@
 		opt:emissionprefix=""
 		opt:textdefault=""
 		opt:textpreferred="">
-      <opt:xhtml>Type here any additional driver options not existing in this GUI otherwise.
-      <br/>The string you introduce here will be emitted as is in the driver invocation command.
+      <opt:xhtml>
+          Type here any additional driver options not existing in this GUI otherwise.
+          <br/>The string you introduce here will be emitted as is in the driver invocation command.
       </opt:xhtml>
     </opt:stringOption>
-    <!-- We have not be able to use these next two options and might have to get rid of them. -->
+    <!-- TODO: We may not be able to use these next two options and might have to get rid of them. -->
     <opt:booleanOption
 		opt:groupid="post"
 		opt:id="code-dinit"
@@ -168,7 +172,11 @@
 		opt:groupid="ignore-me"
 		opt:name="Link micro MIPS compressed startup code and libraries"
 		opt:suppressif="${micromips.suppress}">
-      <opt:xhtml>Link the startup code and libraries generated for the microMIPS compressed ISA. Use this option only when the device is configured to boot to the microMIPS mode (e.g. #pragma config BOOTISA=MICROMIPS).</opt:xhtml>
+      <opt:xhtml>
+          Link the startup code and libraries generated for the microMIPS compressed ISA. Use this 
+          option only when the device is configured to boot to the microMIPS mode 
+          (e.g. BOOTISA is set to MICROMIPS).
+      </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="generate-thumb-code"
@@ -184,22 +192,16 @@
 		opt:booldefault="false"
 		opt:trueemission=""
 		opt:falseemission="-lm"/>
-<!-- TODO:  We may not need this anymore. -->
-    <opt:booleanOption
-		opt:id="include-cxx-filesystem"
-		opt:groupid="post"
-		opt:name="Link C++ std::filesystem library"
-		opt:booldefault="false"
-		opt:trueemission="-lc++fs">
-      <opt:xhtml>Libc++ puts std::filesystem into a separate library.  Enable this option if the project uses std::filesystem.</opt:xhtml>
-    </opt:booleanOption>
     <opt:booleanOption
 		opt:id="include-cxx-experimental"
 		opt:groupid="post"
 		opt:name="Link experimental C++ features library"
 		opt:booldefault="false"
 		opt:trueemission="-lc++experimental">
-      <opt:xhtml>Libc++ puts experimental C++ features into a separate library.  Enable this option if the project uses &lt; experimental/... &gt; headers.</opt:xhtml>
+      <opt:xhtml>
+          Libc++ puts experimental C++ features into a separate library.  
+          Enable this option if the project uses &lt; experimental/... &gt; headers.
+      </opt:xhtml>
     </opt:booleanOption>
   </opt:optionCategory>
 

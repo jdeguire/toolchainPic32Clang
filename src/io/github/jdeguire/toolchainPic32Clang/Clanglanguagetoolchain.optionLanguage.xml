@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<!-- NOTE:  We'll keep orginal opt:id name here for compatibility with Microchip tools.  -->
-<opt:optionLanguage xmlns:opt="http://crownking/opt"
-                    opt:id="XC32Global"
-                    opt:name="Clang Language Toolchain"
-                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                    xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd">
+<opt:optionLanguage
+    xmlns:opt="http://crownking/opt"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
+    opt:id="ClangGlobal"
+    opt:name="Clang Language Toolchain">
 
   <opt:optionCategory opt:id="general" opt:name="General">
     <opt:stringOption
@@ -23,24 +23,35 @@
         opt:textdefault=""
         opt:isfile="true"
 		opt:isbrowsable="true">
-      <opt:xhtml>
-        Use a custom configuration file to tell Clang about your device instead of using the default.
-        Such a file contains device-specific options--such as whether the device is a MIPS or Arm
-        device--and predefined macros that may be useful in your code.  If this option is empty, the
-        default configuration file will be used.  To create your own, start with one of the default
-        config files found under the "target/config" directory where the toolchain is located.
-      </opt:xhtml>
+        <opt:xhtml>
+            Use a custom configuration file to tell Clang about your device instead of using the default.
+            Such a file contains device-specific options--such as whether the device is a MIPS or Arm
+            device--and predefined macros that may be useful in your code.  If this option is empty, the
+            default configuration file will be used.  To create your own, start with one of the default
+            config files found under the "target/config" directory where the toolchain is located.
+        </opt:xhtml>
     </opt:stringOption>
+    <opt:booleanOption
+        opt:id="color-diagnostics"
+        opt:groupid="both"
+        opt:name="Use colors in diagnostic messages"
+        opt:trueemission="-fcolor-diagnostics"
+        opt:falseemission="-fno-color-diagnostics"
+        opt:booldefault="true">
+        <opt:xhtml>
+            Colorize text in Clang diagnostic messages, such as error or warning messages.
+        </opt:xhtml>
+    </opt:booleanOption>
     <opt:booleanOption
 		opt:id="save-temps"
 		opt:groupid="both"
 		opt:name="Don't delete intermediate files"
 		opt:trueemission="-save-temps=obj"
 		opt:booldefault="false">
-      <opt:xhtml>
-        Don't delete intermediate files. Place them in the object directory and name them based on
-        the source file.
-      </opt:xhtml>
+        <opt:xhtml>
+            Don't delete intermediate files. Place them in the object directory and name them based
+            on the source file.
+        </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="fake-xc32"
@@ -48,28 +59,28 @@
 		opt:name="Add XC32 compatibility macros"
 		opt:trueemission=""
 		opt:booldefault="true">
-      <opt:xhtml>
-        If True, define the __XC, __XC32, and __XC32_VERSION macros for compatibility with code
-        that expects those, as well as versions with double underscores on each side.  
-        Clang-specific macros, like __clang__, are still defined.
-      </opt:xhtml>
-      <opt:falseModifiers>
-        <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="true"/>
-      </opt:falseModifiers>
-      <opt:trueModifiers>
-        <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="false"/>
-      </opt:trueModifiers>
+        <opt:xhtml>
+            If True, define the __XC, __XC32, and __XC32_VERSION macros for compatibility with code
+            that expects those, as well as versions with double underscores on each side.  
+            Clang-specific macros, like __clang__, are still defined.
+        </opt:xhtml>
+        <opt:falseModifiers>
+            <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="true"/>
+        </opt:falseModifiers>
+        <opt:trueModifiers>
+            <opt:optionGrayer opt:idref="fake-xc32-version" opt:bool="false"/>
+        </opt:trueModifiers>
     </opt:booleanOption>
     <opt:stringOption
 		opt:id="fake-xc32-version"
 		opt:groupid="xc32-compat"
 		opt:name="XC32 version macro value"
-		opt:textdefault="2100"
+		opt:textdefault="2400"
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
-      <opt:xhtml>
-        Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times
-        1000 (eg. 2100 for XC32 v2.10).
-      </opt:xhtml>
+        <opt:xhtml>
+            Set the value to use for the __XC32_VERSION__ macro.  Set this to the desired version times
+            1000 (eg. 2400 for XC32 v2.40).
+        </opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:groupid="gp-relative-treshhold"
@@ -78,10 +89,10 @@
 		opt:emissionprefix="-G "
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator"
 		opt:suppressif="${target.isARM}">
-      <opt:xhtml>
-        Put definitions of externally-visible data in a small data section for fast access if that 
-        data is no bigger than num bytes.
-      </opt:xhtml>
+        <opt:xhtml>
+            Put definitions of externally-visible data in a small data section for fast access if that 
+            data is no bigger than num bytes.
+        </opt:xhtml>
     </opt:stringOption>
     <opt:booleanOption
 		opt:id="extended-got"
@@ -90,10 +101,10 @@
 		opt:trueemission="-mxgot"
 		opt:booldefault="false"
 		opt:suppressif="${target.isARM}">
-      <opt:xhtml>
-        Allow a global offset table larger than 64kB at the expense of slower access (3 instructions
-        instead of 1).
-      </opt:xhtml>
+        <opt:xhtml>
+            Allow a global offset table larger than 64kB at the expense of slower access (3 instructions
+            instead of 1).
+        </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="relaxed-math"
@@ -101,16 +112,16 @@
 		opt:name="Relaxed floating-point math"
 		opt:trueemission="-ffast-math"
 		opt:booldefault="false">
-      <opt:xhtml>
-        Allow the compiler to more aggresively optimize floating-poing math by making certain
-        assumptions about floating-point math that may result in some loss of precision, including
-        (but not limited to): 
-        <br/> - floating-point math follows regular algebraic rules such as	the associative and 
-        distributive properties, 
-        <br/> - operands to floating-point operations are not NaN or Inf, 
-        <br/> - and that +0 and -0 are interchangeable.  
-        <br/>Enabling this option defines the __FAST_MATH__ preprocessor macro.
-      </opt:xhtml>
+        <opt:xhtml>
+            Allow the compiler to more aggresively optimize floating-poing math by making certain
+            assumptions about floating-point math that may result in some loss of precision, including
+            (but not limited to): 
+            <br/> - floating-point math follows regular algebraic rules such as	the associative and 
+            distributive properties, 
+            <br/> - operands to floating-point operations are not NaN or Inf, 
+            <br/> - and that +0 and -0 are interchangeable.  
+            <br/>Enabling this option defines the __FAST_MATH__ preprocessor macro.
+        </opt:xhtml>
     </opt:booleanOption>
     <opt:stringListOption
 		opt:name="Common include directories"
@@ -121,13 +132,13 @@
 		opt:slashnormalization="unix"
 		opt:isdirectory="true"
 		opt:isbrowsable="true">
-      <opt:browseinfo>
-        Relative paths are from MPLAB X project directory.
-      </opt:browseinfo>
-      <opt:xhtml>Add 'dir' to the list of shared include directories for compilers and assembler.
-      <br/>
-      <br/>Relative paths are from MPLAB X project directory.
-      </opt:xhtml>
+        <opt:browseinfo>
+            Relative paths are from MPLAB X project directory.
+        </opt:browseinfo>
+        <opt:xhtml>
+            Add 'dir' to the list of shared include directories for compilers and assembler.
+            <br/><br/>Relative paths are from MPLAB X project directory.
+        </opt:xhtml>
     </opt:stringListOption>
 <!-- TODO: We will probably have to remove these TCM options. -->
     <opt:stringOption
@@ -138,7 +149,7 @@
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
 		opt:unsuppressif="${target.isARM}"
 		opt:showif="${target.isARM}">
-      <opt:xhtml>Enable data Tightly Coupled Memory with the specified size.</opt:xhtml>
+        <opt:xhtml>Enable data Tightly Coupled Memory with the specified size.</opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:groupid="both"
@@ -148,7 +159,7 @@
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
 		opt:unsuppressif="${target.isARM}"
 		opt:showif="${target.isARM}">
-      <opt:xhtml>Enable instruction Tightly Coupled Memory with the specified size.</opt:xhtml>
+        <opt:xhtml>Enable instruction Tightly Coupled Memory with the specified size.</opt:xhtml>
     </opt:stringOption>
     <opt:booleanOption
 		opt:name="Locate Stack in data TCM"
@@ -158,7 +169,7 @@
 		opt:id="mstacktcm"
 		opt:unsuppressif="${target.isARM}"
 		opt:showif="${target.isARM}">
-      <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
+        <opt:xhtml>Locate the stack in data Tightly Coupled Memory.</opt:xhtml>
     </opt:booleanOption>
   </opt:optionCategory>
 
@@ -168,30 +179,31 @@
 		opt:groupid="wpo"
 		opt:name="Enable Link-Time Optimizations"
 		opt:trueemission="">
-      <opt:xhtml>
-        When this feature is enabled, the build will be constrained in the following ways if ThinLTO
-        is NOT used:
-        <br/> - The per-file build settings will be ignored;
-        <br/> - The build will no longer be an incremental one (full build only).
-      </opt:xhtml>
-      <opt:falseModifiers>
-        <opt:optionSuppressor opt:idref="lto.enable-vtable-opts" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.enable-thin" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="true"/>
-      </opt:falseModifiers>
-      <opt:trueModifiers>
-        <opt:optionSuppressor opt:idref="lto.enable-vtable-opts" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="lto.enable-thin" opt:bool="false"/>
-        <opt:optionModifierTrigger opt:idref="lto.enable-thin"/>
-      </opt:trueModifiers>
+        <opt:xhtml>
+            When this feature is enabled, the build will be constrained in the following ways if ThinLTO
+            is NOT used:
+            <br/> - The per-file build settings will be ignored;
+            <br/> - The build will no longer be an incremental one (full build only).
+        </opt:xhtml>
+        <opt:falseModifiers>
+            <opt:optionSuppressor opt:idref="lto.enable-vtable-opts" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.enable-thin" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="true"/>
+        </opt:falseModifiers>
+        <opt:trueModifiers>
+            <opt:optionSuppressor opt:idref="lto.enable-vtable-opts" opt:bool="false"/>
+            <opt:optionSuppressor opt:idref="lto.enable-thin" opt:bool="false"/>
+            <opt:optionModifierTrigger opt:idref="lto.enable-thin"/>
+        </opt:trueModifiers>
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="lto.enable-vtable-opts"
 		opt:groupid="lto"
 		opt:name="Enable whole-program vtable optimizations"
-		opt:trueemission="-fwhole-program-vtables">
+		opt:trueemission="-fwhole-program-vtables"
+        opt:booldefault="true">
     </opt:booleanOption>    
     <opt:booleanOption
 		opt:id="lto.enable-thin"
@@ -199,21 +211,21 @@
 		opt:name="Use ThinLTO"
 		opt:trueemission="-flto=thin"
 		opt:booldefault="true">
-      <opt:xhtml>
-        Use Clang's ThinLTO mode, which uses a cache to enable incremental builds and build times
-        similar to non-LTO builds.  The cache is stored in "build/{config_name}/ltocache".  
-        <br/>See https://clang.llvm.org/docs/ThinLTO.html for more info.
-      </opt:xhtml>
-      <opt:falseModifiers>
-        <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="true"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="true"/>
-      </opt:falseModifiers>
-      <opt:trueModifiers>
-        <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="false"/>
-        <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="false"/>
-      </opt:trueModifiers>
+        <opt:xhtml>
+            Use Clang's ThinLTO mode, which uses a cache to enable incremental builds and build times
+            similar to non-LTO builds.  The cache is stored in "build/{config_name}/ltocache".  
+            <br/>See https://clang.llvm.org/docs/ThinLTO.html for more info.
+        </opt:xhtml>
+        <opt:falseModifiers>
+            <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="true"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="true"/>
+        </opt:falseModifiers>
+        <opt:trueModifiers>
+            <opt:optionSuppressor opt:idref="lto.link.threads" opt:bool="false"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachesize" opt:bool="false"/>
+            <opt:optionSuppressor opt:idref="lto.link.cachedir" opt:bool="false"/>
+        </opt:trueModifiers>
     </opt:booleanOption>
     <!-- This next option is set up in LinkerProperties::getThinLtoThreadsOpt(), so it is ignored.-->
     <opt:stringOption
@@ -222,10 +234,10 @@
 		opt:name="Threads for ThinLTO link (0: Auto)"
 		opt:textdefault="0"
 		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.DecimalNumberOptionValidator">
-      <opt:xhtml>
-        Set the number of threads to use during a ThinLTO link.  If set to 0, this will use half of
-        the available threads on the current machine.
-      </opt:xhtml>
+        <opt:xhtml>
+            Set the number of threads to use during a ThinLTO link.  If set to 0, this will use half of
+            the available threads on the current machine.
+        </opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:id="lto.link.cachesize"
@@ -233,11 +245,11 @@
 		opt:name="Max size of ThinLTO cache"
 		opt:textdefault="1024m"
 		opt:emissionprefix="--thinlto-cache-policy,cache_size_bytes=">
-      <opt:xhtml>
-        Set max size of the ThinLTO cache before it is pruned.  Use a suffix of "k" for kilobytes,
-        "m" for megabytes or "g" for gigatbytes.  For example, using "1024m" will set the max size
-        of 1024MiB.  Use 0 for no pruning.
-      </opt:xhtml>
+        <opt:xhtml>
+            Set max size of the ThinLTO cache before it is pruned.  Use a suffix of "k" for kilobytes,
+            "m" for megabytes or "g" for gigabytes.  For example, using "1024m" will set the max size
+            of 1024MiB.  Use 0 for no pruning.
+        </opt:xhtml>
     </opt:stringOption>
     <opt:stringOption
 		opt:id="lto.link.cachedir"
@@ -246,10 +258,10 @@
 		opt:textdefault="${OBJECTDIR}/ltocache"
 		opt:emissionprefix="--thinlto-cache-dir="
 		opt:hideif="true">
-      <opt:xhtml>
-        Set the location of the ThinLTO cache directory.  This option is not meant to be visible 
-        and is here to make adding the directory to the output easier.
-      </opt:xhtml>
+        <opt:xhtml>
+            Set the location of the ThinLTO cache directory.  This option is not meant to be visible 
+            and is here to make adding the directory to the output easier.
+        </opt:xhtml>
     </opt:stringOption>
   </opt:optionCategory>
 
@@ -257,5 +269,8 @@
   <opt:enablePattern opt:idref="gp-relative-option" opt:expr="-G "/>
   <opt:enablePattern opt:idref="relaxed-math" opt:expr="-ffast-math"/>
   <opt:enablePattern opt:idref="extended-got" opt:expr="-mxgot"/>
+  <opt:enablePattern opt:idref="lto.enable-vtable-opts" opt:expr="-fwhole-program-vtables"/>
+  <opt:enablePattern opt:idref="lto.enable-thin" opt:expr="-flto=thin"/>
   <opt:submatchPattern opt:idref="common-include-directories" opt:expr="-I(.+)" opt:firstexpr="-I" opt:secondexpr="(.+)"/>
+
 </opt:optionLanguage>

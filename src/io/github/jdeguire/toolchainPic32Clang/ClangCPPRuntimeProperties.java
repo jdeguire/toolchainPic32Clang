@@ -25,4 +25,7 @@ public final class ClangCPPRuntimeProperties extends ClangAbstractTargetRuntimeP
 
         super(desc, conf);
     }
+
+    // TODO:  Since this class doesn't do anything, I might be able to remove it and use the
+    //        ClangRuntimeProperties class instead in the main XML file for the CPP options.
 }
