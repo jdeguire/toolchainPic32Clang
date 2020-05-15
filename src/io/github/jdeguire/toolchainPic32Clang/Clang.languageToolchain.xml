@@ -501,11 +501,9 @@
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
         <mp:makeRule mp:id="tidyDummy" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:markasphony="true" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties">
-<!--            <mp:textEmitter mp:text="@${RM} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${OUTPUT_SUFFIX} ${NEWLINE}"/> -->
             <mp:textEmitter mp:text="@${RM} ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
-<!--            <mp:textEmitter mp:text="@&quot;${gnu_bins_dir}touch&quot; ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex ${NEWLINE}"/>  -->
-<!--            <mp:textEmitter mp:text="@touch ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${OUTPUT_SUFFIX} ${NEWLINE}"/> -->
+<!--            <mp:textEmitter mp:text="@&quot;${gnu_bins_dir}touch&quot; ${FINAL_IMAGE_NAME} ${NEWLINE}"/>  -->
             <mp:textEmitter mp:text="@touch ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
         </mp:makeRule>
 
