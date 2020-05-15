@@ -20,18 +20,6 @@
     	opt:booldefault="true"
     	opt:id="exceptions"/>
     <opt:booleanOption
-    	opt:name="Check that the pointer returned by operator 'new' is non-null"
-        opt:trueemission="-fcheck-new"
-    	opt:falseemission="-fno-check-new"
-    	opt:booldefault="false"
-    	opt:id="check-new"/>
-    <opt:booleanOption
-    	opt:name="Generate code to check for violation of exception specifications at runtime"
-    	opt:trueemission="-fenforce-eh-specs"
-    	opt:falseemission="-fno-enforce-eh-specs"
-    	opt:booldefault="true"
-    	opt:id="eh-specs"/>
-    <opt:booleanOption
         opt:name="Enable C++20 Modules"
         opt:trueemission="-fmodules"
         opt:booldefault="false"

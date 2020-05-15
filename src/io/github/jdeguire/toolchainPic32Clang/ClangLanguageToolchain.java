@@ -121,15 +121,19 @@ public class ClangLanguageToolchain {
      * provide his or her own config via a project option, so we need to check for and use that if
      * the user specified one.
      */
-    public static String getTargetConfigPath(TargetDevice target, ProjectOptionAccessor optAccessor) {
+    public static String getTargetConfigPath(TargetDevice target,
+                                             MakeConfiguration conf,
+                                             ProjectOptionAccessor optAccessor) {
         String userConfig = optAccessor.getProjectOption("C32Global", "user-target-config", "");
 
         if(!userConfig.isEmpty()) {
             return userConfig;
         } else {
-            // This should be relative to SYSROOT because of the '=' at the start.
+            // Testing indicates that the "--config" does not recognize '=' to mean "relative to
+            // SysRoot, so we need the full path here.
+            String root_path = getToolchainRootPath(conf);
             String target_cfg = ClangLanguageToolchain.TARGET_CFG_DIR;
-            return "=/" + target_cfg + "/" + target.getDeviceName().toLowerCase() + ".cfg";
+            return root_path + target_cfg + "/" + target.getDeviceName().toLowerCase() + ".cfg";
         }
     }
 

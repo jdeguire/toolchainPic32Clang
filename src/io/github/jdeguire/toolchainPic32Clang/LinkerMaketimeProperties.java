@@ -31,13 +31,13 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
         super(projectDescriptor, conf, commandLineProperties);
 
         addDebuggerNameOptions();
-        commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
-        commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
-        commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
+        commandLineProperties.setProperty("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
+        commandLineProperties.setProperty("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
+        commandLineProperties.setProperty("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION).toString());
 
-        commandLineProperties.put("show_mem_usage", shouldShowMemUsage());
-        commandLineProperties.put("thinlto_threads_opt", getThinLtoThreadsOpt());
-        commandLineProperties.put("multilib_dir_opt", getMultilibDirectoryOpt());
+        commandLineProperties.setProperty("show_mem_usage", shouldShowMemUsage().toString());
+        commandLineProperties.setProperty("thinlto_threads_opt", getThinLtoThreadsOpt());
+        commandLineProperties.setProperty("multilib_dir_opt", getMultilibDirectoryOpt());
     }
 
     // TODO:  Can we use this or do we remove it?

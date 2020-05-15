@@ -21,10 +21,10 @@ public class ClangGlobalMaketimeProperties extends CommonMaketimeProperties {
 		IllegalArgumentException {
 
         super(projectDescriptor, conf, commandLineProperties);
-        commandLineProperties.put("USE_RESPONSE_FILES", getUseResponseFiles());
-        commandLineProperties.put("USE_LTO", getUseLTO());
-        commandLineProperties.put("CHOP_AR_LINE", getChoppedArchiverLine());
-        commandLineProperties.put("run_clang_tidy", getRunClangTidy());
+        commandLineProperties.setProperty("USE_RESPONSE_FILES", getUseResponseFiles().toString());
+        commandLineProperties.setProperty("USE_LTO", getUseLTO().toString());
+        commandLineProperties.setProperty("CHOP_AR_LINE", getChoppedArchiverLine());
+        commandLineProperties.setProperty("run_clang_tidy", getRunClangTidy().toString());
     }
 
     public final String getChoppedArchiverLine() {

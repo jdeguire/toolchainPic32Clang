@@ -10,8 +10,12 @@ import com.microchip.mplab.mdbcore.common.streamingdata.interfaces.TraceSetupInf
 import com.microchip.mplab.mdbcore.streamingdataprocessing.TraceOptionsConstants;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfigurationBook;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
+import org.openide.util.Utilities;
 
 /**
  *
@@ -19,6 +23,8 @@ import java.util.logging.Level;
  * Modified by Jesse DeGuire for toolchainPic32Clang.
  */
 public final class CompilerMaketimeProperties extends CommonMaketimeProperties {
+
+    private static String gnubinsDir = "";
 
     public CompilerMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
@@ -32,11 +38,11 @@ public final class CompilerMaketimeProperties extends CommonMaketimeProperties {
         super(projectDescriptor, conf, commandLineProperties);
 
         addDebuggerNameOptions();
-        commandLineProperties.put("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
-        commandLineProperties.put("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
-        commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
-
-        commandLineProperties.put("c_includes_in_cpp", shouldUseCIncludesInCPP());
+        commandLineProperties.setProperty("INSTRUMENTED_TRACE_OPTIONS", getTraceOptions());
+        commandLineProperties.setProperty("FUNCTION_LEVEL_PROFILING_OPTIONS", getFunctionLevelProfilingOptions()); // waiting on compiler 2013.06.04
+        commandLineProperties.setProperty("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION).toString());
+        commandLineProperties.setProperty("c_includes_in_cpp", shouldUseCIncludesInCPP());
+        commandLineProperties.setProperty("gnu_bins_dir", getGnuBinsDirectory());
     }
 
     // TODO:  We might not be able to use these instrumented trace options, so they might need removing.
@@ -133,5 +139,82 @@ public final class CompilerMaketimeProperties extends CommonMaketimeProperties {
 
     private String shouldUseCIncludesInCPP() {
         return optAccessor.getProjectOption("C32CPP", "c-includes-in-cpp", "false");
-    }    
+    }
+
+    /* MPLAB X ships with a directory containing useful GNU utilities on Windows.  This will look
+     * for that directory on Windows, but return an empty string on other platforms since the 
+     * utilities should already be present in the PATH (namely, in the "/bin/" directory).  This 
+     * actually does the search only once because the directory will be in the MPLAB X install path,
+     * which isn't going to change while we're running.
+     */
+// TODO:  MPLAB X is actually supposed to set up the environment for us (though not when debugging
+//        through Netbeans), so this should not be needed.
+    private String getGnuBinsDirectory() {
+/*
+        boolean isWindows = Utilities.isWindows();
+
+        if(isWindows  &&  gnubinsDir.isEmpty()) {
+            File searchDir = new File(System.getProperty("netbeans.home"));
+
+            if(!searchDir.isDirectory()) {
+                searchDir = searchDir.getParentFile();
+            }
+
+            // Search the directory for the "gnuBins" subdirectory and keep going up levels until we
+            // find it or can't go any higher.
+            boolean found = false;
+            while(!found  &&  null != searchDir) {
+                if(subdirectoryExists(searchDir, "gnuBins", !isWindows)) {
+                    searchDir = new File(searchDir, "gnuBins");
+                    found = true;
+                } else {
+                    searchDir = searchDir.getParentFile();
+                }
+            }
+
+            if(found) {
+                if(subdirectoryExists(searchDir, "GnuWin64", !isWindows)) {
+                    searchDir = new File(searchDir, "GnuWin64");
+                    searchDir = new File(searchDir, "bin");
+                    gnubinsDir = searchDir.getAbsolutePath() + File.separator;
+                } else if(subdirectoryExists(searchDir, "GnuWin32", !isWindows)) {
+                    searchDir = new File(searchDir, "GnuWin32");
+                    searchDir = new File(searchDir, "bin");
+                    gnubinsDir = searchDir.getAbsolutePath() + File.separator;
+                }
+            }
+        }
+
+        return gnubinsDir;
+*/
+        return "";
+    }
+
+    /* If 'f' is a directory, search it to find a subdirectory with the given name and return True
+     * if it was found and False if it was not.  This will return False if the given File is not
+     * a directory.
+     */
+    private boolean subdirectoryExists(File file, String subdir, boolean caseSensitive) {
+        boolean found = false;
+
+        if(file.isDirectory()) {
+            File[] subfiles = file.listFiles();
+
+            for(File sf : subfiles) {
+                if(sf.isDirectory()) {
+                    if(caseSensitive) {
+                        found = sf.getName().equals(subdir);
+                    } else {
+                        found = sf.getName().equalsIgnoreCase(subdir);
+                    }
+
+                    if(found) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        return found;
+    }
 }

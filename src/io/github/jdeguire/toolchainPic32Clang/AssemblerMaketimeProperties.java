@@ -27,6 +27,6 @@ public final class AssemblerMaketimeProperties extends CommonMaketimeProperties 
         super(projectDescriptor, conf, commandLineProperties);
 
         addDebuggerNameOptions();
-        commandLineProperties.put("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION));
+        commandLineProperties.setProperty("project_cpp", shouldBuildWithCPP(ClangLanguageToolchain.CPP_SUPPORT_FIRST_VERSION).toString());
     }
 }

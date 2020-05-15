@@ -58,7 +58,7 @@ abstract class ClangAbstractSystemDefineProvider implements DefineProvider {
                                          Project proj) 
                                          throws IOException {
         ProjectOptionAccessor optAccessor = new ProjectOptionAccessor(proj, makeConf);
-        String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, optAccessor);
+        String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, makeConf, optAccessor);
         List<String> cfgContents = ClangLanguageToolchain.getTargetConfigContents(makeConf, proj, cfgPath);
 
         // Find lines that contain Clang options to define a macro.  Clang wants an '=' between a 

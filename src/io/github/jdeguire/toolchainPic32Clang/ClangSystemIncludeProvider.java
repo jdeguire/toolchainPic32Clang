@@ -38,7 +38,7 @@ public class ClangSystemIncludeProvider implements IncludeProvider {
         try {
             TargetDevice target = new TargetDevice(makeConf.getDevice().getValue());
             ProjectOptionAccessor optAccessor = new ProjectOptionAccessor(project, makeConf);
-            String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, optAccessor);
+            String cfgPath = ClangLanguageToolchain.getTargetConfigPath(target, makeConf, optAccessor);
             List<String> cfgContents = ClangLanguageToolchain.getTargetConfigContents(makeConf, project, cfgPath);
 
             for(String line : cfgContents) {

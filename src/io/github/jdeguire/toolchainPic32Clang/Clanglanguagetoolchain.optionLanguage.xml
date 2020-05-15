@@ -11,7 +11,7 @@
         opt:id="clang-version"
         opt:groupid="ignore-me"
         opt:name="Clang Version"
-        opt:textdefault=""
+        opt:textdefault="Close and re-open Project Properties to see"
         opt:textpreferred=""
         opt:grayif="true">
     </opt:stringOption>
