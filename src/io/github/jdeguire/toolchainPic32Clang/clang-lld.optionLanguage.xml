@@ -58,22 +58,22 @@
     </opt:stringOption>
     <!-- TODO: We may not be able to use these next two options and might have to get rid of them. -->
     <opt:booleanOption
-		opt:groupid="post"
+		opt:groupid="ignore-me"
 		opt:id="code-dinit"
 		opt:name="Place code in data init template"
 		opt:default="${Imola2.detected}"
-		opt:trueemission="--code-in-dinit"
-		opt:falseemission="--no-code-in-dinit"
+		opt:trueemission=""
+		opt:falseemission=""
 		opt:suppressif="${target.isARM}">
       Place code sections into the data-initialization template stored in the .dinit section.
     </opt:booleanOption>
     <opt:booleanOption
-		opt:groupid="post"
+		opt:groupid="ignore-me"
 		opt:id="allocate-dinit"
 		opt:name="Allocate data-init section to serial memory"
 		opt:default="${Imola2.detected}"
-		opt:trueemission="--dinit-in-serial-mem"
-		opt:falseemission="--no-dinit-in-serial-mem"
+		opt:trueemission=""
+		opt:falseemission=""
 		opt:suppressif="${target.isARM}">
       Allocate the .dinit template section to a memory region named "serial_mem" rather than "kseg0_program_mem".
     </opt:booleanOption>

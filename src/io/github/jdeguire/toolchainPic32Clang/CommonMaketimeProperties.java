@@ -42,8 +42,8 @@ public class CommonMaketimeProperties extends MPLABXSpecificProperties {
         String config_path = ClangLanguageToolchain.getTargetConfigPath(target, conf, optAccessor);
 
         commandLineProperties.setProperty("xc32_compat_macros", getXC32CompatibilityMacroOptions());
-        commandLineProperties.setProperty("sysroot_path", toolchain_root);
-        commandLineProperties.setProperty("target_config_path", config_path);
+        commandLineProperties.setProperty("sysroot_opt", "--sysroot=\"" + toolchain_root + "\"");
+        commandLineProperties.setProperty("target_config_opt", "--config \"" + config_path + "\"");
     }
 
     final void addDebuggerNameOptions() {
