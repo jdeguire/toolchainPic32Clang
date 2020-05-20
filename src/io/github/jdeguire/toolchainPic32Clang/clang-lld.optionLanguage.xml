@@ -139,13 +139,14 @@
 		opt:groupid="pre"
 		opt:name="Do not link crt0 startup code"
 		opt:trueemission="-nostartfiles"/>
-<!-- TODO:  We may not be able to remove startup code, but Harmony 3 might use this. -->
+<!-- TODO:  We'll have to check this and use it to add the startup object file to the link step. 
+            Harmony 3 appears to set this one, so if we can keep only one it'll be this next one.
+-->
     <opt:booleanOption
 		opt:id="no-device-startup-code"
-		opt:groupid="pre"
+		opt:groupid="ignore-me"
 		opt:name="Do not link device startup code"
-		opt:trueemission="-mno-device-startup-code"
-		opt:unsuppressif="${target.isARM}">
+		opt:trueemission="">
     </opt:booleanOption>
     <!-- Next 4 options used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
     <opt:booleanOption

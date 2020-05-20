@@ -74,7 +74,6 @@
 
         <mp:makeRule mp:id="doLTO" mp:prerequisites="${CURRENT_SOURCE_FILES}" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
-            <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
             <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
@@ -110,7 +109,6 @@
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
-            <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=" "/>
@@ -126,8 +124,6 @@
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32-LD" opt:groupidref="appendMe" mp:prefix="," mp:transform="true" mp:from=" " mp:to=","/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
-            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
-            <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
             <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
             <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
@@ -167,7 +163,6 @@
             <mp:textEmitter mp:ifnot="${SIMULATOR}" mp:onlydebug="true" mp:text=",--defsym=__ICD2RAM=1"/>
             <mp:textEmitter mp:onlydebug="true" mp:text=",--defsym=__MPLAB_DEBUG=1,--defsym=__DEBUG=1${COMMA_BEFORE_DEBUGGER_NAME}${DEBUGGER_NAME_AS_SYMBOL}"/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32-AS" opt:groupidref="symbols-on-release" mp:prefix="," mp:separator=","/>
-            <!--mp:textEmitter mp:text=",-MD=&quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot;"/-->
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="post" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="common-include-dirs" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
@@ -188,13 +183,10 @@
 
         <mp:makeRule mp:id="doRespFileLTO" mp:prerequisites="${CURRENT_SOURCE_FILES} nbproject/$(CND_CONF).$(IMAGE_TYPE)" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
-            <!--mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/-->
             <mp:textEmitter mp:text="@${RM} $(POSSIBLE_DEPFILES) ${NEWLINE}"/><!-- any .ok and .err files? -->
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text="${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text="${MP_CPPC} "/>
             <mp:textEmitter mp:text=" @nbproject/$(CND_CONF).$(IMAGE_TYPE) ${NEWLINE}"/>
-            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
-            <!--mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/-->
             <mp:textEmitter mp:if="${show_mem_usage}" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-size -B -t ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX}${NEWLINE}"/>
             <mp:textEmitter mp:onlyproduction="true" mp:text="${MP_CC_DIR}${FOLDER_CHAR_SEPARATOR_FOR_TOOL_DIR}llvm-objcopy -O ihex ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.hex${NEWLINE}"/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
@@ -204,13 +196,10 @@
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
-            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
-            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_CC_PRE) "/>
-            <!-- This needs the backslash and quote because of FixDeps.  Otherwise, it will output something unescaped and will fail. -->
-            <mp:textEmitter mp:text=" --sysroot=\&quot;${sysroot_path}\&quot; --config \&quot;${target_config_path}\&quot; "/>
+            <mp:textEmitter mp:text=" --sysroot=&quot;${sysroot_path}&quot; --config &quot;${target_config_path}&quot; "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32CPP" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
@@ -233,18 +222,16 @@
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32CPP" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../ ${NEWLINE}" mp:macroDetectionExclude="true"/>
         </mp:makeRule>
         <mp:makeRule mp:id="compile" mp:prerequisites=".*\.[cC]$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties" mp:commandlineprovider="com.microchip.mplab.nbide.toolchainCommon.provider.CCompilerMacrosProvider">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}" mp:macroDetectionExclude="true"/>
-            <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
-            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c" mp:macroDetectionExclude="true"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text=" $(MP_EXTRA_CC_PRE) "/>
-            <!-- This needs the backslash and quote because of FixDeps.  Otherwise, it will output something unescaped and will fail. -->
-            <mp:textEmitter mp:text=" --sysroot=\&quot;${sysroot_path}\&quot; --config \&quot;${target_config_path}\&quot; "/>
+            <mp:textEmitter mp:text=" --sysroot=&quot;${sysroot_path}&quot; --config &quot;${target_config_path}&quot; "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text="-g -D__DEBUG ${DEBUGGER_NAME_AS_MACRO} "/>
             <mp:optionEmitter mp:onlyproduction="true" mp:idref="C32" opt:groupidref="symbols-on-release" mp:prefix=" " mp:separator=" "/>
@@ -266,16 +253,15 @@
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}" mp:macroDetectionExclude="true"/>
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../ ${NEWLINE}" mp:macroDetectionExclude="true"/>
         </mp:makeRule>
         <mp:makeRule mp:id="assemble" mp:prerequisites=".*\.s$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
-            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../  -c"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
-            <!-- This needs the backslash and quote because of FixDeps.  Otherwise, it will output something unescaped and will fail. -->
-            <mp:textEmitter mp:text=" --sysroot=\&quot;${sysroot_path}\&quot; --config \&quot;${target_config_path}\&quot; "/>
+            <mp:textEmitter mp:text=" --sysroot=&quot;${sysroot_path}&quot; --config &quot;${target_config_path}&quot; "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG  ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c "/>
@@ -297,19 +283,17 @@
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; $(SILENT) -rsi ${MP_CC_DIR}../ ${NEWLINE}"/>
         </mp:makeRule>
         <mp:makeRule mp:id="assembleWithPreprocess" mp:prerequisites=".*\.S$" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.AssemblerMaketimeProperties">
             <mp:textEmitter mp:text="@${MKDIR} ${CURRENT_QUOTED_IF_SPACED_OBJECT_DIR_UNIX_SLASHES} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.d ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${RM} ${CURRENT_QUOTED_IF_SPACED_OBJECT_FILE}.ok ${CURRENT_OBJECT_FILE}.err ${NEWLINE}"/>
-           <!-- Actually do it redirecting output and recording success/failure (which does not look neat) and do not stop on fail -->
-            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.asm.d&quot; -t $(SILENT) -rsi ${MP_CC_DIR}../  -c"/>
             <mp:textEmitter mp:ifnot="${project_cpp}" mp:text=" ${MP_CC} "/>
             <mp:textEmitter mp:if="${project_cpp}" mp:text=" ${MP_CPPC} "/>
             <mp:textEmitter mp:text="$(MP_EXTRA_AS_PRE) "/>
-            <!-- This needs the backslash and quote because of FixDeps.  Otherwise, it will output something unescaped and will fail. -->
-            <mp:textEmitter mp:text=" --sysroot=\&quot;${sysroot_path}\&quot; --config \&quot;${target_config_path}\&quot; "/>
+            <mp:textEmitter mp:text=" --sysroot=&quot;${sysroot_path}&quot; --config &quot;${target_config_path}&quot; "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="lto" mp:separator=" " mp:prefix=" "/>
             <mp:textEmitter mp:onlydebug="true" mp:text=" -D__DEBUG ${DEBUGGER_NAME_AS_MACRO}"/>
             <mp:textEmitter mp:text=" -c "/>
@@ -335,6 +319,7 @@
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="postlist" mp:expand="true" mp:separator="," mp:prefix=","/>
             <mp:optionEmitter mp:idref="C32-AS" opt:groupidref="appendMe" mp:prefix=" "/>
             <mp:textEmitter mp:text="${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${FIXDEPS} &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.d&quot; &quot;${CURRENT_UNQUOTED_OBJECT_FILE}.asm.d&quot; -t $(SILENT) -rsi ${MP_CC_DIR}../ ${NEWLINE}"/>
         </mp:makeRule>
         <mp:makeRule mp:id="link" mp:target="${FINAL_IMAGE_NAME}" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.LinkerMaketimeProperties" mp:prerequisites="${CURRENT_OBJECT_FILES}">
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
@@ -501,10 +486,10 @@
             <mp:textEmitter mp:text="${NEWLINE}"/>
         </mp:makeRule>
         <mp:makeRule mp:id="tidyDummy" mp:target="${FINAL_IMAGE_NAME}" mp:prerequisites="${CURRENT_OBJECT_FILES}" mp:markasphony="true" mp:final="false" mp:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.CompilerMaketimeProperties">
-            <mp:textEmitter mp:text="@${RM} ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@${RM} -r ${FINAL_TARGET_DIR} ${NEWLINE}"/>
             <mp:textEmitter mp:text="@${MKDIR} ${FINAL_TARGET_DIR} ${NEWLINE}"/>
-<!--            <mp:textEmitter mp:text="@&quot;${gnu_bins_dir}touch&quot; ${FINAL_IMAGE_NAME} ${NEWLINE}"/>  -->
-            <mp:textEmitter mp:text="@touch ${FINAL_IMAGE_NAME} ${NEWLINE}"/>
+            <mp:textEmitter mp:text="@touch ${FINAL_IMAGE_NAME_MINUS_EXTENSION}.${DEBUGGABLE_SUFFIX} ${NEWLINE}"/>
+            <mp:textEmitter mp:onlyproduction="true" mp:text="@echo &quot;:00000001FF&quot; &gt; ${FINAL_IMAGE_NAME}${NEWLINE}" />
         </mp:makeRule>
 
     </mp:makefileWriter>

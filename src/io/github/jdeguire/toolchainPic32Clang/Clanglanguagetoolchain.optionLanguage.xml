@@ -31,11 +31,13 @@
             config files found under the "target/config" directory where the toolchain is located.
         </opt:xhtml>
     </opt:stringOption>
+    <!-- TODO:  Enabling colors causes MPLAB X to not linkify messages, probably because it gets
+                caught up on the ANSI codes.  Do I need to make my own message parser to handle this? -->
     <opt:booleanOption
         opt:id="color-diagnostics"
         opt:groupid="both"
         opt:name="Use colors in diagnostic messages"
-        opt:trueemission="-fcolor-diagnostics"
+        opt:trueemission="-fansi-escape-codes -fcolor-diagnostics"
         opt:falseemission="-fno-color-diagnostics"
         opt:booldefault="true">
         <opt:xhtml>

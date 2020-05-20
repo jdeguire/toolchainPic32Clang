@@ -52,7 +52,7 @@ public final class ProcessorDependentMaketimeProperties extends CommonMaketimePr
             }
 
                 
-            gldName = "=/" + libDir + "/" + target.getDeviceName().toLowerCase() + ".ld";
+            gldName = "=/" + libDir + "/proc/" + target.getDeviceName().toLowerCase() + ".ld";
         }
 
         commandLineProperties.setProperty("OPTION_TO_SPECIFY_GLD", ",-T ");
