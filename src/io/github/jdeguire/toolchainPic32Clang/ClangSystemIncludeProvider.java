@@ -4,6 +4,8 @@ package io.github.jdeguire.toolchainPic32Clang;
 //import com.microchip.mplab.logger.MPLABLogger;
 import com.microchip.mplab.nbide.embedded.makeproject.api.configurations.MakeConfiguration;
 import com.microchip.mplab.nbide.embedded.spi.IncludeProvider;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 //import java.util.logging.Logger;
@@ -22,8 +24,8 @@ public class ClangSystemIncludeProvider implements IncludeProvider {
 //    private static final Logger logger = MPLABLogger.mplog;
 
     /* Read system directories from the target config file and return them in a list.  MPLAB X is
-     * supposed to invoke the compiler to figure this out, but it may not be including the target
-     * config files when it does so, so we'll do this manually.
+     * supposed to invoke the compiler to figure this out, but here is a fallback in case MPLAB X is
+     * not able to do that for some reason.
      *
      * Each supported device has a target config file that tells Clang things like CPU architecture,
      * macros, and directories.  The user can also specify a custom file through the project options.
@@ -42,14 +44,41 @@ public class ClangSystemIncludeProvider implements IncludeProvider {
             List<String> cfgContents = ClangLanguageToolchain.getTargetConfigContents(makeConf, project, cfgPath);
 
             for(String line : cfgContents) {
-                if(line.startsWith("-isystem")) {
-                    // Remove "-isystem" and quotes since we don't need them here.
-                    line = line.substring(8);
+                boolean found = false;
+                boolean relativeToSysroot = false;
+
+                // If either of these options has a '=' instead of a space between the option and 
+                // its value, then the given directory is relative to the "--sysroot" option value. 
+                // This plug-in sets Sysroot to the toolchain's root directory.
+                if(line.startsWith("-I")) {
+                    relativeToSysroot = ('=' == line.charAt(2));
+                    found = true;
+                    line = line.substring(3);    // remote option since we no longer need it.
+                } else if(line.startsWith("-isystem")) {
+                    relativeToSysroot = ('=' == line.charAt(8));
+                    found = true;
+                    line = line.substring(9);    // remote option since we no longer need it.
+                }
+                
+                if(found)
+                {
+                    // Remove quotes since we don't need them here.
                     line = line.replace('\"', ' ');
                     line = line.trim();
-
+                    
                     // We need to convert to an absolute path here so MPLAB X can find it.
-                    line = ClangLanguageToolchain.convertRelativeToAbsolutePath(makeConf, project, line);
+                    if(relativeToSysroot) {
+                        String rootPath = ClangLanguageToolchain.getToolchainRootPath(makeConf);
+                        line = Paths.get(rootPath, line).normalize().toString();
+                    } else {
+                        Path p = Paths.get(line);
+
+                        if(!p.isAbsolute()) {
+                            String projPath = project.getProjectDirectory().getPath();
+                            line = Paths.get(projPath, line).normalize().toString();
+                        }
+                    }
+
                     res.add(line);
                 }
             }

@@ -43,7 +43,7 @@ public class ClangVersionProvider implements VersionProvider
 
         // Check if we need to update our cache because we got a new directory.
         if(!cachedPath.equals(file.getPath())) {
-            file = new File(file, ClangLanguageToolchain.VERSION_FILE_PATH);
+            file = new File(file, ClangLanguageToolchain.getPic32ClangVersionFilePath());
 
             try(FileReader reader = new FileReader(file)) {
                 char[] buf = new char[32];

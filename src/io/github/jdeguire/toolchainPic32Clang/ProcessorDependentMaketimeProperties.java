@@ -39,20 +39,8 @@ public final class ProcessorDependentMaketimeProperties extends CommonMaketimePr
             // Target config files should already add the location of the default linker script as a
             // library path, but we should at least make the given path relative to SYSROOT just in
             // case the user happens to add his/her own path that would match with just a filename.
-            String libDir;
-
-            if(target.isArm()) {
-                if(target.supportsArmIsa()) {
-                    libDir = ClangLanguageToolchain.CORTEX_A_LIB_DIR;
-                } else {
-                    libDir = ClangLanguageToolchain.CORTEX_M_LIB_DIR;
-                }
-            } else {
-                libDir = ClangLanguageToolchain.MIPS32_LIB_DIR;
-            }
-
-                
-            gldName = "=/" + libDir + "/proc/" + target.getDeviceName().toLowerCase() + ".ld";
+            String libDir = ClangLanguageToolchain.getArchFamilyLibraryPath(target);                
+            gldName = "=/" + libDir + "proc/" + target.getDeviceName().toLowerCase() + ".ld";
         }
 
         commandLineProperties.setProperty("OPTION_TO_SPECIFY_GLD", ",-T");

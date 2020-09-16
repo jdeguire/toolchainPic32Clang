@@ -44,11 +44,7 @@ public class ClangLanguageToolchain {
 //    public static final String SKIP_LICENSE_CHECK_SUPPORT_FIRST_VERSION = "1.43";
 //    public static final String BUILD_COMPARISON_SUPPORT_FIRST_VERSION = "1.42";
 //    public static final String MEM_RESERVATION_SUPPORT_FIRST_VERSION = "1.30";
-    public static final String TARGET_CFG_DIR = "target/config";
-    public static final String MIPS32_LIB_DIR = "target/mips32/lib";
-    public static final String CORTEX_M_LIB_DIR = "target/cortex-m/lib";
-    public static final String CORTEX_A_LIB_DIR = "target/cortex-a/lib";
-    public static final String VERSION_FILE_PATH = "pic32clang_version";
+    public static final String TARGET_DIR = "target";
 
     private static final ArrayList<String> cachedTargetConfigContents = new ArrayList<String>();
     private static String cachedTargetConfigPath = "";
@@ -86,35 +82,23 @@ public class ClangLanguageToolchain {
         return rootPath.substring(0, i+1);
     }
 
-    /* If the given path starts with a '=', then it is meant to be relative to SYSROOT (where Clang
-     * will assume is the base of its directory structure).  Convert such paths to absolute paths by
-     * substituting the '=' for the actual SYSROOT path.
-     * 
-     * If the path does not start with '=' but is realtive, then this will convert it to an absolute
-     * path assuming that the path should be relative to the project directory (the Project.X 
-     * directory).  
-     *
-     * This will just return the given path if it does not start with '='.
+    /* Return the path relative to the toolchain root that contains the files specific to that arch
+     * family, such as "mips32" or "cortex-m". This path will end in '/'.
      */
-    public static String convertRelativeToAbsolutePath(MakeConfiguration conf,
-                                                       Project proj,
-                                                       String pathStr) {
-        if('=' == pathStr.charAt(0)) {
-            String rootPath = getToolchainRootPath(conf);
-            rootPath = rootPath.substring(0, rootPath.length()-1);   // strip trailing '/'
-            
-            pathStr = rootPath + pathStr.substring(1);
-        } else {
-            Path p = Paths.get(pathStr);
-
-            if(!p.isAbsolute()) {
-                String projPath = proj.getProjectDirectory().getPath();
-
-                pathStr = Paths.get(projPath, pathStr).normalize().toString();
-            }
+    public static String getArchFamilyPath(TargetDevice target) {
+        if(target.isMips32())
+            return TARGET_DIR + "/mips32/";
+        else {
+            // This should get us "cortex-m" or "cortex-a" or whatever else.
+            return TARGET_DIR + "/" + target.getCpuName().toLowerCase().substring(0, 8) + "/";
         }
+    }
 
-        return pathStr;
+    /* Return the path relative to the toolchain root that contains the arch-specific libraries for
+     * the given target. This path will end in '/'.
+     */
+    public static String getArchFamilyLibraryPath(TargetDevice target) {
+        return getArchFamilyPath(target) + "lib/";
     }
 
     /* Get the path to the target config file that will be used for the given target.  The user can
@@ -132,9 +116,17 @@ public class ClangLanguageToolchain {
             // Testing indicates that the "--config" does not recognize '=' to mean "relative to
             // SysRoot, so we need the full path here.
             String root_path = getToolchainRootPath(conf);
-            String target_cfg = ClangLanguageToolchain.TARGET_CFG_DIR;
-            return root_path + target_cfg + "/" + target.getDeviceName().toLowerCase() + ".cfg";
+            String target_cfg = getArchFamilyPath(target);
+            return root_path + target_cfg + target.getDeviceName().toLowerCase() + ".cfg";
         }
+    }
+
+    /* Return the file path relative to the toolchain root that contains the package version for
+     * this toolchain. The whole package (compiler, libraries, files, etc.) is versioned separately
+     * from Clang itself.
+     */
+    public static String getPic32ClangVersionFilePath() {
+        return "pic32clang_version";        
     }
 
 
@@ -174,7 +166,14 @@ public class ClangLanguageToolchain {
                                                        Project proj,
                                                        String targetCfgPath)
                                                 throws IOException {
-        targetCfgPath = convertRelativeToAbsolutePath(conf, proj, targetCfgPath);
+        // Track the absolute path because two different toolchains with potentially different files
+        // can have the same relative paths.
+        Path p = Paths.get(targetCfgPath);
+
+        if(!p.isAbsolute()) {
+            String projPath = proj.getProjectDirectory().getPath();
+            targetCfgPath = Paths.get(projPath, targetCfgPath).normalize().toString();
+        }
 
         if(!targetCfgPath.equals(cachedTargetConfigPath)) {
             updateTargetConfigCache(targetCfgPath);

@@ -15,6 +15,8 @@
     <mp:hasCapability mp:id="library" mp:bool="true"/>
     <mp:dynamicCapabilitiesProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangDynamicCapabilitiesProvider"/>
     <mp:helpFileProvider mp:class="io.github.jdeguire.toolchainPic32Clang.ClangHelpFileProvider"/>
+    <!-- TODO:  Pester MPlAB X guys to make ExecutionEnvironment available so I can try this. -->
+<!--    <mp:errorParser mp:class="io.github.jdeguire.toolchainPic32Clang.ClangErrorParser"/>  -->
 
     <!-- The mp:id fields here match the XML element nodes in the MPLAB X project configuration file.
          Keep these as "C32blahblah" to stay compatible with Microchip tools. -->
@@ -24,7 +26,7 @@
     <mp:configurationObject mp:id="C32-LD" opt:src="clang-lld.optionLanguage.xml" mp:idref="lld" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
     <mp:configurationObject mp:id="C32CPP" opt:src="clang-cpp.optionLanguage.xml" mp:idref="clang++" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangCPPRuntimeProperties"/>
     <mp:configurationObject mp:id="C32-AR" opt:src="clang-ar.optionLanguage.xml" mp:idref="llvm-ar" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangRuntimeProperties"/>
-    <mp:configurationObject mp:id="Tidy" opt:src="clang-tidy.optionLanguage.xml" mp:idref="clang-tidy" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangTidyRuntimeProperties"/>
+    <mp:configurationObject mp:id="Tidy" opt:src="clang-tidy.optionLanguage.xml" mp:idref="clang" opt:runtimepropertiesclass="io.github.jdeguire.toolchainPic32Clang.ClangTidyRuntimeProperties"/>
 
     <mp:customizerNode mp:idref="C32Global" mp:name="Clang (Global Options)" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNode">
         <mp:customizerNode mp:idref="C32-AS" mp:name="Assembler" mp:class="io.github.jdeguire.toolchainPic32Clang.ClangCustomizerNodeAS"/>

@@ -119,14 +119,16 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
         return opt;
     }
 
-    /* Return the "-L<dir>" option string that will point to the particular multilib variant that we 
+    /* Return the "-L=<dir>" option string that will point to the particular multilib variant that we 
      * need given our options and architecture.
      *
      * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'dsp'
      * applies only to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
-        String multilibOpt = "-L\"=/";
+        // The '=' makes this relative to the directory given with the "--sysroot" option, which
+        // this plug-in sets to the root path of the installed toolchain in use.
+        String multilibOpt = "-L=\"/" + ClangLanguageToolchain.getArchFamilyLibraryPath(target);
 
         if(target.isMips32()) {
             multilibOpt += getMips32Multilib();
@@ -144,20 +146,19 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
     }
 
     private String getMips32Multilib() {
-        String libdir = ClangLanguageToolchain.MIPS32_LIB_DIR + "/";
-        libdir += target.getCpuName();
+        String libdir = target.getArchNameForCompiler().substring(6);     // remove "mips32" to leave "r2" or "r5"
 
         // ISA is user-selectable via an option, so check that option.
         if(target.supportsMips16Isa()  &&  
            optAccessor.getBooleanProjectOption("C32-LD", "generate-16-bit-code", false)) {
             libdir += "/mips16";
-        }
-        else if(target.supportsMicroMipsIsa()  &&  target.supportsMips32Isa()) {
-            if(optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
+        } else if(target.supportsMicroMipsIsa()) {
+            if(!target.supportsMips32Isa()  ||  
+	       optAccessor.getBooleanProjectOption("C32-LD", "generate-micro-compressed-code", false)) {
                 libdir += "/micromips";
             }
         }
-        // else will be MIPS32 or microMIPS for devices that support only the latter.
+        // else will be MIPS32.
 
         if(target.supportsDspR2Ase()) {
             libdir += "/dspr2";
@@ -171,8 +172,7 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
     }
 
     private String getCortexMMultilib() {
-        String libdir = ClangLanguageToolchain.CORTEX_M_LIB_DIR + "/";
-        libdir += target.getCpuName().replace('-', '_');
+        String libdir = target.getArchNameForCompiler().substring(3);     // remove "arm" to leave "v__"
 
         // ISA is always Thumb on Cortex-M, so that's always the default.
 
@@ -181,13 +181,12 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
         if(target.hasFpu()) {
             libdir += "/" + target.getArmFpuName().toLowerCase();
         }
-        
+
         return libdir;
     }
 
     private String getCortexAMultilib() {
-        String libdir = ClangLanguageToolchain.CORTEX_A_LIB_DIR + "/";
-        libdir += target.getCpuName().replace('-', '_');
+        String libdir = target.getArchNameForCompiler().substring(3);     // remove "arm" to leave "v__"
 
         // ISA is user-selectable via an option, so check that option.
         if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {

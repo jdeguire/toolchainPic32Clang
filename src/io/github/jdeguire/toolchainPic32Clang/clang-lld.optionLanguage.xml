@@ -185,14 +185,6 @@
 		opt:name="Link Thumb startup code and libraries"
 		opt:default="false"
 		opt:suppressif="${thumb.suppress}"/>
-<!-- TODO:  We may not be able to do this because Musl bundles the math library into the C library. -->
-    <opt:booleanOption
-		opt:id="exclude-floating-point-library"
-		opt:groupid="post"
-		opt:name="Exclude floating-point library"
-		opt:booldefault="false"
-		opt:trueemission=""
-		opt:falseemission="-lm"/>
     <opt:booleanOption
 		opt:id="include-cxx-experimental"
 		opt:groupid="post"

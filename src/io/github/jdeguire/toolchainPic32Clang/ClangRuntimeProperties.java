@@ -140,7 +140,7 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
 
         if(!currentVer.equals(cachedClangVersion)) {
             try {
-            optAccessor.setProjectOption("C32Global", "clang-version", cachedClangVersion);
+                optAccessor.setProjectOption("C32Global", "clang-version", cachedClangVersion);
             } catch(IllegalArgumentException e) {
                 // When creating a new project or switching from some other toolchain to Clang,
                 // this XML tag does not yet exist, so the above throws an exception.  The default

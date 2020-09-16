@@ -5,9 +5,14 @@
  */
 package io.github.jdeguire.toolchainPic32Clang;
 
-import com.microchip.crownking.mplabinfo.DeviceSupport;
+import com.microchip.crownking.Pair;
+import com.microchip.crownking.mplabinfo.FamilyDefinitions;
+import com.microchip.crownking.mplabinfo.FamilyDefinitions.Family;
+import com.microchip.mplab.crownkingx.xPIC;
+import com.microchip.mplab.crownkingx.xPICFactory;
 import com.microchip.mplab.nbide.embedded.spi.DeviceServiceProvider;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import org.apache.commons.io.FileUtils;
@@ -26,9 +31,47 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
     public ClangDeviceServiceProvider() {
     }
 
+
+    /* I have no idea what this does, but it's apparently required.  This just calls the default
+     * implementation in the interface.
+     */
     @Override
-    public DeviceSupport.ToolSupport isDeviceSupported(String compilerPath, String compilerVersion, String deviceName) {
-        DeviceSupport.ToolSupport toolSupport = DeviceSupport.ToolSupport.RED;
+    public Pair<Boolean, String> hasPackCompatibilityPreRequisite() {
+        return DeviceServiceProvider.super.hasPackCompatibilityPreRequisite();
+    }
+
+    /* I can only guess for now, but I suspect this is used to see if a toolchain could in theory
+     * support a particular device.  The intent here is to support 32-bit devices, so this will
+     * return True if the given device name refers to a 32-bit device.
+     */
+    @Override
+    public boolean isDeviceSupported(String devname) {
+        boolean isSupported = false;
+
+        try {
+            xPIC pic = (xPIC)xPICFactory.getInstance().get(devname);
+
+            if(FamilyDefinitions.Family.PIC32 == pic.getFamily()  ||  
+               FamilyDefinitions.Family.ARM32BIT == pic.getFamily()) {
+                isSupported = true;
+            }
+
+            xPICFactory.getInstance().release(pic);
+
+        } catch (Exception e) {
+            // Do nothing for now.
+        }
+
+        return isSupported;
+    }
+
+    /* This is used by MPLAB X to ask if a single device is supported by the currently-selected 
+     * toolchain.  We check for support by seeing if the toolchain has a target config file for
+     * the given device.
+     */
+    @Override
+    public boolean isDeviceSupported(String compilerPath, String compilerVersion, String deviceName) {
+        boolean isSupported = false;
 
         if (!compilerPath.isEmpty()  &&  deviceName != null) {
             if(!compilerPath.equals(cachedPath)  ||  !compilerVersion.equals(cachedVersion)) {
@@ -38,11 +81,11 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
             }
 
             if(deviceCache.contains(deviceName.toLowerCase())) {
-                toolSupport = DeviceSupport.ToolSupport.GREEN;
+                isSupported = true;
             }
         }
 
-        return toolSupport;
+        return isSupported;
     }
 
     /* This class probably gets called a bunch of times, so just in case we'll keep a cache of
@@ -65,19 +108,29 @@ public final class ClangDeviceServiceProvider implements DeviceServiceProvider {
             file = file.getParentFile();
         }
 
-        file = new File(file, ClangLanguageToolchain.TARGET_CFG_DIR);
+        file = new File(file, ClangLanguageToolchain.TARGET_DIR);
 
-        if(file.exists()) {
-            String exts[] = {"cfg", "CFG"};
-            // MPLAB X has a very old Apache Commons package that doesn't support Java generics.
-            @SuppressWarnings("unchecked")
-            Collection<File> cfgFiles = FileUtils.listFiles(file, exts, true);
+        // The target directory is organized by architecture family ("mips32" vs. "cortex-a", for 
+        // example), and each family has a "config" subdirectory with the target config files. Walk
+        // through these directories to build the full list of supported devices.
+        File[] targetFiles = file.listFiles();        
+        for(File tf : targetFiles) {
+            if(tf.isDirectory()) {
+                File configFile = new File(tf, "config");
 
-            for(File f : cfgFiles) {
-                String basename = f.getName();
-                basename = basename.substring(0, basename.lastIndexOf('.')).toLowerCase();
+                if(configFile.isDirectory()) {
+                    String exts[] = {"cfg", "CFG"};
+                    // MPLAB X has a very old Apache Commons package that doesn't support Java generics.
+                    @SuppressWarnings("unchecked")
+                    Collection<File> cfgFiles = FileUtils.listFiles(file, exts, true);
 
-                deviceCache.add(basename);
+                    for(File f : cfgFiles) {
+                        String basename = f.getName();
+                        basename = basename.substring(0, basename.lastIndexOf('.')).toLowerCase();
+
+                        deviceCache.add(basename);
+                    }
+                }
             }
         }
     }

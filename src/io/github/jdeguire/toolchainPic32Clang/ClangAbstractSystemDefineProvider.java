@@ -64,7 +64,7 @@ abstract class ClangAbstractSystemDefineProvider implements DefineProvider {
         // Find lines that contain Clang options to define a macro.  Clang wants an '=' between a 
         // macro name and value, but MPLAB X wants a space, so we have to replace those.
         for(String line : cfgContents) {
-            if(line.startsWith("-D")  &&  !Character.isWhitespace(2)) {
+            if(line.startsWith("-D")  &&  !Character.isWhitespace(line.charAt(2))) {
                 list.add(replaceFirstChar(line.substring(2), '=', ' '));
             } else if(line.startsWith("--define-macro")) {
                 if('=' == line.charAt(14)  ||  ' ' == line.charAt(14)) {
