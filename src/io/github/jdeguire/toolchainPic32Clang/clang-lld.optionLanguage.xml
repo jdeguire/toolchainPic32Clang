@@ -148,21 +148,7 @@
 		opt:name="Do not link device startup code"
 		opt:trueemission="">
     </opt:booleanOption>
-    <!-- Next 4 options used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
-    <opt:booleanOption
-		opt:id="use-fast-math-libs"
-		opt:groupid="ignore-me"
-		opt:name="Use fast math libraries"
-		opt:booldefault="false">
-      <opt:xhtml>
-        Use libraries that were built with the "-ffast-math" option.  These will have extra optimizations
-        that sacrifice floating-point precision for speed, such as making the following assumptions:
-        <br/> - floating-point math follows regular algebraic rules such as	the associative and 
-        distributive properties, 
-        <br/> - operands to floating-point operations are not NaN or Inf, 
-        <br/> - and that +0 and -0 are interchangeable.  
-      </opt:xhtml>
-    </opt:booleanOption>
+    <!-- Next 3 options used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
     <opt:booleanOption
 		opt:id="generate-16-bit-code"
 		opt:groupid="ignore-me"

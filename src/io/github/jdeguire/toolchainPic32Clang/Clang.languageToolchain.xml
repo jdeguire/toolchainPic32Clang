@@ -248,7 +248,6 @@
             <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
             <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="compile" mp:separator=" "/>
             <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>
@@ -451,7 +450,6 @@
             <mp:textEmitter mp:text="${INSTRUMENTED_TRACE_OPTIONS} "/>
             <mp:textEmitter mp:text="${FUNCTION_LEVEL_PROFILING_OPTIONS} "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="both" mp:separator=" "/>
-            <mp:optionEmitter mp:idref="C32Global" opt:groupidref="compile" mp:separator=" "/>
             <mp:textEmitter mp:text=" -D${MPLABX_ACTIVE_CFG}=$(CND_CONF) "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="gp-relative-treshhold" mp:prefix=" "/>
             <mp:optionEmitter mp:idref="C32Global" opt:groupidref="appendMe" mp:separator=" " mp:prefix=" "/>

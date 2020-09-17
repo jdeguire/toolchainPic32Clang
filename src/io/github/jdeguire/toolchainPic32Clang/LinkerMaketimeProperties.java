@@ -208,12 +208,6 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
     private String getCommonMultilibs() {
         String libdir = "";
 
-        /* Get fast-math usage.
-         */
-        if(optAccessor.getBooleanProjectOption("C32-LD", "use-fast-math-libs", false)) {
-            libdir += "/fast-math";
-        }
-
         /* Get optimization level.
          */
         String opt = optAccessor.getProjectOption("C32-LD", "optimization-level", "");

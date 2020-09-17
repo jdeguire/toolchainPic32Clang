@@ -110,7 +110,7 @@
     </opt:booleanOption>
     <opt:booleanOption
 		opt:id="relaxed-math"
-		opt:groupid="compile"
+		opt:groupid="both"
 		opt:name="Relaxed floating-point math"
 		opt:trueemission="-ffast-math"
 		opt:booldefault="false">
