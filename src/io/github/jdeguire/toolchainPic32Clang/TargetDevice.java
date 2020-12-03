@@ -203,11 +203,11 @@ public class TargetDevice {
                         arch = TargetArch.ARMV8M_MAIN;
                         found = true;
                         break;
-					case "armv8.1m":                             // Cortex M55
+                    case "armv8.1m":                             // Cortex M55
                     case "armv8.1m.main":
                         arch = TargetArch.ARMV8_1M_MAIN;
-						found = true;
-						break;
+                        found = true;
+                        break;
                     default:
                         found = false;
                         break;
@@ -301,8 +301,8 @@ public class TargetDevice {
     /* Return True if the target has a 64-bit FPU.
      */
     public boolean hasFpu64() {
-        // So far, only the Cortex-M4 devices have a single-precision FPU.
-        return hasFpu() && !getCpuName().equals("cortex-m4");
+        // So far, only the Cortex-M4 and ARMv8M Mainline devices have a single-precision FPU.
+        return hasFpu()  &&  !getCpuName().equals("cortex-m4")  &&  TargetArch.ARMV8M_BASE != getArch();
     }
 
     /* Return True if the device has an L1 cache.  This is actually just a guess for now based on
