@@ -1,42 +1,42 @@
 <?xml version="1.0"?>
 <opt:optionLanguage
-	xmlns:opt="http://crownking/opt"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
-	opt:id="lld"
-	opt:name="LLVM Linker">
+  xmlns:opt="http://crownking/opt"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://crownking/opt opt/optionLanguage.xsd"
+  opt:id="lld"
+  opt:name="LLVM Linker">
   
   <opt:optionCategory opt:id="general" opt:name="General">
     <opt:stringOption
-		opt:id="heap-size"
-		opt:groupid="post"
-		opt:name="Heap size (bytes)"
-		opt:emissionprefix="--defsym=_min_heap_size="/>
+    opt:id="heap-size"
+    opt:groupid="post"
+    opt:name="Heap size (bytes)"
+    opt:emissionprefix="--defsym=_min_heap_size="/>
     <opt:stringOption
-		opt:id="stack-size"
-		opt:groupid="post"
-		opt:name="Minimum stack size (bytes)"
-		opt:emissionprefix="--defsym=_min_stack_size="/>
+    opt:id="stack-size"
+    opt:groupid="post"
+    opt:name="Minimum stack size (bytes)"
+    opt:emissionprefix="--defsym=_min_stack_size="/>
     <opt:booleanOption
-		opt:id="enable-check-sections"
-		opt:groupid="post"
-		opt:name="Allow overlapped sections"
-		opt:trueemission="--no-check-sections"/>
+    opt:id="enable-check-sections"
+    opt:groupid="post"
+    opt:name="Allow overlapped sections"
+    opt:trueemission="--no-check-sections"/>
     <opt:booleanOption
-		opt:id="remove-unused-sections"
-		opt:groupid="post"
-		opt:name="Remove unused sections"
-		opt:trueemission="--gc-sections"/>
+    opt:id="remove-unused-sections"
+    opt:groupid="post"
+    opt:name="Remove unused sections"
+    opt:trueemission="--gc-sections"/>
     <!-- We do not use the additional-options-use-response-files boolean option to emit anything directly. 
          We check its value in the makefile writer rules and emit what is needed for both the linker
          and assembler based on it being "true"-->
     <opt:booleanOption
-		opt:id="additional-options-use-response-files"
-		opt:groupid="ignore-me"
-		opt:name="Use response file to link"
-		opt:default="false"
-		opt:trueemission="true"
-		opt:suppressif="${response-files.suppress}">
+    opt:id="additional-options-use-response-files"
+    opt:groupid="ignore-me"
+    opt:name="Use response file to link"
+    opt:default="false"
+    opt:trueemission="true"
+    opt:suppressif="${response-files.suppress}">
       <opt:xhtml>
           In Windows, you have a max command line length of 8191 chars. When linking long programs, 
           the link line might go over this limit. Clang provides response file capabilities. Check 
@@ -45,12 +45,12 @@
     </opt:booleanOption>
     <!-- Keep "XC32" in the name of this next option for compatibility in case something like the Harmony Configurator expects it. -->
     <opt:stringOption
-		opt:id="oXC32ld-extra-opts"
-		opt:groupid="pre"
-		opt:name="Additional driver options"
-		opt:emissionprefix=""
-		opt:textdefault=""
-		opt:textpreferred="">
+    opt:id="oXC32ld-extra-opts"
+    opt:groupid="pre"
+    opt:name="Additional driver options"
+    opt:emissionprefix=""
+    opt:textdefault=""
+    opt:textpreferred="">
       <opt:xhtml>
           Type here any additional driver options not existing in this GUI otherwise.
           <br/>The string you introduce here will be emitted as is in the driver invocation command.
@@ -58,35 +58,35 @@
     </opt:stringOption>
     <!-- TODO: We may not be able to use these next two options and might have to get rid of them. -->
     <opt:booleanOption
-		opt:groupid="ignore-me"
-		opt:id="code-dinit"
-		opt:name="Place code in data init template"
-		opt:default="${Imola2.detected}"
-		opt:trueemission=""
-		opt:falseemission=""
-		opt:suppressif="${target.isARM}">
+    opt:groupid="ignore-me"
+    opt:id="code-dinit"
+    opt:name="Place code in data init template"
+    opt:default="${Imola2.detected}"
+    opt:trueemission=""
+    opt:falseemission=""
+    opt:suppressif="${target.isARM}">
       Place code sections into the data-initialization template stored in the .dinit section.
     </opt:booleanOption>
     <opt:booleanOption
-		opt:groupid="ignore-me"
-		opt:id="allocate-dinit"
-		opt:name="Allocate data-init section to serial memory"
-		opt:default="${Imola2.detected}"
-		opt:trueemission=""
-		opt:falseemission=""
-		opt:suppressif="${target.isARM}">
+    opt:groupid="ignore-me"
+    opt:id="allocate-dinit"
+    opt:name="Allocate data-init section to serial memory"
+    opt:default="${Imola2.detected}"
+    opt:trueemission=""
+    opt:falseemission=""
+    opt:suppressif="${target.isARM}">
       Allocate the .dinit template section to a memory region named "serial_mem" rather than "kseg0_program_mem".
     </opt:booleanOption>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="libraries" opt:name="Libraries">
     <opt:enumOption
-		opt:id="optimization-level"
-		opt:groupid="ignore-me"
-		opt:name="Optimization level of Standard Libraries"
-		opt:textdefault=""
-		opt:emissionprefix=""
-        opt:neveremits="true">
+    opt:id="optimization-level"
+    opt:groupid="ignore-me"
+    opt:name="Optimization level of Standard Libraries"
+    opt:textdefault=""
+    opt:emissionprefix=""
+    opt:neveremits="true">
       <!-- Selection used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
       <opt:selection opt:text="" opt:name="None"/>
       <opt:selection opt:text="-O1" opt:name="1"/>
@@ -97,23 +97,23 @@
       <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
     <opt:stringListOption
-		opt:id="input-libraries"
-		opt:groupid="post"
-		opt:name="System Libraries"
-		opt:emissionprefix="-l"
-		opt:emissionseparator=",-l"
-		opt:isfile="true"
-		opt:isbrowsable="true"
-		opt:slashnormalization="unix"/>
+    opt:id="input-libraries"
+    opt:groupid="post"
+    opt:name="System Libraries"
+    opt:emissionprefix="-l"
+    opt:emissionseparator=",-l"
+    opt:isfile="true"
+    opt:isbrowsable="true"
+    opt:slashnormalization="unix"/>
     <opt:stringListOption
-		opt:id="extra-lib-directories"
-		opt:groupid="post"
-		opt:name="Library directories"
-		opt:emissionprefix="-L"
-		opt:emissionseparator=",-L"
-		opt:slashnormalization="unix"
-		opt:isdirectory="true"
-		opt:isbrowsable="true">
+    opt:id="extra-lib-directories"
+    opt:groupid="post"
+    opt:name="Library directories"
+    opt:emissionprefix="-L"
+    opt:emissionseparator=",-L"
+    opt:slashnormalization="unix"
+    opt:isdirectory="true"
+    opt:isbrowsable="true">
       <opt:browseinfo>
         Relative paths are from MPLAB X project directory.
       </opt:browseinfo>
@@ -121,44 +121,48 @@
         Relative paths are from MPLAB X project directory.
       </opt:xhtml>
     </opt:stringListOption>
+<!-- TODO:  These next two options may need to change if we end up having to put 'nostdlib' and 
+            'nostdlib++' into the target config files to stop Clang from trying to link whatever
+            it finds.
+-->
     <opt:booleanOption
-		opt:id="exclude-standard-libraries"
-		opt:groupid="pre"
-		opt:name="Exclude Standard Libraries"
-		opt:trueemission="-nostdlib"/>
+    opt:id="exclude-standard-libraries"
+    opt:groupid="pre"
+    opt:name="Exclude Standard Libraries"
+    opt:trueemission="-nostdlib"/>
     <opt:booleanOption
-		opt:id="exclude-cxx-libraries"
-		opt:groupid="pre"
-		opt:name="Exclude C++ Standard Libraries"
-		opt:booldefault="false"
-		opt:trueemission="-nostdlib++"
-		opt:falseemission="-stdlib=libc++"/>
+    opt:id="exclude-cxx-libraries"
+    opt:groupid="pre"
+    opt:name="Exclude C++ Standard Libraries"
+    opt:booldefault="false"
+    opt:trueemission="-nostdlib++"
+    opt:falseemission="-stdlib=libc++"/>
 <!-- TODO:  We might need to manually add/remove the startup code, so this might change. -->
     <opt:booleanOption
-		opt:id="no-startup-files"
-		opt:groupid="pre"
-		opt:name="Do not link crt0 startup code"
-		opt:trueemission="-nostartfiles"/>
+    opt:id="no-startup-files"
+    opt:groupid="pre"
+    opt:name="Do not link crt0 startup code"
+    opt:trueemission="-nostartfiles"/>
 <!-- TODO:  We'll have to check this and use it to add the startup object file to the link step. 
             Harmony 3 appears to set this one, so if we can keep only one it'll be this next one.
 -->
     <opt:booleanOption
-		opt:id="no-device-startup-code"
-		opt:groupid="ignore-me"
-		opt:name="Do not link device startup code"
-		opt:trueemission="">
+    opt:id="no-device-startup-code"
+    opt:groupid="ignore-me"
+    opt:name="Do not link device startup code"
+    opt:trueemission="">
     </opt:booleanOption>
     <!-- Next 3 options used to determine multilib variant; see LinkerProperties.java::getCommonMultilibs(). -->
     <opt:booleanOption
-		opt:id="generate-16-bit-code"
-		opt:groupid="ignore-me"
-		opt:name="Link MIPS16 libraries"
-		opt:suppressif="${mips16.suppress}"/>
+    opt:id="generate-16-bit-code"
+    opt:groupid="ignore-me"
+    opt:name="Link MIPS16 libraries"
+    opt:suppressif="${mips16.suppress}"/>
     <opt:booleanOption
-		opt:id="generate-micro-compressed-code"
-		opt:groupid="ignore-me"
-		opt:name="Link micro MIPS compressed startup code and libraries"
-		opt:suppressif="${micromips.suppress}">
+    opt:id="generate-micro-compressed-code"
+    opt:groupid="ignore-me"
+    opt:name="Link micro MIPS compressed startup code and libraries"
+    opt:suppressif="${micromips.suppress}">
       <opt:xhtml>
           Link the startup code and libraries generated for the microMIPS compressed ISA. Use this 
           option only when the device is configured to boot to the microMIPS mode 
@@ -166,17 +170,17 @@
       </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
-		opt:id="generate-thumb-code"
-		opt:groupid="ignore-me"
-		opt:name="Link Thumb startup code and libraries"
-		opt:default="false"
-		opt:suppressif="${thumb.suppress}"/>
+    opt:id="generate-thumb-code"
+    opt:groupid="ignore-me"
+    opt:name="Link Thumb startup code and libraries"
+    opt:default="false"
+    opt:suppressif="${thumb.suppress}"/>
     <opt:booleanOption
-		opt:id="include-cxx-experimental"
-		opt:groupid="post"
-		opt:name="Link experimental C++ features library"
-		opt:booldefault="false"
-		opt:trueemission="-lc++experimental">
+    opt:id="include-cxx-experimental"
+    opt:groupid="post"
+    opt:name="Link experimental C++ features library"
+    opt:booldefault="false"
+    opt:trueemission="-lc++experimental">
       <opt:xhtml>
           Libc++ puts experimental C++ features into a separate library.  
           Enable this option if the project uses &lt; experimental/... &gt; headers.
@@ -188,17 +192,17 @@
   <!-- TODO:  Can we even use these? -->
   <opt:optionCategory opt:id="fill-flash-options" opt:name="Fill Flash Memory" opt:hideif="${target.isARM}">
     <opt:complexOption
-		opt:groupid="ld-extra"
-		opt:id="fill-options"
-		opt:name="Fill"
-		opt:emissionprefix="--fill="
-		opt:suppressif="${target.isARM}">
+    opt:groupid="ld-extra"
+    opt:id="fill-options"
+    opt:name="Fill"
+    opt:emissionprefix="--fill="
+    opt:suppressif="${target.isARM}">
       <opt:enumOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-what"
-		  opt:name="Which area to fill"
-		  opt:textdefault="0"
-		  opt:neveremits="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-what"
+      opt:name="Which area to fill"
+      opt:textdefault="0"
+      opt:neveremits="true">
         You can fill all unused memory or specify and area
         <opt:selection opt:name="No Fill" opt:text="0">
           <opt:optionSuppressor opt:idref="fill-flash-options-seq" opt:bool="true"/>
@@ -228,12 +232,12 @@
         </opt:selection>
       </opt:enumOption>
       <opt:enumOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-how"
-		  opt:name="How to fill it"
-		  opt:textdefault="0"
-		  opt:neveremits="true"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-how"
+      opt:name="How to fill it"
+      opt:textdefault="0"
+      opt:neveremits="true"
+      opt:suppressif="true">
         You can provide a sequence you type in or a value. If you select a value you can further define if the value should be incremented/decremented on each
         consecutive address.
         <opt:selection opt:name="Provide sequence of values" opt:text="0">
@@ -252,28 +256,28 @@
         </opt:selection>
       </opt:enumOption>
       <opt:stringOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-seq"
-		  opt:name="Sequence"
-		  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.SequenceValidator"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-seq"
+      opt:name="Sequence"
+      opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.SequenceValidator"
+      opt:suppressif="true">
         Comma separated values. Each value uses C syntax. Example: 0x10,17,18,0x13
       </opt:stringOption>
       <opt:stringOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-const"
-		  opt:name="Constant"
-		  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-const"
+      opt:name="Constant"
+      opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+      opt:suppressif="true">
         Specify constant using C syntax (0x for hex 0 for octal). Example: 0x10 is the same as 020 or 16
       </opt:stringOption>
       <opt:enumOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-increment"
-		  opt:name="Increment/Decrement"
-		  opt:textdefault=""
-		  opt:emitswhendefault="false"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-increment"
+      opt:name="Increment/Decrement"
+      opt:textdefault=""
+      opt:emitswhendefault="false"
+      opt:suppressif="true">
         You can select to leave the constant alone, or increment/decrement the initial value on each consecutive address.
         <opt:selection opt:name="No Incrementing" opt:text="">
           <opt:optionSuppressor opt:idref="fill-flash-options-inc-const" opt:bool="true"/>
@@ -288,21 +292,21 @@
         </opt:selection>
       </opt:enumOption>
       <opt:stringOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-inc-const"
-		  opt:name="Increment/Decrement Constant"
-		  opt:textpreferred="1"
-		  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-inc-const"
+      opt:name="Increment/Decrement Constant"
+      opt:textpreferred="1"
+      opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+      opt:suppressif="true">
         Specify constant using C syntax (0x for hex 0 for octal). Example: 0x10 is the same as 020 or 16
       </opt:stringOption>
       <opt:stringOption
-		  opt:groupid="ld-extra"
-		  opt:id="fill-flash-options-addr"
-		  opt:name="Memory Address Range"
-		  opt:emissionprefix="@"
-		  opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.RangeValidator"
-		  opt:suppressif="true">
+      opt:groupid="ld-extra"
+      opt:id="fill-flash-options-addr"
+      opt:name="Memory Address Range"
+      opt:emissionprefix="@"
+      opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.RangeValidator"
+      opt:suppressif="true">
         Specify range as Start:End where Start and End use C syntax. Example 0x100:0x1FF is the same as 256:511.
       </opt:stringOption>
     </opt:complexOption>
@@ -311,112 +315,112 @@
   <opt:optionCategory opt:id="diagnostics" opt:name="Diagnostics">
     <!-- TODO:  Check if this is the correct way to output a map file. -->
     <opt:stringOption
-		opt:id="map-file"
-		opt:groupid="post"
-		opt:name="Generate map file"
-		opt:emissionprefix="-Map="
-		opt:isfile="true"
-		opt:isbrowsable="true"
-		opt:slashnormalization="unix"
-		opt:textpreferred="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
+    opt:id="map-file"
+    opt:groupid="post"
+    opt:name="Generate map file"
+    opt:emissionprefix="-Map="
+    opt:isfile="true"
+    opt:isbrowsable="true"
+    opt:slashnormalization="unix"
+    opt:textpreferred="${DISTDIR}/${PROJECTNAME}.${IMAGE_TYPE}.map"/>
     <!-- This is used by LinkerProperties to determine if llvm-size needs to be called. -->
     <opt:booleanOption
-		opt:id="report-memory-usage"
-		opt:groupid="ignore-me"
-		opt:name="Display memory usage"
-		opt:default="true"/>
+    opt:id="report-memory-usage"
+    opt:groupid="ignore-me"
+    opt:name="Display memory usage"
+    opt:default="true"/>
     <!-- TODO:  Can we use this next option? -->
     <opt:booleanOption
-		opt:id="generate-cross-reference-file"
-		opt:groupid="post"
-		opt:name="Generate cross-reference file"
-		opt:trueemission="--cref"/>
+    opt:id="generate-cross-reference-file"
+    opt:groupid="post"
+    opt:name="Generate cross-reference file"
+    opt:trueemission="--cref"/>
     <!-- TODO:  Can we use this next option? -->
     <opt:booleanOption
-		opt:id="warn-section-align"
-		opt:groupid="post"
-		opt:name="Warn on section realignment"
-		opt:trueemission="--warn-section-align"/>
+    opt:id="warn-section-align"
+    opt:groupid="post"
+    opt:name="Warn on section realignment"
+    opt:trueemission="--warn-section-align"/>
     <!-- TODO:  Can we use this next option? -->
     <opt:stringListOption
-		opt:id="trace-symbols"
-		opt:groupid="post"
-		opt:name="Trace symbols"
-		opt:emissionprefix="-y "
-		opt:emissionseparator=",-y "/>
+    opt:id="trace-symbols"
+    opt:groupid="post"
+    opt:name="Trace symbols"
+    opt:emissionprefix="-y "
+    opt:emissionseparator=",-y "/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="symbols-and-macros" opt:name="Symbols &amp; Macros">
     <opt:stringListOption
-		opt:id="linker-symbols"
-		opt:groupid="post"
-		opt:name="Linker symbols"
-		opt:emissionprefix="--defsym="
-		opt:emissionseparator=" --defsym="
-		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+    opt:id="linker-symbols"
+    opt:groupid="post"
+    opt:name="Linker symbols"
+    opt:emissionprefix="--defsym="
+    opt:emissionseparator=" --defsym="
+    opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
-		opt:id="preprocessor-macros"
-		opt:groupid="post"
-		opt:name="Preprocessor macro definitions"
-		opt:emissionprefix="-D"
-		opt:emissionseparator=" -D"
-		opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+    opt:id="preprocessor-macros"
+    opt:groupid="post"
+    opt:name="Preprocessor macro definitions"
+    opt:emissionprefix="-D"
+    opt:emissionseparator=" -D"
+    opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:enumOption
-		opt:id="symbol-stripping"
-		opt:groupid="post"
-		opt:name="Symbols" opt:textdefault="" opt:emissionprefix="">
+    opt:id="symbol-stripping"
+    opt:groupid="post"
+    opt:name="Symbols" opt:textdefault="" opt:emissionprefix="">
       <opt:selection opt:text="" opt:name="Keep all"/>
       <opt:selection opt:text="-S" opt:name="Strip debugging info"/>
       <opt:selection opt:text="-s" opt:name="Strip all symbol info"/>
     </opt:enumOption>
     <opt:stringOption
-		opt:groupid="post"
-		opt:id="ebase-addr"
-		opt:name="Exception Base start address"
-		opt:emissionprefix="-DEBASE_ADDRESS="
-		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:hideif="${Imola2.suppresor}"
-		opt:suppressif="${Imola2.suppresor}">
+    opt:groupid="post"
+    opt:id="ebase-addr"
+    opt:name="Exception Base start address"
+    opt:emissionprefix="-DEBASE_ADDRESS="
+    opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+    opt:hideif="${Imola2.suppresor}"
+    opt:suppressif="${Imola2.suppresor}">
       Exception Base start address.
     </opt:stringOption>
     <opt:stringOption
-		opt:groupid="post"
-		opt:id="kseg-origin"
-		opt:name="SRAM code-region start address"
-		opt:emissionprefix="-DKSEG0_PROGRAM_MEM_ORIGIN="
-		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:hideif="${Imola2.suppresor}"
-		opt:suppressif="${Imola2.suppresor}">
+    opt:groupid="post"
+    opt:id="kseg-origin"
+    opt:name="SRAM code-region start address"
+    opt:emissionprefix="-DKSEG0_PROGRAM_MEM_ORIGIN="
+    opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+    opt:hideif="${Imola2.suppresor}"
+    opt:suppressif="${Imola2.suppresor}">
       SRAM code-region start address.
     </opt:stringOption>
     <opt:stringOption
-		opt:groupid="post"
-		opt:id="kseg-length"
-		opt:name="SRAM code-region length in bytes"
-		opt:emissionprefix="-DKSEG0_PROGRAM_MEM_LENGTH="
-		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:hideif="${Imola2.suppresor}"
-		opt:suppressif="${Imola2.suppresor}">
+    opt:groupid="post"
+    opt:id="kseg-length"
+    opt:name="SRAM code-region length in bytes"
+    opt:emissionprefix="-DKSEG0_PROGRAM_MEM_LENGTH="
+    opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+    opt:hideif="${Imola2.suppresor}"
+    opt:suppressif="${Imola2.suppresor}">
       SRAM code-region length in bytes.
     </opt:stringOption>
     <opt:stringOption
-		opt:groupid="post"
-		opt:id="serial-origin"
-		opt:name="SPI Flash-region start address"
-		opt:emissionprefix="-DSERIAL_MEM_ORIGIN="
-		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:hideif="${Imola2.suppresor}"
-		opt:suppressif="${Imola2.suppresor}">
+    opt:groupid="post"
+    opt:id="serial-origin"
+    opt:name="SPI Flash-region start address"
+    opt:emissionprefix="-DSERIAL_MEM_ORIGIN="
+    opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+    opt:hideif="${Imola2.suppresor}"
+    opt:suppressif="${Imola2.suppresor}">
       SPI Flash-region start address.
     </opt:stringOption>
     <opt:stringOption
-		opt:groupid="post"
-		opt:id="serial-length"
-		opt:name="SPI Flash-region length in bytes"
-		opt:emissionprefix="-DSERIAL_MEM_LENGTH="
-		opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
-		opt:hideif="${Imola2.suppresor}"
-		opt:suppressif="${Imola2.suppresor}">
+    opt:groupid="post"
+    opt:id="serial-length"
+    opt:name="SPI Flash-region length in bytes"
+    opt:emissionprefix="-DSERIAL_MEM_LENGTH="
+    opt:validatorclass="com.microchip.mplab.nbide.toolchainCommon.opt.validation.CSyntaxNumberValidator"
+    opt:hideif="${Imola2.suppresor}"
+    opt:suppressif="${Imola2.suppresor}">
       SPI Flash-region length in bytes.
     </opt:stringOption>
   </opt:optionCategory>

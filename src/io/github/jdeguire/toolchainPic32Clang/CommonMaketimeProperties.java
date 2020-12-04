@@ -25,13 +25,13 @@ public class CommonMaketimeProperties extends MPLABXSpecificProperties {
     final protected TargetDevice target;
 
     public CommonMaketimeProperties(final MakeConfigurationBook projectDescriptor,
-							final MakeConfiguration conf,
-							final Properties commandLineProperties) 
-		throws com.microchip.crownking.Anomaly, 
-		org.xml.sax.SAXException,
-		java.io.IOException, 
-		javax.xml.parsers.ParserConfigurationException, 
-		IllegalArgumentException {
+                            final MakeConfiguration conf,
+                            final Properties commandLineProperties) 
+        throws com.microchip.crownking.Anomaly, 
+        org.xml.sax.SAXException,
+        java.io.IOException, 
+        javax.xml.parsers.ParserConfigurationException, 
+        IllegalArgumentException {
 
         super(projectDescriptor, conf, commandLineProperties);
 

@@ -34,8 +34,8 @@ import org.netbeans.api.project.Project;
  * I'm not at all sure what the means.
  */ 
 public class ClangLanguageToolchain {
-	// TODO:  We might be able to remove ones that do not apply to Clang; namely, the ones
-	//        referenced in CommonPropertiesCalculator.
+    // TODO:  We might be able to remove ones that do not apply to Clang; namely, the ones
+    //        referenced in CommonPropertiesCalculator.
     public static final String CPP_SUPPORT_FIRST_VERSION = "0.01";
 //    public static final String MDFP_SUPPORTED_VERSION = "2.20";
 //    public static final String LIBC_SUPPORT_FIRST_VERSION = "1.41";
@@ -89,8 +89,7 @@ public class ClangLanguageToolchain {
         if(target.isMips32())
             return TARGET_DIR + "/mips32/";
         else {
-            // This should get us "cortex-m" or "cortex-a" or whatever else.
-            return TARGET_DIR + "/" + target.getCpuName().toLowerCase().substring(0, 8) + "/";
+            return TARGET_DIR + "/arm/";
         }
     }
 

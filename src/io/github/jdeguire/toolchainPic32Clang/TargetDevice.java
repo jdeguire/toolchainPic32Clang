@@ -309,17 +309,10 @@ public class TargetDevice {
      * the device's family or architecture.
      */
     public boolean hasL1Cache() {
-        boolean result = false;
-
-        if(getSubFamily() == SubFamily.PIC32MZ) {
-            result = true;
-        } else if(getCpuName().equals("cortex-m7")) {
-            result = true;
-        } else if(getCpuName().startsWith("cortex-a")) {
-            result = true;
-        }
-
-        return result;
+        return (getSubFamily() == SubFamily.PIC32MZ  ||
+                getCpuName().equals("cortex-m7")  ||
+                getCpuName().equals("cortex-m55")  ||
+                getCpuName().startsWith("cortex-a"));
     }
 
     /* Return True if the target supports the MIPS32 instruction set.
@@ -373,10 +366,33 @@ public class TargetDevice {
         return (TargetArch.ARMV7A == arch || TargetArch.ARMV8A == arch);
     }
 
-    /* Return True if the target supports the Thumb instruction set.
+    /* Return True if the target supports the Thumb or Thumb2 instruction set.
      */
     public boolean supportsThumbIsa() {
         return isArm();
+    }
+
+    /* Return True if the target supports the Arm Cortex-M Security Extension.
+     */
+    public boolean supportsCortexMSecurityExtension() {
+        if(isArm()) {
+            switch(getArch()) {
+                case ARMV8M_BASE:
+                case ARMV8M_MAIN:
+                case ARMV8_1M_MAIN:
+                    return true;
+                default:
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /* Return True if the target supports Helium--also known as the M-Profile Vector Extension.
+     */
+    public boolean supportsHeliumExtension() {
+        return isArm()  &&  TargetArch.ARMV8_1M_MAIN == getArch();
     }
 
     /* Get the name of the FPU for ARM devices.  ARM devices have different FPU variants that can be

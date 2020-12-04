@@ -23,11 +23,11 @@ public final class CompilerMaketimeProperties extends CommonMaketimeProperties {
     public CompilerMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties) 
-		throws com.microchip.crownking.Anomaly, 
-		org.xml.sax.SAXException,
-		java.io.IOException, 
-		javax.xml.parsers.ParserConfigurationException, 
-		IllegalArgumentException {
+        throws com.microchip.crownking.Anomaly, 
+        org.xml.sax.SAXException,
+        java.io.IOException, 
+        javax.xml.parsers.ParserConfigurationException, 
+        IllegalArgumentException {
 
         super(projectDescriptor, conf, commandLineProperties);
 

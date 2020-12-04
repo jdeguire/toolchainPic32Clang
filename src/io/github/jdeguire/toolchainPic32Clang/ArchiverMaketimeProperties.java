@@ -21,11 +21,11 @@ public final class ArchiverMaketimeProperties extends CommonMaketimeProperties {
     public ArchiverMaketimeProperties(final MakeConfigurationBook projectDescriptor,
             final MakeConfiguration conf,
             final Properties commandLineProperties)
-		throws com.microchip.crownking.Anomaly, 
-		org.xml.sax.SAXException,
-		java.io.IOException, 
-		javax.xml.parsers.ParserConfigurationException, 
-		IllegalArgumentException {
+        throws com.microchip.crownking.Anomaly, 
+        org.xml.sax.SAXException,
+        java.io.IOException, 
+        javax.xml.parsers.ParserConfigurationException, 
+        IllegalArgumentException {
 
         super(projectDescriptor, conf, commandLineProperties);
     }

@@ -32,12 +32,12 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
     private static boolean updatingVersion = false;
 
     public ClangRuntimeProperties(final MakeConfigurationBook desc, final MakeConfiguration conf) 
-		throws com.microchip.crownking.Anomaly, 
-		org.xml.sax.SAXException,
-		java.io.IOException, 
-		javax.xml.parsers.ParserConfigurationException, 
-		IllegalArgumentException,
-		MakeConfigurationException {
+        throws com.microchip.crownking.Anomaly, 
+        org.xml.sax.SAXException,
+        java.io.IOException, 
+        javax.xml.parsers.ParserConfigurationException, 
+        IllegalArgumentException,
+        MakeConfigurationException {
 
         super(desc, conf);
 
@@ -57,6 +57,7 @@ public final class ClangRuntimeProperties extends ClangAbstractTargetRuntimeProp
     /* TODO:  "Imola2" appears to be Microchip's internal codename for the PIC32WK devices.
      *        These do not have built-in flash, but load from an on-package serial PROM.
      *        We should probably replace this with another name (if we can even support it).
+     *        Have the PIC32WK devices been cancelled? What about the PIC32MZ W1?
      */
     private void setImola2Properties(final MakeConfigurationBook projectDescriptor) {
         //default settings, in case projectDescriptor is corrupted.

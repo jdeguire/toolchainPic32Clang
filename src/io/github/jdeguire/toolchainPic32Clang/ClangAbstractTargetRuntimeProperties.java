@@ -24,14 +24,14 @@ public abstract class ClangAbstractTargetRuntimeProperties extends CommonToolcha
     final protected TargetDevice target;
 
     protected ClangAbstractTargetRuntimeProperties(MakeConfigurationBook desc, MakeConfiguration conf) 
-		throws com.microchip.crownking.Anomaly, 
-		org.xml.sax.SAXException,
-		java.io.IOException, 
-		javax.xml.parsers.ParserConfigurationException, 
-		IllegalArgumentException,
-		MakeConfigurationException {
+        throws com.microchip.crownking.Anomaly, 
+        org.xml.sax.SAXException,
+        java.io.IOException, 
+        javax.xml.parsers.ParserConfigurationException, 
+        IllegalArgumentException,
+        MakeConfigurationException {
 
-		super(desc, conf);
+        super(desc, conf);
 
         optAccessor = new ProjectOptionAccessor(desc.getProject(), conf);
         target = new TargetDevice(conf.getDevice().getValue());

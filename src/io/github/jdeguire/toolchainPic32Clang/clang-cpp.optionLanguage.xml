@@ -8,17 +8,17 @@
 
   <opt:optionCategory opt:id="cpp" opt:name="C++ specific">
     <opt:booleanOption 
-    	opt:name="Generate run time type descriptor information"
+        opt:name="Generate run time type descriptor information"
         opt:trueemission="-frtti"
         opt:falseemission="-fno-rtti"
         opt:booldefault="true"
-    	opt:id="rtti"/>
+        opt:id="rtti"/>
     <opt:booleanOption
         opt:name="Enable C++ exception handling"
         opt:trueemission="-fexceptions"
-    	opt:falseemission="-fno-exceptions"
-    	opt:booldefault="true"
-    	opt:id="exceptions"/>
+        opt:falseemission="-fno-exceptions"
+        opt:booldefault="true"
+        opt:id="exceptions"/>
     <opt:booleanOption
         opt:name="Enable C++20 Modules"
         opt:trueemission="-fmodules"
@@ -57,11 +57,11 @@
         </opt:xhtml>
     </opt:enumOption>
     <opt:enumOption 
-    	opt:id="unaligned-access"
-    	opt:name="Enable unaligned access"
-    	opt:textdefault=""
-    	opt:unsuppressif="${target.isARM}"
-    	opt:showif="${target.isARM}">
+        opt:id="unaligned-access"
+        opt:name="Enable unaligned access"
+        opt:textdefault=""
+        opt:unsuppressif="${target.isARM}"
+        opt:showif="${target.isARM}">
         <opt:selection opt:text="" opt:name="Compiler Default"/>
         <opt:selection opt:text="-munaligned-access" opt:name="Unaligned Access"/>
         <opt:selection opt:text="-mno-unaligned-access" opt:name="No Unaligned Access"/>
@@ -73,57 +73,57 @@
         </opt:xhtml>
     </opt:enumOption>
     <opt:booleanOption 
-    	opt:id="enable-symbols"
-    	opt:groupid="symbols-on-release"
-    	opt:name="Have symbols in production build"
-    	opt:trueemission="-g"
-    	opt:falseemission=""
-    	opt:booldefault="true"/>
+        opt:id="enable-symbols"
+        opt:groupid="symbols-on-release"
+        opt:name="Have symbols in production build"
+        opt:trueemission="-g"
+        opt:falseemission=""
+        opt:booldefault="true"/>
     <!-- TODO:  We may not be able to support AppIO. -->
     <opt:booleanOption
-    	opt:id="enable-app-io"
-    	opt:name="Enable App IO"
-    	opt:trueemission="-mappio-debug"
-    	opt:suppressif="${target.isARM}"/>
+        opt:id="enable-app-io"
+        opt:name="Enable App IO"
+        opt:trueemission="-mappio-debug"
+        opt:suppressif="${target.isARM}"/>
     <opt:booleanOption
-    	opt:id="isolate-each-function"
-    	opt:name="Isolate each function in a section"
-    	opt:trueemission="-ffunction-sections"/>
+        opt:id="isolate-each-function"
+        opt:name="Isolate each function in a section"
+        opt:trueemission="-ffunction-sections"/>
     <opt:booleanOption
-    	opt:id="place-data-into-section"
-    	opt:name="Place data into its own section"
-    	opt:trueemission="-fdata-sections"/>
+        opt:id="place-data-into-section"
+        opt:name="Place data into its own section"
+        opt:trueemission="-fdata-sections"/>
     <opt:booleanOption
-    	opt:id="use-indirect-calls"
-    	opt:name="Use indirect calls"
-    	opt:trueemission="-mlong-calls"/>
+        opt:id="use-indirect-calls"
+        opt:name="Use indirect calls"
+        opt:trueemission="-mlong-calls"/>
     <opt:booleanOption
-    	opt:id="generate-16-bit-code"
-    	opt:name="Generate MIPS16 16-bit code"
-    	opt:trueemission="-mips16"
-    	opt:default="false"
-		opt:suppressif="${mips16.suppress}"/>
+        opt:id="generate-16-bit-code"
+        opt:name="Generate MIPS16 16-bit code"
+        opt:trueemission="-mips16"
+        opt:default="false"
+        opt:suppressif="${mips16.suppress}"/>
     <opt:booleanOption
-    	opt:id="generate-micro-compressed-code"
-    	opt:name="Generate microMIPS compressed code"
-    	opt:default="false"
-    	opt:trueemission="-mmicromips"
-		opt:suppressif="${micromips.suppress}"/>
+        opt:id="generate-micro-compressed-code"
+        opt:name="Generate microMIPS compressed code"
+        opt:default="false"
+        opt:trueemission="-mmicromips"
+        opt:suppressif="${micromips.suppress}"/>
     <opt:booleanOption
-    	opt:id="generate-thumb-code"
-    	opt:name="Generate Thumb code"
-    	opt:default="false"
-    	opt:trueemission="-mthumb"
-		opt:suppressif="${thumb.suppress}"/>
+        opt:id="generate-thumb-code"
+        opt:name="Generate Thumb code"
+        opt:default="false"
+        opt:trueemission="-mthumb"
+        opt:suppressif="${thumb.suppress}"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="optimization" opt:name="Optimization">
     <opt:enumOption
-    	opt:id="optimization-level"
+        opt:id="optimization-level"
         opt:name="Optimization level"
         opt:textdefault=""
-    	opt:emissionprefix=""
-    	opt:emitswhendefault="false">
+        opt:emissionprefix=""
+        opt:emitswhendefault="false">
         <opt:selection opt:text="" opt:name="0"/>
         <opt:selection opt:text="-Og" opt:name="g"/>
         <opt:selection opt:text="-O1" opt:name="1"/>
@@ -145,31 +145,31 @@
         </opt:xhtml>
     </opt:enumOption>
     <opt:booleanOption
-    	opt:id="enable-unroll-loops"
-    	opt:name="Unroll loops"
-    	opt:trueemission="-funroll-loops"/>
+        opt:id="enable-unroll-loops"
+        opt:name="Unroll loops"
+        opt:trueemission="-funroll-loops"/>
     <opt:booleanOption
-    	opt:id="enable-omit-frame-pointer"
-    	opt:name="Omit frame pointer"
-    	opt:trueemission="-fomit-frame-pointer"/>
+        opt:id="enable-omit-frame-pointer"
+        opt:name="Omit frame pointer"
+        opt:trueemission="-fomit-frame-pointer"/>
   </opt:optionCategory>
 
   <opt:optionCategory opt:id="errors-and-warnings" opt:name="Preprocessing and messages">
     <opt:stringListOption
-    	opt:id="preprocessor-macros"
-    	opt:name="Preprocessor macros"
-    	opt:emissionprefix="-D"
-    	opt:emissionseparator=" -D"
-    	opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
+        opt:id="preprocessor-macros"
+        opt:name="Preprocessor macros"
+        opt:emissionprefix="-D"
+        opt:emissionseparator=" -D"
+        opt:expr="[A-Za-z_][A-Za-z_0-9]*(=.+)?"/>
     <opt:stringListOption
-    	opt:id="extra-include-directories"
+        opt:id="extra-include-directories"
         opt:groupid="include-dirs"
-    	opt:name="Include directories"
-    	opt:emissionprefix="-I"
-    	opt:emissionseparator=" -I"
-    	opt:slashnormalization="unix"
-    	opt:isdirectory="true"
-    	opt:isbrowsable="true">
+        opt:name="Include directories"
+        opt:emissionprefix="-I"
+        opt:emissionseparator=" -I"
+        opt:slashnormalization="unix"
+        opt:isdirectory="true"
+        opt:isbrowsable="true">
         <opt:browseinfo>
             Relative paths are from <br/>MPLAB X project directory.
         </opt:browseinfo>
@@ -180,9 +180,9 @@
         </opt:xhtml>
     </opt:stringListOption>
     <opt:booleanOption
-    	opt:id="c-includes-in-cpp"
-    	opt:name="Also use C include directories"
-    	opt:trueemission="">
+        opt:id="c-includes-in-cpp"
+        opt:name="Also use C include directories"
+        opt:trueemission="">
         <opt:xhtml>
             If enabled, add the directories listed in the "Include Directories" option in the C
             option section in addition to the directories in the C++ option section.  The C 
@@ -190,17 +190,17 @@
         </opt:xhtml>
     </opt:booleanOption>
     <opt:booleanOption
-    	opt:id="make-warnings-into-errors"
-    	opt:name="Make warnings into errors"
-    	opt:trueemission="-Werror"/>
+        opt:id="make-warnings-into-errors"
+        opt:name="Make warnings into errors"
+        opt:trueemission="-Werror"/>
     <opt:booleanOption
         opt:id="additional-warnings"
-    	opt:name="Additional warnings"
-    	opt:trueemission="-Wall"/>
+        opt:name="Additional warnings"
+        opt:trueemission="-Wall"/>
     <opt:booleanOption
-    	opt:id="strict-ansi"
-    	opt:name=""
-    	opt:trueemission="-pedantic"/>
+        opt:id="strict-ansi"
+        opt:name=""
+        opt:trueemission="-pedantic"/>
   </opt:optionCategory>
 
 

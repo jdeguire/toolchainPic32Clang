@@ -122,8 +122,8 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
     /* Return the "-L=<dir>" option string that will point to the particular multilib variant that we 
      * need given our options and architecture.
      *
-     * The directory order will be cpu/isa/dsp/fpu/fastmath/optimization_level.  Note that 'dsp'
-     * applies only to MIPS devices.
+     * The directory order will be cpu/isa/dsp/fpu/optimization_level.  Note that 'dsp' applies only
+     * to MIPS devices.
      */
     private String getMultilibDirectoryOpt() {
         // The '=' makes this relative to the directory given with the "--sysroot" option, which
@@ -133,13 +133,10 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
         if(target.isMips32()) {
             multilibOpt += getMips32Multilib();
         } else if(target.isArm()) {
-            if(target.supportsArmIsa()) {
-                multilibOpt += getCortexAMultilib();
-            } else {
-                multilibOpt += getCortexMMultilib();
-            }
-        } else
+            multilibOpt += getArmMultilib();
+        } else {
             return "";
+        }
 
         multilibOpt += getCommonMultilibs();
         return multilibOpt + "\"";
@@ -171,25 +168,13 @@ public final class LinkerMaketimeProperties extends CommonMaketimeProperties {
         return libdir;
     }
 
-    private String getCortexMMultilib() {
+    private String getArmMultilib() {
         String libdir = target.getArchNameForCompiler().substring(3);     // remove "arm" to leave "v__"
 
-        // ISA is always Thumb on Cortex-M, so that's always the default.
-
-        /* Get FPU.
-         */
-        if(target.hasFpu()) {
-            libdir += "/" + target.getArmFpuName().toLowerCase();
-        }
-
-        return libdir;
-    }
-
-    private String getCortexAMultilib() {
-        String libdir = target.getArchNameForCompiler().substring(3);     // remove "arm" to leave "v__"
-
-        // ISA is user-selectable via an option, so check that option.
-        if(optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
+        // If the device supports the Arm (A32) ISA, the user can select to use Thumb. Otherwise,
+        // the target supports only Thumb and so this option does not apply.
+        if(target.supportsArmIsa()  &&  
+           optAccessor.getBooleanProjectOption("C32-LD", "generate-thumb-code", false)) {
             libdir += "/thumb";
         }
 
