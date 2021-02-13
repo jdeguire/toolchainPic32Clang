@@ -92,7 +92,6 @@
       <opt:selection opt:text="-O1" opt:name="1"/>
       <opt:selection opt:text="-O2" opt:name="2"/>
       <opt:selection opt:text="-O3" opt:name="3"/>
-      <opt:selection opt:text="-Ofast" opt:name="fast"/>
       <opt:selection opt:text="-Os" opt:name="s"/>
       <opt:selection opt:text="-Oz" opt:name="z"/>
     </opt:enumOption>
